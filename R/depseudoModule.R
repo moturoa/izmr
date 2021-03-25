@@ -2,11 +2,8 @@
 
 depseudoModule <- function(input, output, session, pseudo_ids = reactive(NULL)){
   
-  url <- getOption("izm_rest_url")
-  if(is.null(url)){
-    stop("set options(izm_rest_url = 'http://....') first!")
-  }
-  url <- file.path(url, "depseudo")
+  
+  url <- get_search_path("depseudo")
   
   observe({
     

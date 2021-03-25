@@ -25,13 +25,9 @@ izm_search_input <- function(what, label, url, timeout){
 izmSearchUI <- function(id){
   
   ns <- NS(id)
+
+  url <- get_search_path("dev")
   
-  # Read Search URL from options.
-  url <- getOption("izm_rest_url")
-  if(is.null(url)){
-    stop("Set search URL with options(izm_rest_url='http://...')")
-  }
-  url <- file.path(url, "dev")  # dev endpoint voor de REST service
   timeout <- getOption("izm_search_timeout", 1000)
   
   

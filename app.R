@@ -13,9 +13,10 @@ source("R/voorbeeldModule.R")
 source("R/depseudoModule.R")
 source("R/pm_decrypt.R")
 source("R/parse_depseudo_result.R")
+source("R/utils.R")
 
 
-# "https://izm2-rest.ad.ede.nl/dev" 
+# "https://izm2-rest.ad.ede.nl" 
 
 options(
   izm_rest_url = "http://127.0.0.1",

@@ -23,6 +23,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
 \item \href{#method-get_kinderen}{\code{pseudoData$get_kinderen()}}
 \item \href{#method-get_family}{\code{pseudoData$get_family()}}
+\item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-clone}{\code{pseudoData$clone()}}
 }
 }
@@ -153,6 +154,15 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_family()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family(pseudo_id, what = c("bsn", "anr"))}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_suite"></a>}}
+\if{latex}{\out{\hypertarget{method-get_suite}{}}}
+\subsection{Method \code{get_suite()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_suite(pseudo_bsn)}\if{html}{\out{</div>}}
 }
 
 }

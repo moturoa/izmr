@@ -43,7 +43,11 @@ voorbeeldModuleUI <- function(id){
     
     
     tags$h4("Personen dit adres"),
-    tableOutput(ns("tab_adres"))
+    tableOutput(ns("tab_adres")),
+    
+    
+    tags$h4("Suite"),
+    tableOutput(ns("tab_suite"))
   )
   
 }
@@ -62,6 +66,12 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   })
   
   adres_personen <- izmr::get_adres_depseudo(this_adres, .pdb)
+  
+  
+  person_suite <- reactive({
+    .pdb$get_suite(clicked_id())
+  })
+  
   
   output$tab_person <- renderTable({
 
@@ -111,6 +121,16 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
       filter(vwsdatuminschrijving == "") %>%
       select(
         naam, geboortedatum, geslacht, overleden
+      )
+    
+  })
+  
+  
+  output$tab_suite <- renderTable({
+    
+    person_suite() %>%
+      select(
+        bron, begindatum, einddatum, omschrijving
       )
     
   })

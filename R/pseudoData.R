@@ -240,7 +240,135 @@ pseudoData <- R6::R6Class(
           )
         )
         
+    },
+    
+    #------ Bron constructor -----
+    
+    get_suite = function(pseudo_bsn){
+      
+      
+      q_suite <- glue("select 'Suite' as bron, * from suite where bsn = '{pseudo_bsn}';")
+      suite <- self$query(q_suite)
+      
+      
+      suite <- self$replace_na_char(suite)
+      
+      suite <- mutate(suite,
+                      begindatum = coalesce(
+                        a_dd_begin,
+                        b_dd_aanvr,
+                        c_dd_begin,
+                        d_dd_begin,
+                        e_dd_aanvr,
+                        f_dd_st_pe,
+                        h_t_begin
+                      ),
+                      einddatum = coalesce(
+                        a_dd_eind,
+                        c_dd_eind,
+                        d_dd_eind,
+                        h_t_eind
+                      )
+                      ) %>%
+        arrange(begindatum)
+      
+      
+      suite <- mutate(suite,
+                      omschrijving = paste(
+                        ifelse(!is.na(a_waarschuwingen), glue('Waarschuwing: {a_waarschuwingen} '), ''), 
+                        ifelse(!is.na(b_huidige_behandelaar) | !is.na(b_regeling) | !is.na(b_soort_wp) | !is.na(b_reden), 'Afwijzing', ''),
+                        ifelse(!is.na(b_huidige_behandelaar), glue(', behandelaar {b_huidige_behandelaar} '), ''),
+                        ifelse(!is.na(b_regeling), glue(', regeling: {b_regeling} '), ''),
+                        ifelse(!is.na(b_soort_wp), glue(', WP: {b_soort_wp} '), ''),
+                        ifelse(!is.na(b_reden), glue(', reden: {b_reden} '), ''),
+                        ifelse(!is.na(c_huidige_behandelaar) | !is.na(c_zorgaanbieder), 'WMO', ''),
+                        ifelse(!is.na(c_huidige_behandelaar), glue(', behandelaar: {c_huidige_behandelaar} '), ''),
+                        ifelse(!is.na(c_zorgaanbieder), glue('({c_zorgaanbieder})'), ''),
+                        ifelse(!is.na(d_huidige_behandelaar) | !is.na(d_zorgaanbieder), 'Jeugd', ''), 
+                        ifelse(!is.na(d_huidige_behandelaar), glue('Jeugd behandelaar: {d_huidige_behandelaar} '), ''),
+                        ifelse(!is.na(d_zorgaanbieder), glue('({d_zorgaanbieder}) '), ''),
+                        ifelse(!is.na(e_huidige_behandelaar) | !is.na(e_soort_wp) | !is.na(e_fase) | !is.na(e_status_aanvraag), 'Lopende voorziening', ''), 
+                        ifelse(!is.na(e_huidige_behandelaar), glue(', behandelaar: {e_huidige_behandelaar}'), ''),                       
+                        ifelse(!is.na(e_soort_wp), glue(', WP: {e_soort_wp} '), ''),
+                        ifelse(!is.na(e_fase), glue(', fase: {e_fase} '), ''),
+                        ifelse(!is.na(e_status_aanvraag), glue(', status: {e_status_aanvraag} '), ''),
+                        ifelse(!is.na(f_regeling) | !is.na(f_huidige_behandelaar), 'Periodiek algemene regeling', ''),
+                        ifelse(!is.na(f_regeling), glue(': {f_regeling} '), ''),
+                        ifelse(!is.na(f_huidige_behandelaar), glue(', behandelaar: {f_huidige_behandelaar} '), ''),
+                        ifelse(!is.na(h), glue('Participatie naar werk traject '), ''),
+                        ifelse(!is.na(h_huidige_behandelaar), glue(', behandelaar: {h_huidige_behandelaar} '), ''),
+                        ifelse(!is.na(h_a_begin), glue(', startdatum participatie activiteit voorziening: {h_a_begin} '), '')
+                        ,sep = ''
+                      )
+      )
+      
+      suite
+                                                                        
+    },
+    
+    
+    get_menscentraal = function(pseudo_id){
+      
+      q_mens <- glue("select 'Mens Centraal' as bron, 'Groepnummer ' || groepnr as omschrijving, ",
+                    " zaaktype_id, begindatum	as begindatum, einddatum as einddatum, ",
+                    "status, groepnr from menscentraal where klant_bsn = '{pseudo_id}';") 
+      
+      self$query(q_mens) %>% 
+        mutate(begindatum =  as_date(ymd_hms(begindatum)), 
+               einddatum =  as_date(ymd_hms(einddatum)))  %>%
+        arrange(desc(begindatum))
+      
+    },
+    
+    get_openwave = function(pseudo_id){
+      
+      q_wave <- glue("select 'Open Wave' as bron, module, zaaksoort, omschrijving, ",
+                     "aanvraagdatum as begindatum, besluitdatum, besluit as einddatum, ",
+                     "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
+                     " where bsn_nummer = '{pseudo_id}';")
+      
+      self$query(q_wave) %>% 
+        mutate(begindatum = ymd(begindatum), einddatum = ymd(einddatum)) %>%
+        arrange(desc(begindatum)) 
+    },
+    
+    get_carel = function(pseudo_id){
+      
+      
+      q_carel <- glue("select 'Carel' as bron, 'Melding school: ' || naam_school as omschrijving, ",
+                      " behandelaar, melding, start_melding as begindatum, ",
+                      " einde_melding as einddatum, naam_school from carel where bsn ='{pseudo_id}';")
+      
+      self$query(q_carel) %>% 
+        mutate(begindatum = dmy(begindatum), einddatum = dmy(einddatum)) %>%
+        arrange(desc(begindatum))
+      
+    },
+    
+    get_allegro = function(pseudo_id){
+      
+      q_allegro <- glue("select 'Allegro' as bron, aanvraag_schulhulp as omschrijving, ",
+                        "naam_consulent, aanvraag_schulhulp as aanvraag_schuldhulp, ",
+                        "traject_schuld_hulp, start_datum as begindatum, ",
+                        "eind_datum as einddatum from allegro where bsn = '{pseudo_id}';") 
+      
+      self$query(q_allegro) %>%
+        mutate(begindatum = ymd(begindatum), einddatum = ymd(einddatum))
+    },
+    
+    get_brp_verh_hst = function(pseudo_id){
+      
+      q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, ",
+                             "'' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente,",
+                             " vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, ",
+                             "'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum ",
+                             " from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';")
+      
+      self$query(q_brp_verh_hst)
+      
     }
+    
+
     
   ),
   

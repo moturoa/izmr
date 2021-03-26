@@ -6,9 +6,10 @@ voorbeeldModuleUI <- function(id){
   
   ns <- NS(id)
   
-  
-  verbatimTextOutput(ns("txt_out"))
-  
+  tagList(
+    verbatimTextOutput(ns("txt_out")),
+    verbatimTextOutput(ns("txt_out2"))
+  )
   
 }
 
@@ -20,12 +21,16 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
     clicked_id()$clicked$id
   })
   
-  p_out <- callModule(depseudoModule, "depseudo", pseudo_ids = id_in)
+  # id maakt hier niet uit!
+  p_out <- callModule(restCallModule, "depseudo", pseudo_ids = id_in)
   
-    
+  fam <- get_family_depseudo(id_in, .pdb)
+  
   output$txt_out <- renderPrint({
-    p_out()
+    fam()
   })
+  
+  output
   
   
 }

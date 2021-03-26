@@ -27,7 +27,6 @@ izmSearchUI <- function(id){
   ns <- NS(id)
 
   url <- get_search_path("dev")
-  
   timeout <- getOption("izm_search_timeout", 1000)
   
   

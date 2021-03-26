@@ -1,0 +1,30 @@
+
+
+
+get_family_depseudo <- function(id_in, database_object){
+  
+  fam <- reactive({
+    req(id_in())
+    database_object$get_family(id_in(), what = "bsn")
+  })
+  
+  fam_id <- reactive({
+    fam() %>% pull(pseudo_bsn)
+  })
+  
+  f_out <- callModule(restCallModule, "fam", pseudo_ids = fam_id, what = "lookup")
+  
+  
+  reactive({
+    
+    req(fam())
+    req(nrow(f_out()) > 0)
+    
+    left_join(fam(), f_out(), 
+              by = "pseudo_bsn", 
+              suffix = c(".y", ""))
+    
+  })
+  
+}
+

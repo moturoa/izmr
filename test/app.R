@@ -76,19 +76,22 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
     
     fam() %>%
       filter(relation %in% c("vader","moeder")) %>%
-      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      mutate(
+        naam = izmr::clickable_link(pseudo_bsn, naam),
+        adres = paste(straatnaam, huisnummer, huisletter)) %>%
       select(relation, naam, geboortedatum, adres, overleden)
     
-  })
+  }, sanitize.text.function = function(x) x)
   
   output$tab_kids <- renderTable({
     
     fam() %>%
       filter(relation %in% c("zoon","dochter")) %>%
-      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      mutate(naam = izmr::clickable_link(pseudo_bsn, naam),
+             adres = paste(straatnaam, huisnummer, huisletter)) %>%
       select(relation, naam, geboortedatum, adres)
     
-  })
+  }, sanitize.text.function = function(x) x)
   
   output$tab_huwelijk <- renderTable({
     

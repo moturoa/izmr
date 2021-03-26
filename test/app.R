@@ -14,7 +14,7 @@ options(
 
 # Path (relative mag ook) naar SQLite met pseudo-data.
 # Komt uiteindelijk op postgres.
-.pdb <- pseudoData$new(
+.pdb <- izmr::pseudoData$new(
   filename = "c:/repos/ede/izm_frontend/data/ede_izm_postgres_copy.sqlite"
 )
 
@@ -27,7 +27,19 @@ voorbeeldModuleUI <- function(id){
   ns <- NS(id)
   
   tagList(
-    tableOutput(ns("txt_out"))
+    uiOutput(ns("ui_person_name")),
+    
+    # Zelf
+    tableOutput(ns("tab_person")),
+    
+    tags$h4("Ouders"),
+    tableOutput(ns("tab_parents")),
+    
+    tags$h4("Kinderen"),
+    tableOutput(ns("tab_kids")),
+    
+    tags$h4("Huwelijk"),
+    tableOutput(ns("tab_huwelijk"))
   )
   
 }
@@ -35,12 +47,43 @@ voorbeeldModuleUI <- function(id){
 voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL)){
   
   
-  fam <- get_family_depseudo(clicked_id, .pdb)
+  fam <- izmr::get_family_depseudo(clicked_id, .pdb)
   
-  output$txt_out <- renderTable({
-    fam()
+  output$tab_person <- renderTable({
+
+    fam() %>%
+      filter(relation == "persoon_poi") %>%
+      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      select(naam, geboortedatum, adres)
+    
   })
   
+  output$tab_parents <- renderTable({
+    
+    fam() %>%
+      filter(relation %in% c("vader","moeder")) %>%
+      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      select(relation, naam, geboortedatum, adres, overleden)
+    
+  })
+  
+  output$tab_kids <- renderTable({
+    
+    fam() %>%
+      filter(relation %in% c("zoon","dochter")) %>%
+      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      select(relation, naam, geboortedatum, adres)
+    
+  })
+  
+  output$tab_huwelijk <- renderTable({
+    
+    fam() %>%
+      filter(grepl("partner", relation)) %>%
+      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
+      select(relation, naam, geboortedatum, adres)
+    
+  })
 }
 
 
@@ -55,7 +98,7 @@ ui <- fluidPage(
     tabPanel("Search", value = "search",
              
              # werkt alleen met id = 'izm' (vanwege namespacing die we lastig in JS kunnen zetten)
-             izmSearchUI("izm")
+             izmr::izmSearchUI("izm")
              
     ),
     tabPanel("Casus", value = "casus",
@@ -74,7 +117,7 @@ server <- function(input, output, session) {
   
   # De module vult de datatable in de izmSearchUI, en
   # returns een list met 'clicked' (id, nonce), 'nresults'.
-  izm_search <- callModule(izmSearchModule, "izm")
+  izm_search <- callModule(izmr::izmSearchModule, "izm")
   
   clicked_id <- reactive(
     izm_search()$clicked$id

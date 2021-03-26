@@ -73,17 +73,14 @@ pseudoData <- R6::R6Class(
     
     
     #------ Family constructors -------
+    
+    # 1 functie om persoon/personen op te halen op basis van bsn, anummer of adres.
+    # haalt alle nodige data uit bzsprsq00.
     get_person_brp = function(pseudo_id = NULL, what = c("bsn", "anr", "adres"), adres = NULL){
       
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
-      
-      if(what == "adres"){
-        stopifnot(is.list(adres))
-        stopifnot(all.equal(names(adres),
-                            c("postcode","huisnummer","huisletter","huisnummertoevoeging")))
-      }
-      
+
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vwsdatuminschrijving", 
@@ -117,10 +114,10 @@ pseudoData <- R6::R6Class(
       } else if(what == "adres"){
         
         q7 <- glue("select {sel_sql} from bzsprsq00 where ",
-                  "vblpostcode = '{adres$postcode}' and ",
-                  "vblhuisnummer = '{adres$huisnummer}' and ",
-                  "vblhuisletter = '{adres$huisletter}' and ",
-                  "vblhuisnummertoevoeging = '{adres$huisnummertoevoeging}';")
+                  "vblpostcode = '{adres$vblpostcode}' and ",
+                  "vblhuisnummer = '{adres$vblhuisnummer}' and ",
+                  "vblhuisletter = '{adres$vblhuisletter}' and ",
+                  "vblhuisnummertoevoeging = '{adres$vblhuisnummertoevoeging}';")
         
         out <- self$query(q7)
         

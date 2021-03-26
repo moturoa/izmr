@@ -39,7 +39,11 @@ voorbeeldModuleUI <- function(id){
     tableOutput(ns("tab_kids")),
     
     tags$h4("Huwelijk"),
-    tableOutput(ns("tab_huwelijk"))
+    tableOutput(ns("tab_huwelijk")),
+    
+    
+    tags$h4("Personen dit adres"),
+    tableOutput(ns("tab_adres"))
   )
   
 }
@@ -48,6 +52,16 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   
   
   fam <- izmr::get_family_depseudo(clicked_id, .pdb)
+  
+  this_adres <- reactive({
+    req(fam())
+    
+    fam() %>%
+      filter(relation == "persoon_poi") %>%
+      select(vblpostcode, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging)
+  })
+  
+  adres_personen <- izmr::get_adres_depseudo(this_adres, .pdb)
   
   output$tab_person <- renderTable({
 
@@ -84,6 +98,20 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
       select(relation, naam, geboortedatum, adres)
     
   })
+  
+  
+  output$tab_adres <- renderTable({
+    
+    req(adres_personen())
+    
+    adres_personen() %>%
+      filter(vwsdatuminschrijving == "") %>%
+      select(
+        naam, geboortedatum, geslacht, overleden
+      )
+    
+  })
+  
 }
 
 

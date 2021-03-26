@@ -1,5 +1,12 @@
-
-
+#' Wrapper around imzsearch API
+#' @description A shiny module function (server only) that returns a reactive with parsed results
+#' from either the 'depseudo' or the 'lookup' endpoint.
+#' @param input Shiny module, don't use.
+#' @param output Shiny module, don't use.
+#' @param session Shiny module, don't use.
+#' @param what Either 'depseudo' or 'lookup'.
+#' @param pseudo_ids A reactive vector with pseudo BSNs to send to API.
+#' @export
 restCallModule <- function(input, output, session, 
                            what = c("depseudo","lookup"),  # endpoint
                            pseudo_ids = reactive(NULL)){

@@ -1,5 +1,9 @@
-
-
+#' R6 class for connection to anonymized database.
+#' @param config_file Not used at the moment (data in SQLite).
+#' @param schema Not used at the moment.
+#' @param filename Full path to the SQLite database.
+#' @param pool If TRUE, uses pool to connect.
+#' @export
 pseudoData <- R6::R6Class(
   
   public = list(
@@ -173,7 +177,7 @@ pseudoData <- R6::R6Class(
       out <- self$query(q_txt)
       
       # replace NA with ""
-      out <- self$replace_na_char(out)
+      #out <- self$replace_na_char(out)
       
       # relation, datums
       out <- out %>% 

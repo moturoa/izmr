@@ -1,27 +1,11 @@
-
-
-
-
-izm_search_input <- function(what, label, url, timeout){
-  
-  tagList(        
-    tags$label(class="control-label", 
-               `for` = what, 
-               label
-    ),
-    tags$input(
-      id = what,
-      onkeyup = glue("autosearch('{url}', {timeout});"),
-      type = "text",
-      class = "form-control izmsearch",
-      names = what,
-      value = "")
-  )
-  
-}
-
-
-
+#' De IZM als standalone shiny module
+#' @description De Integrale ZoekMachine als module (UI, Server).
+#' @param id **Moet zijn** : "izm", anders werkt de onderliggende JS code niet.
+#' @param input Shiny input, dont use.
+#' @param output Shiny input, dont use.
+#' @param session Shiny input, dont use.
+#' @export
+#' @rdname izmSearchModule
 izmSearchUI <- function(id){
   
   ns <- NS(id)
@@ -33,8 +17,7 @@ izmSearchUI <- function(id){
   fluidPage(
     
     tags$head(
-      tags$script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"),
-      #tags$script(src = "script.js", class = "init")
+      tags$script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
     ),
     
     includeCSS("https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css"),
@@ -68,6 +51,8 @@ izmSearchUI <- function(id){
                  
                  tags$thead(
                    tags$tr(
+                     # Als REST API geen 7 kolommen terugpast, hier instellen!
+                     # TODO column names
                      tags$th(""),
                      tags$th(""),
                      tags$th(""),
@@ -86,7 +71,8 @@ izmSearchUI <- function(id){
 
 
 
-
+#' @export
+#' @rdname izmSearchModule
 izmSearchModule <- function(input, output, session){
   
   reactive(
@@ -100,6 +86,26 @@ izmSearchModule <- function(input, output, session){
   
 }
 
+
+#----- Utils ------
+# not exported.
+izm_search_input <- function(what, label, url, timeout){
+  
+  tagList(        
+    tags$label(class="control-label", 
+               `for` = what, 
+               label
+    ),
+    tags$input(
+      id = what,
+      onkeyup = glue("autosearch('{url}', {timeout});"),
+      type = "text",
+      class = "form-control izmsearch",
+      names = what,
+      value = "")
+  )
+  
+}
 
 
 

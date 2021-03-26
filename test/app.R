@@ -57,6 +57,11 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   
   fam <- izmr::get_family_depseudo(clicked_id, .pdb)
   
+  this_person <- reactive({
+    fam() %>%
+      filter(relation == "persoon_poi")
+  })
+  
   this_adres <- reactive({
     req(fam())
     
@@ -73,10 +78,13 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   })
   
   
+  output$ui_person_name <- renderUI({
+    tags$h4(this_person()$naam)
+  })
+  
   output$tab_person <- renderTable({
 
-    fam() %>%
-      filter(relation == "persoon_poi") %>%
+    this_person() %>%
       mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
       select(naam, geboortedatum, adres)
     
@@ -127,6 +135,8 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   
   
   output$tab_suite <- renderTable({
+    
+    req(person_suite())
     
     person_suite() %>%
       select(

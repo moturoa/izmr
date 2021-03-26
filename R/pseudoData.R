@@ -246,12 +246,15 @@ pseudoData <- R6::R6Class(
     
     get_suite = function(pseudo_bsn){
       
+      if(is.null(pseudo_bsn))return(NULL)
       
       q_suite <- glue("select 'Suite' as bron, * from suite where bsn = '{pseudo_bsn}';")
       suite <- self$query(q_suite)
       
+      if(nrow(suite) > 0){
+        suite <- self$replace_na_char(suite)
+      }
       
-      suite <- self$replace_na_char(suite)
       
       suite <- mutate(suite,
                       begindatum = coalesce(

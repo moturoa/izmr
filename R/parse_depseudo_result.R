@@ -5,8 +5,12 @@ parse_result <- function(res, column_names){
   n_columns <- length(column_names)
   empty_result <- empty_dataframe(column_names)
   
-  
   if(is.numeric(res) | is.null(res)){
+    return(empty_result)
+  }
+  
+  if("status" %in% names(res) && res$status == 404){
+    flog.info("Error in REST Call - 404 !")
     return(empty_result)
   }
   
@@ -23,6 +27,9 @@ parse_result <- function(res, column_names){
     dfr
   },
   error=function(cond) {  
+    
+    browser()
+    
     cat(file=stderr(), glue('Error in parseResDepseudo: {paste(cond, sep = ",")}'), sep= '\n')  
     return(empty_result)
   },

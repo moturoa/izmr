@@ -141,6 +141,7 @@ ui <- fluidPage(
   
 )
 
+
 server <- function(input, output, session) {
   
   # De module vult de datatable in de izmSearchUI, en

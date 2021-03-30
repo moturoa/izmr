@@ -5,7 +5,7 @@
 #' @param id_in A reactive vector with a pseudo-BSN.
 #' @param database_object An instance of the pseudoData R6 object (includes database connection).
 #' @export
-get_family_depseudo <- function(id_in, database_object){
+get_family_depseudo_old <- function(id_in, database_object){
   
   fam <- reactive({
     req(id_in())

@@ -2,7 +2,7 @@
 
 export(clickable_link)
 export(get_adres_depseudo)
-export(get_family_depseudo)
+export(get_family_depseudo_old)
 export(izmSearchModule)
 export(izmSearchUI)
 export(izmr_dependencies)

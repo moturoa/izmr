@@ -35,7 +35,7 @@ casusModuleUI <- function(id){
 casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
   
   
-  fam <- izmr::get_family_depseudo(clicked_id, .pdb)
+  fam <- .pdb$get_family_depseudo(clicked_id)
   #fam <- izmr::get_family_depseudo(clicked_id, .pdb)
   
   

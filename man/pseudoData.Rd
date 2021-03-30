@@ -23,12 +23,14 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
 \item \href{#method-get_kinderen}{\code{pseudoData$get_kinderen()}}
 \item \href{#method-get_family}{\code{pseudoData$get_family()}}
+\item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
 \item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
 \item \href{#method-get_openwave}{\code{pseudoData$get_openwave()}}
 \item \href{#method-get_carel}{\code{pseudoData$get_carel()}}
 \item \href{#method-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
+\item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-clone}{\code{pseudoData$clone()}}
 }
 }
@@ -163,6 +165,15 @@ R6 class for connection to anonymized database.
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_all_bronnen"></a>}}
+\if{latex}{\out{\hypertarget{method-get_all_bronnen}{}}}
+\subsection{Method \code{get_all_bronnen()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_all_bronnen(pseudo_bsn)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_suite"></a>}}
 \if{latex}{\out{\hypertarget{method-get_suite}{}}}
 \subsection{Method \code{get_suite()}}{
@@ -213,6 +224,15 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_brp_verh_hst()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_brp_verh_hst(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_family_depseudo"></a>}}
+\if{latex}{\out{\hypertarget{method-get_family_depseudo}{}}}
+\subsection{Method \code{get_family_depseudo()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family_depseudo(id_in)}\if{html}{\out{</div>}}
 }
 
 }

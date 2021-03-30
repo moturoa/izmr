@@ -9,7 +9,7 @@
 izmSearchUI <- function(id){
   
   ns <- NS(id)
-
+  
   url <- get_search_path("dev")
   timeout <- getOption("izm_search_timeout", 1000)
   
@@ -25,30 +25,19 @@ izmSearchUI <- function(id){
     
     tags$form(name = "izmsearch",
               fluidRow(
-                
-                shinydashboard::box(width = 10,
-                      splitLayout(cellWidths="25%",
-                                  izm_search_input("achternaam", "Achternaam", url, timeout),
-                                  izm_search_input("geboortedatum", "Geboortedatum", url, timeout),
-                                  izm_search_input("bsn", "BSN", url, timeout),
-                                  
-                                  actionButton(ns("btn_reset"), 
-                                               "Reset", 
-                                               onclick = "resetform();"),
-                                  htmlOutput(ns("zoeken_count"))
-                      ),
-                      splitLayout(cellWidths="25%",
-                                  izm_search_input("straatnaam", "Straatnaam", url, timeout), 
-                                  izm_search_input("huisnummer", "Huisnummer", url, timeout), 
-                                  izm_search_input("postcode", "Postcode", url, timeout),
-                                  box(icon("info-circle"), HTML("Wildcards: <b>_</b> voor een enkele positie,<br/> <b>%</b> voor 1 of meerdere posities"), width = 12)
-                      ), 
-                      hr(),
-                      DTOutput(ns("zoeken_resultaten"))                               
-                ) 
-              )  
-              
-               
+                column(4,
+                       izm_search_input("achternaam", "Achternaam", url, timeout),  
+                       izm_search_input("straatnaam", "Straatnaam", url, timeout)
+                ),
+                column(4,
+                       izm_search_input("bsn", "BSN", url, timeout),
+                       izm_search_input("huisnummer", "Huisnummer", url, timeout),
+                ),
+                column(4,
+                       izm_search_input("geboortedatum", "Geboortedatum", url, timeout),
+                       izm_search_input("postcode", "Postcode", url, timeout)
+                )
+              ) 
     ),
     
     
@@ -56,7 +45,7 @@ izmSearchUI <- function(id){
                  "Reset", 
                  onclick = "resetform();"),
     
-
+    
     tags$section(
       tags$table(id = "searchresults", class = "display",
                  

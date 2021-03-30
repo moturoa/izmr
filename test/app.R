@@ -1,80 +1,7 @@
 
 
 
-library(izmr) 
-
-# Shiny packages
-
-# Shiny packages
-library(shiny)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(shinyjs)
-library(dqshiny)
-library(shinyWidgets)
-#library(shinyalert)
-library(shinycssloaders)
-#library(sortable)
-library(htmltools)
-library(shinytoastr)
-library(shinyjqui)
-library(shinybusy)
-#library(whereami)
-library(leaflet)  
-library(safer)
-
-#library(shinyfilterset)
-#library(shintodashboard)
-library(shintoanalytics)
-library(shintobag)
-#library(shinypasswordinput)
-#library(shinyinbox)
-
-# Logging / dev / code
-library(futile.logger)
-library(yaml)
-#library(devtools)
-library(config)
-library(gert)
-library(R6)
-library(rlang)
-library(uuid)
-library(jsonlite)
-
-# HTML tables
-library(knitr)
-library(kableExtra)
 library(izmr)
-
-# HTML Widgets
-#library(rintrojs)
-library(DT)
-library(plotly)
-library(scales)
-
-
-# Data related 
-library(tidyverse)
-library(lubridate)
-library(stringr)
-library(glue)
-library(textclean)
-library(writexl)
-library(rvest) 
-library(data.table)
-
-# Database related
-library(DBI) 
-library(RSQLite)
-library(pool)
-library(dbplyr)
-#library(arrow)
-#library(openxlsx)
-library(forcats)
-source("casusModule.R")
-source("casusOverzichtModule.R")
-source("casusBronnenModule.R")
-source("functionsDatatables.R")
 
 
 #---- Config ----
@@ -87,8 +14,8 @@ options(
 
 # Path (relative mag ook) naar SQLite met pseudo-data.
 # Komt uiteindelijk op postgres.
-.pdb <<- izmr::pseudoData$new(
-  filename = "C:/Users/MartijnHeijstek/Documents/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+.pdb <- izmr::pseudoData$new(
+  filename = "c:/repos/ede/izm_frontend/data/ede_izm_postgres_copy.sqlite"
 )
 
 
@@ -156,7 +83,7 @@ voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL))
   })
   
   output$tab_person <- renderTable({
-    
+
     this_person() %>%
       mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
       select(naam, geboortedatum, adres)
@@ -229,19 +156,19 @@ ui <- fluidPage(
   
   
   tabsetPanel(id = "main",
-              tabPanel("Search", value = "search",
-                       
-                       # werkt alleen met id = 'izm' (vanwege namespacing die we lastig in JS kunnen zetten)
-                       izmr::izmSearchUI("izm")
-                       
-              ),
-              tabPanel("Casus", value = "casus",
-                       
-                       tags$h4("Voorbeeld module"),
-                       casusModuleUI("casus_izm")
-                       
-              )
-              
+    tabPanel("Search", value = "search",
+             
+             # werkt alleen met id = 'izm' (vanwege namespacing die we lastig in JS kunnen zetten)
+             izmr::izmSearchUI("izm")
+             
+    ),
+    tabPanel("Casus", value = "casus",
+             
+             tags$h4("Voorbeeld module"),
+             voorbeeldModuleUI("voorbeeld")
+             
+    )
+    
   )
   
   
@@ -264,7 +191,7 @@ server <- function(input, output, session) {
   
   # De clicked_id doorsturen naar andere modules in je applicatie, 
   # als een reactive.
-  callModule(casusModule, "casus_izm", clicked_id = clicked_id)
+  callModule(voorbeeldModule, "voorbeeld", clicked_id = clicked_id)
   
 }
 

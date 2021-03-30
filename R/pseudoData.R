@@ -243,15 +243,38 @@ pseudoData <- R6::R6Class(
     },
     
     #------ Bron constructor -----
+    get_all_bronnen = function(pseudo_bsn) {
+      suite <- self$get_suite(pseudo_bsn)
+      menscentraal <- self$get_menscentraal(pseudo_bsn)
+      carel <- self$get_suite(pseudo_bsn)
+      allegro <- self$get_suite(pseudo_bsn)
+      openwave <- self$get_openwave(pseudo_bsn)
+      
+      
+      return( 
+        list(
+          suite,
+          menscentraal, 
+          carel,
+          allegro,
+          openwave
+        )
+      )
+    },
+    
+    
     
     get_suite = function(pseudo_bsn){
       
+      if(is.null(pseudo_bsn))return(NULL)
       
       q_suite <- glue("select 'Suite' as bron, * from suite where bsn = '{pseudo_bsn}';")
       suite <- self$query(q_suite)
       
+      if(nrow(suite) > 0){
+        suite <- self$replace_na_char(suite)
+      }
       
-      suite <- self$replace_na_char(suite)
       
       suite <- mutate(suite,
                       begindatum = coalesce(
@@ -366,11 +389,39 @@ pseudoData <- R6::R6Class(
       
       self$query(q_brp_verh_hst)
       
-    }
+    },
     
 
+     
+  
+  get_family_depseudo = function(id_in){
     
-  ),
+    fam <- reactive({
+      req(id_in())
+      self$get_family(id_in(), what = "bsn")
+    })
+    
+    fam_id <- reactive({
+      fam() %>% pull(pseudo_bsn)
+    })
+    
+    f_out <- callModule(restCallModule, "fam", pseudo_ids = fam_id, what = "lookup")
+    
+    
+    reactive({
+      
+      req(fam())
+      req(nrow(f_out()) > 0)
+      
+      left_join(fam(), f_out(), 
+                by = "pseudo_bsn", 
+                suffix = c(".y", ""))
+      
+    })
+    
+  } 
+  
+  ), 
   
   private = list(
     to_sql_string = function(x){
@@ -382,7 +433,10 @@ pseudoData <- R6::R6Class(
       )
       
     }
-  )
+  ) 
+  
+  
+  
 )
     
     

@@ -72,7 +72,8 @@ library(dbplyr)
 #library(openxlsx)
 library(forcats)
 source("casusModule.R")
-source("casusOverzichtModule.R") 
+source("casusOverzichtModule.R")
+source("casusBronModule.R")  
 source("functionsDatatables.R")
 
 

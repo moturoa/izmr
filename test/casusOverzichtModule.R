@@ -84,7 +84,7 @@ casusOverzichtModule <- function(input, output, session, family){
   
   # Dynamisch personen uitklappen (PINNEN!)
   inserted <- c()
-  observeEvent(input$expandPseudoBsn,  { 
+  observeEvent(input$expandPseudoBsn, ignoreInit = FALSE, { 
     print(input$expandPseudoBsn)
     
     expand_fam <- .pdb$get_family_depseudo(reactive(input$expandPseudoBsn))

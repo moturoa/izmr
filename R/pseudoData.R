@@ -244,11 +244,14 @@ pseudoData <- R6::R6Class(
     
     #------ Bron constructor -----
     get_all_bronnen = function(pseudo_bsn) {
-      suite <- self$get_suite(pseudo_bsn)
-      menscentraal <- self$get_menscentraal(pseudo_bsn)
-      carel <- self$get_suite(pseudo_bsn)
-      allegro <- self$get_suite(pseudo_bsn)
-      openwave <- self$get_openwave(pseudo_bsn)
+      
+      bron <- reactive({
+        req(pseudo_bsn())
+        suite <- self$get_suite(pseudo_bsn())
+        menscentraal <- self$get_menscentraal(pseudo_bsn())
+        carel <- self$get_suite(pseudo_bsn())
+        allegro <- self$get_suite(pseudo_bsn())
+        openwave <- self$get_openwave(pseudo_bsn())
       
       
       return( 
@@ -259,7 +262,7 @@ pseudoData <- R6::R6Class(
           allegro,
           openwave
         )
-      )
+      )})
     },
     
     

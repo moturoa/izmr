@@ -20,7 +20,7 @@ casusModuleUI <- function(id){
                     #casusNetwerkUI(ns('netwerkmodule')) 
            ),
            tabPanel(value='panel_bronnen',  uiOutput(ns("title_panel")),  
-                    casusBronnenUI(ns('bronmodule'))
+                    #casusBronnenUI(ns('bronmodule'))
                     
            ),
            tabPanel(value='panel_tijdlijn', title=HTML('<i class="fa fa-clock-o"></i> Tijdlijn'),   

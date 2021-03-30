@@ -88,7 +88,7 @@ casusOverzichtModule <- function(input, output, session, family){
     print(input$expandPseudoBsn)
     
     expand_fam <- .pdb$get_family_depseudo(reactive(input$expandPseudoBsn))
-    print(expand_fam())
+   
     dat <- head(expand_fam(), 1) 
     dat2 <- expand_fam() %>% filter(relation != 'person_poi')
     

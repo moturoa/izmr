@@ -243,6 +243,24 @@ pseudoData <- R6::R6Class(
     },
     
     #------ Bron constructor -----
+    get_all_bronnen() = function(pseudo_bsn) {
+      suite <- self$get_suite(pseudo_bsn)
+      menscentraal <- self$get_menscentraal(pseudo_bsn)
+      carel <- self$get_suite(pseudo_bsn)
+      allegro <- self$get_suite(pseudo_bsn)
+      
+      
+      return( 
+        list(
+          suite,
+          menscentraal, 
+          carel,
+          allegro  
+        )
+      )
+    }
+    
+    
     
     get_suite = function(pseudo_bsn){
       

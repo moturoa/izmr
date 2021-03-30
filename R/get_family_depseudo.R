@@ -32,3 +32,29 @@ get_family_depseudo <- function(id_in, database_object){
   
 }
 
+get_bronnen <- function(id_in, database_object){
+  
+  bron <- reactive({
+    req(id_in())
+    database_object$get_all_bronnen(id_in() )
+  })
+  
+  fam_id <- reactive({
+    fam() %>% pull(pseudo_bsn)
+  })
+  
+  f_out <- callModule(restCallModule, "fam", pseudo_ids = fam_id, what = "lookup")
+  
+  
+  reactive({
+    
+    req(fam())
+    req(nrow(f_out()) > 0)
+    
+    left_join(fam(), f_out(), 
+              by = "pseudo_bsn", 
+              suffix = c(".y", ""))
+    
+  })
+  
+}

@@ -25,19 +25,30 @@ izmSearchUI <- function(id){
     
     tags$form(name = "izmsearch",
               fluidRow(
-                column(4,
-                       izm_search_input("achternaam", "Achternaam", url, timeout),  
-                       izm_search_input("straatnaam", "Straatnaam", url, timeout)
-                ),
-                column(4,
-                       izm_search_input("bsn", "BSN", url, timeout),
-                       izm_search_input("huisnummer", "Huisnummer", url, timeout),
-                ),
-                column(4,
-                       izm_search_input("geboortedatum", "Geboortedatum", url, timeout),
-                       izm_search_input("postcode", "Postcode", url, timeout)
-                )
-              ) 
+                
+                shinydashboard::box(width = 10,
+                      splitLayout(cellWidths="25%",
+                                  izm_search_input("achternaam", "Achternaam", url, timeout),
+                                  izm_search_input("geboortedatum", "Geboortedatum", url, timeout),
+                                  izm_search_input("bsn", "BSN", url, timeout),
+                                  
+                                  actionButton(ns("btn_reset"), 
+                                               "Reset", 
+                                               onclick = "resetform();"),
+                                  htmlOutput(ns("zoeken_count"))
+                      ),
+                      splitLayout(cellWidths="25%",
+                                  izm_search_input("straatnaam", "Straatnaam", url, timeout), 
+                                  izm_search_input("huisnummer", "Huisnummer", url, timeout), 
+                                  izm_search_input("postcode", "Postcode", url, timeout),
+                                  box(icon("info-circle"), HTML("Wildcards: <b>_</b> voor een enkele positie,<br/> <b>%</b> voor 1 of meerdere posities"), width = 12)
+                      ), 
+                      hr(),
+                      DTOutput(ns("zoeken_resultaten"))                               
+                ) 
+              )  
+              
+               
     ),
     
     

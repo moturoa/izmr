@@ -60,7 +60,7 @@ casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
   
   
   # -------------- Tijdlijn --------------
-  #callModule(casusTijdlijnModule, id="tijdlijnmodule", bronnen=bron) 
+  callModule(casusTijdlijnModule, id="tijdlijnmodule", bronnen=bron) 
 
   
 }

@@ -73,7 +73,7 @@ make_timeline_persoon <- function(brondata){
     split(., 1:nrow(.))
   
   timeline_items <- lapply(persoon_data, function(x){
-    
+  
     # deze functie is gedefinieerd in R/timeline_functions.R
     # de list wordt als table weergegeven.
     table_item_timeline(list(Omschrijving = x$omschrijving),  
@@ -122,12 +122,11 @@ table_item_timeline <- function(lis,
       tags$td(label, style = label_cell_css),
       tags$td(content)
     )
-  }
-  
+  } 
   timelineItem(
     title = title,
-    icon = icon,
-    color = icon_color,
+    #icon = icon,
+    #color = icon_color,
     time = date,
     tags$table(
       mapply(table_row, label = names(lis), content = unlist(lis), 

@@ -252,20 +252,21 @@ pseudoData <- R6::R6Class(
         carel <- self$get_carel(pseudo_bsn()) 
         allegro <- self$get_allegro(pseudo_bsn()) 
         openwave <- self$get_openwave(pseudo_bsn()) 
+        brp <- self$get_verhuizingen_depseudo(pseudo_bsn) 
       
       
       return( 
-        list(
+        bind_rows(list(
           suite,
           menscentraal, 
           carel,
           allegro,
-          openwave
-        )
+          openwave,
+          brp()
+        )) %>% mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
       )})
     },
-    
-    
+     
     
     get_suite = function(pseudo_bsn){
       
@@ -391,6 +392,46 @@ pseudoData <- R6::R6Class(
         mutate(bron = as.character(bron),omschrijving = as.character(omschrijving),begindatum = ymd(begindatum), einddatum = ymd(einddatum))
     },
     
+    
+    
+    #------ Adres -----
+    get_verhuizingen = function(pseudo_id) {
+   
+        q_brp_verh_hst = glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
+        brp_verh_hst <- dbGetQuery(self$con, q_brp_verh_hst)  
+        
+        
+        # bzsprsq00 voor huidige adres binnen Ede (staat niet altijd in hst)
+        q_brp_pers = glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
+        brp_persoon <- dbGetQuery(self$con, q_brp_pers)   %>% mutate_if(is.character, list(~na_if(., "")))
+        
+        # if prs adres is not in hst; add this as verhuizing
+        
+        if( brp_persoon$begindatum %notin% brp_verh_hst$begindatum) {
+          brp_verh <- brp_persoon %>% filter(begindatum %notin% brp_verh_hst$begindatum)   %>% mutate(omschrijving =  'is Verhuisd', bron = 'Verhuizing')
+           
+          
+          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_verh)
+        }  
+        if(!is.na(brp_persoon$ovldatumoverlijden)) { 
+          brp_ovl <- data.frame(omschrijving =  'Overleden', bron = 'Overleden', begindatum = brp_persoon$ovldatumoverlijden) 
+          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_ovl)
+        }
+        if(!is.na(brp_persoon$vwsgemeentevaninschrijvingomschrijving) | !is.na(brp_persoon$vwsdatuminschrijving)) {
+          brp_uitgeschreven <- data.frame(omschrijving =  paste('Verhuisd naar ', brp_persoon$vwsgemeentevaninschrijvingomschrijving) , bron = 'Uitgeschreven', begindatum = brp_persoon$vwsdatuminschrijving) 
+          brp_verh_hst <-dplyr::bind_rows(brp_verh_hst,brp_uitgeschreven)
+        }
+        if(!is.na(brp_persoon$prsgeboortedatum)) {
+          brp_geboren <- data.frame(omschrijving =  'Geboren', bron = 'Geboren', begindatum = brp_persoon$prsgeboortedatum) 
+          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_geboren)
+        }
+        
+        brp_verh_hst <- brp_verh_hst %>% mutate(begindatum = ymd(begindatum)) %>% arrange(desc(begindatum)) 
+        #print(brp_verh_hst)
+        brp_verh_hst
+     
+    },
+    
     get_brp_verh_hst = function(pseudo_id){
       
       q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, ",
@@ -403,7 +444,10 @@ pseudoData <- R6::R6Class(
       
     },
     
-
+    
+    
+    
+    #------ Depseudonimiseren -----
      
   
   get_family_depseudo = function(id_in){
@@ -431,8 +475,35 @@ pseudoData <- R6::R6Class(
       
     })
     
-  } 
-  
+    },  
+    get_verhuizingen_depseudo = function(id_in){
+      
+      verh <- reactive({
+        req(id_in())
+        self$get_verhuizingen(id_in())
+      })
+      
+      # select the values to depsuedo
+      depseu <- reactive({
+        x <- c(verh() %>% pull(vblpostcode),   
+               verh() %>% pull(vblhuisnummer), 
+               verh() %>% pull(vblhstadresopgemaakt),
+               verh() %>% pull(vblhuisnummertoevoeging),
+               verh() %>% pull(vblstraatnaam))
+        x[!is.na(x)] 
+      })
+      
+      # calling REST service
+      f_out <- callModule(restCallModule, "verh", pseudo_ids = depseu, what = "depseudo")
+      
+      # merge depseudo with pseudo!
+      reactive({ 
+        req(verh())
+        req(nrow(f_out()) > 0)
+        replaceAll(verh(), f_out()) 
+        
+      }) 
+    }
   ), 
   
   private = list(
@@ -450,6 +521,42 @@ pseudoData <- R6::R6Class(
   
   
 )
-    
+`%notin%` <- Negate(`%in%`)
+
+
+# depseudonimiseer adres gegevens, postcode voor bronnen
+replaceAll <- function(df, encoded){
+  df_orig <- copy(df)
+  out <- tryCatch(
+    { 
+      # create named list
+      lookup = setNames(as.character(encoded$value), encoded$pseudo_value)
+      
+      # replace specific values from named list
+      df <- transform(df, vblhstadresopgemaakt=ifelse(vblhstadresopgemaakt %in% names(lookup), str_replace(str_replace_all(lookup[vblhstadresopgemaakt], "(?!^)(?=[A-Z])", " "), "(?=\\d)", " "), vblhstadresopgemaakt),
+                      vblpostcode=ifelse(vblpostcode %in% names(lookup), lookup[vblpostcode], vblpostcode), 
+                      vblhuisnummer=ifelse(vblhuisnummer %in% names(lookup), lookup[vblhuisnummer], vblhuisnummer),
+                      vblhuisletter=ifelse(vblhuisletter %in% names(lookup), lookup[vblhuisletter], vblhuisletter),
+                      vblhuisnummertoevoeging=ifelse(vblhuisnummertoevoeging %in% names(lookup), lookup[vblhuisnummertoevoeging], vblhuisnummertoevoeging), 
+                      vblstraatnaam=ifelse(vblstraatnaam %in% names(lookup), lookup[vblstraatnaam], vblstraatnaam), stringsAsFactors=FALSE)
+      
+      # create or update omschrijving
+      df[is.na(df)] <- ""
+      df <- transform(df, omschrijving=ifelse(  vblhstadresopgemaakt != '', glue('Verhuisd naar {vblhstadresopgemaakt}, {vblpostcode} {gemeente}'),omschrijving ))
+      df <- transform(df, omschrijving=ifelse( vblstraatnaam != '' , glue('Verhuisd naar {vblstraatnaam} {vblhuisnummer} {vblhuisletter} {vblhuisnummertoevoeging}, {vblpostcode} {gemeente}'),omschrijving ))
+      return(df)
+    },
+    error=function(cond) {   
+      cat(file=stderr(), glue('error in replaceAll: {paste(cond, sep = ",")}'), sep= '\n')  
+      return(df_orig)
+    },
+    warning=function(cond) {    
+      cat(file=stderr(), glue('warning in replaceAll: {paste(cond, sep = ",")}'), sep= '\n')  
+      return(df_orig)
+    })
+  return(out)
+  #df <- transform(df, vblhstadresopgemaakt= lookup[vblhstadresopgemaakt] , stringsAsFactors=FALSE)
+  
+}
     
     

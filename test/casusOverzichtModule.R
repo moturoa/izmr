@@ -65,11 +65,15 @@ casusOverzichtModule <- function(input, output, session, family){
     }
      
   }) 
+  
+  
+  # TODO : koppelen aan verzamelingen
   # observeEvent(input$verzameling_addthis,ignoreInit = TRUE, { 
   #  req(returnable$pseudo_bsn[1])
   #  js$setInput(pid='added_person', data= returnable$pseudo_bsn[1])  
   #})
 
+  # ---------- Family box rendering -----------------
   observeEvent(family(), {    
     shinyjs::toggle("box_family", condition = nrow(family() %>% filter(relation !='persoon_poi') ) > 0)
   })
@@ -81,13 +85,12 @@ casusOverzichtModule <- function(input, output, session, family){
   
   
   
-  
-  # Dynamisch personen uitklappen (PINNEN!)
+  # ----------  Dynamisch personen uitklappen (PINNEN!) ----------------- 
   inserted <- c()
   observeEvent(input$expandPseudoBsn, ignoreInit = FALSE, { 
-    print(input$expandPseudoBsn)
-    
+ 
     expand_fam <- .pdb$get_family_depseudo(reactive(input$expandPseudoBsn))
+    expand_bron <- .pdb$get_all_bronnen(reactive(input$expandPseudoBsn))
    
     dat <- head(expand_fam(), 1) 
     dat2 <- expand_fam() %>% filter(relation != 'person_poi')
@@ -97,6 +100,7 @@ casusOverzichtModule <- function(input, output, session, family){
       btn <- input$personDetails
       
       id <- paste0('txt', btn)
+      id2 <- paste0('txt2', btn)
       insertUI(
         selector = '#placeholder',
         ## wrap element in a div with id for ease of removal
@@ -116,8 +120,8 @@ casusOverzichtModule <- function(input, output, session, family){
                                      actionButton(session$ns("verzameling_addthis"), "Naar verzameling"))
                         ) 
                       ),
-                      output[[id]] <- renderDataTable(dat2 %>% select(naam,relation)), 
-                      
+                      output[[id]] <- renderDataTable(dat2 %>% select(naam, relation)), 
+                      output[[id2]] <- renderDataTable(expand_bron() %>% select(bron, begindatum, omschrijving)),           
         )
       ) 
       inserted <<- c(id, inserted)

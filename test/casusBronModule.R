@@ -72,14 +72,14 @@ casusBronnenUI <- function(id){
 
 
 
-casusBronnenModule <- function(input, output, session, data){
+casusBronnenModule <- function(input, output, session, bronnen){
   
   
   # UPDATE datrangeinput with minimum date!
-  observeEvent(data, {   
+  observeEvent(bronnen(), {   
     
-    if(!is.null(data$begindatum)) {
-      minDat <- min(structure(data$begindatum[!is.na(data$begindatum)], class= "Date"))
+    if(!is.null(bronnen()$begindatum)) {
+      minDat <- min(structure(bronnen()$begindatum[!is.na(bronnen()$begindatum)], class= "Date"))
     } else {
       minDat <- NULL
     }
@@ -107,9 +107,9 @@ casusBronnenModule <- function(input, output, session, data){
   
   # filtering on daterangeinput
   observe({
-    req(data)
+    req(bronnen())
     
-    data <- filterDat(data)  
+    data <- filterDat(bronnen())  
     
     
     # showing/ hiding boxes around BRP data 
@@ -124,69 +124,69 @@ casusBronnenModule <- function(input, output, session, data){
   
   # --------------- Rendering tab titles -------------------
   output$txt_suite <- renderText({ 
-    glue("Suite ({nrow(filter(data, bron == 'Suite'))})")
+    glue("Suite ({nrow(filter(bronnen(), bron == 'Suite'))})")
   })
   output$txt_mens <- renderText({ 
-    glue("Mens Centraal ({nrow(filter(data, bron == 'Mens Centraal'))})")
+    glue("Mens Centraal ({nrow(filter(bronnen(), bron == 'Mens Centraal'))})")
   })
   output$txt_allegro <- renderText({ 
-    glue("Allegro ({nrow(filter(data, bron == 'Allegro'))})")
+    glue("Allegro ({nrow(filter(bronnen(), bron == 'Allegro'))})")
   })
   output$txt_carel <- renderText({ 
-    glue("Carel ({nrow(filter(data, bron == 'Carel'))})")
+    glue("Carel ({nrow(filter(bronnen(), bron == 'Carel'))})")
   }) 
   output$txt_wave <- renderText({ 
-    glue("Open Wave ({nrow(filter(data, bron == 'Open Wave'))})")
+    glue("Open Wave ({nrow(filter(bronnen(), bron == 'Open Wave'))})")
   })
   output$txt_brp <- renderText({ 
-    glue("BRP ({nrow(filter(data, bron %in% c('Huwelijk','Kind','Verhuizing' ,'Uitgeschreven' ,'Curatele', 'Overleden')))})")
+    glue("BRP ({nrow(filter(bronnen(), bron %in% c('Huwelijk','Kind','Verhuizing' ,'Uitgeschreven' ,'Curatele', 'Overleden')))})")
   })
   
   # --------------- Rendering tables -------------------
   output$bron_suite <- DT::renderDT({    
-    req(data)
-    datatableBron(data= filter(data, bron == 'Suite') , extra_selectie = 'einddatum_formatted')
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Suite') , extra_selectie = 'einddatum_formatted')
   }) 
   
   output$bron_carel <- DT::renderDT({   
-    req(data)
-    datatableBron(data= filter(data, bron == 'Carel'), extra_selectie = 'einddatum_formatted')   
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Carel'), extra_selectie = 'einddatum_formatted')   
   }) 
   
   output$bron_wave <- DT::renderDT({   
-    req(data)
-    datatableBron(data= filter(data, bron == 'Open Wave'), extra_selectie = 'zaaksoort' )
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Open Wave'), extra_selectie = 'zaaksoort' )
   }) 
   
   output$bron_allegro <- DT::renderDT({   
-    req(data)
-    datatableBron(data= filter(data, bron == 'Allegro')  , extra_selectie ='naam_consulent')   
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Allegro')  , extra_selectie ='naam_consulent')   
   }) 
   output$bron_menscentraal <- DT::renderDT({   
-    req(data)
-    datatableBron(data= filter(data, bron == 'Mens Centraal'), extra_selectie = c('status', 'groepnr'))
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Mens Centraal'), extra_selectie = c('status', 'groepnr'))
   }) 
   
   output$bron_brp_huw <- DT::renderDT({    
-    req(data)
-    datatableBron(data= filter(data, bron == 'Huwelijk'), extra_selectie = 'einddatum_formatted' )   
+    req(bronnen())
+    datatableBron(data= filter(bronnen(), bron == 'Huwelijk'), extra_selectie = 'einddatum_formatted' )   
   }) 
   output$bron_brp_verh <- DT::renderDT({    
     
-    datatableBron(data= filter(data, bron == 'Verhuizing'))   
+    datatableBron(data= filter(bronnen(), bron == 'Verhuizing'))   
   })
   
   output$bron_brp_status <- DT::renderDT({    
     
-    datatableBron(data= filter(data, bron == 'Overleden' | bron == 'Uitgeschreven') %>% arrange(desc(begindatum)))   
+    datatableBron(data= filter(bronnen(), bron == 'Overleden' | bron == 'Uitgeschreven') %>% arrange(desc(begindatum)))   
   }) 
   output$bron_brp_kind <- DT::renderDT({    
     
-    datatableBron(data= filter(data, bron == 'Kind') )   
+    datatableBron(data= filter(bronnen(), bron == 'Kind') )   
   }) 
   output$bron_brp_cura <- DT::renderDT({    
     
-    datatableBron(data= filter(data, bron == 'Curatele') )   
+    datatableBron(data= filter(bronnen(), bron == 'Curatele') )   
   }) 
   
   return(NULL)  

@@ -19,12 +19,12 @@ casusModuleUI <- function(id){
            tabPanel(value='panel_netwerk',  title=HTML('<i class="fa fa-clock-o"></i> Netwerk'),
                     #casusNetwerkUI(ns('netwerkmodule')) 
            ),
-           tabPanel(value='panel_bronnen',  uiOutput(ns("title_panel")),  
+           tabPanel(value='panel_bronnen',  uiOutput(ns("bron_title_panel")),  
                     casusBronnenUI(ns('bronmodule'))
                     
            ),
            tabPanel(value='panel_tijdlijn', title=HTML('<i class="fa fa-clock-o"></i> Tijdlijn'),   
-                    #casusTijdlijnUI(ns('tijdlijnmodule'))
+                    casusTijdlijnUI(ns('tijdlijnmodule'))
                     
            )
     )                    
@@ -35,16 +35,32 @@ casusModuleUI <- function(id){
 casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
   
   
+#  verh <- .pdb$get_verhuizingen_depseudo(clicked_id)
+#  observeEvent(verh(),{
+#    print( verh() )
+#  })
+  
+  
+  # -------------- Retrieve Data for pseudoID --------------
   fam <- .pdb$get_family_depseudo(clicked_id)
   bron <-.pdb$get_all_bronnen(clicked_id)
-  observeEvent(bron(),{
-    print( bind_rows(bron()) )
-  })
+  #observeEvent(bron(),{
+  #  print( bron() )
+  #})
   
+  # -------------- Overzicht --------------
   callModule(casusOverzichtModule, id="overzichtsmodule", family=fam) 
   
-  #callModule(casusBronnenModule, id="bronmodule", bronnen=bron) 
-  #callModule(casusTijdlijnModule, id="tijdlijnmodule", bronnen=rbind(bron)) 
+  # -------------- Bronnen --------------
+  output$bron_title_panel = renderUI({
+    HTML(glue('<i class="fa fa-database"></i> Bronnen ({nrow(bron())})'))
+  })
+  
+  callModule(casusBronnenModule, id="bronmodule", bronnen=bron) 
+  
+  
+  # -------------- Tijdlijn --------------
+  #callModule(casusTijdlijnModule, id="tijdlijnmodule", bronnen=bron) 
 
   
 }

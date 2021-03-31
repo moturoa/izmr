@@ -74,6 +74,7 @@ library(forcats)
 source("casusModule.R")
 source("casusOverzichtModule.R")
 source("casusBronModule.R")  
+source("casusTijdlijn.R")  
 source("functionsDatatables.R")
 
 
@@ -91,142 +92,12 @@ options(
   filename = "C:/Users/MartijnHeijstek/Documents/izm_frontend/data/ede_izm_postgres_copy.sqlite"
 )
 
-
-
-# Module zoals een casusModule oid zou zijn.
-voorbeeldModuleUI <- function(id){
-  
-  
-  ns <- NS(id)
-  
-  tagList(
-    uiOutput(ns("ui_person_name")),
-    
-    # Zelf
-    tableOutput(ns("tab_person")),
-    
-    tags$h4("Ouders"),
-    tableOutput(ns("tab_parents")),
-    
-    tags$h4("Kinderen"),
-    tableOutput(ns("tab_kids")),
-    
-    tags$h4("Huwelijk"),
-    tableOutput(ns("tab_huwelijk")),
-    
-    
-    tags$h4("Personen dit adres"),
-    tableOutput(ns("tab_adres")),
-    
-    
-    tags$h4("Suite"),
-    tableOutput(ns("tab_suite"))
-  )
-  
-}
-
-voorbeeldModule <- function(input, output, session, clicked_id = reactive(NULL)){
-  
-  
-  fam <- izmr::get_family_depseudo(clicked_id, .pdb)
-  
-  this_person <- reactive({
-    fam() %>%
-      filter(relation == "persoon_poi")
-  })
-  
-  this_adres <- reactive({
-    req(fam())
-    
-    fam() %>%
-      filter(relation == "persoon_poi") %>%
-      select(vblpostcode, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging)
-  })
-  
-  adres_personen <- izmr::get_adres_depseudo(this_adres, .pdb)
-  
-  
-  person_suite <- reactive({
-    .pdb$get_suite(clicked_id())
-  })
-  
-  
-  output$ui_person_name <- renderUI({
-    tags$h4(this_person()$naam)
-  })
-  
-  output$tab_person <- renderTable({
-    
-    this_person() %>%
-      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
-      select(naam, geboortedatum, adres)
-    
-  })
-  
-  output$tab_parents <- renderTable({
-    
-    fam() %>%
-      filter(relation %in% c("vader","moeder")) %>%
-      mutate(
-        naam = izmr::clickable_link(pseudo_bsn, naam),
-        adres = paste(straatnaam, huisnummer, huisletter)) %>%
-      select(relation, naam, geboortedatum, adres, overleden)
-    
-  }, sanitize.text.function = function(x) x)
-  
-  output$tab_kids <- renderTable({
-    
-    fam() %>%
-      filter(relation %in% c("zoon","dochter")) %>%
-      mutate(naam = izmr::clickable_link(pseudo_bsn, naam),
-             adres = paste(straatnaam, huisnummer, huisletter)) %>%
-      select(relation, naam, geboortedatum, adres)
-    
-  }, sanitize.text.function = function(x) x)
-  
-  output$tab_huwelijk <- renderTable({
-    
-    fam() %>%
-      filter(grepl("partner", relation)) %>%
-      mutate(adres = paste(straatnaam, huisnummer, huisletter)) %>%
-      select(relation, naam, geboortedatum, adres)
-    
-  })
-  
-  
-  output$tab_adres <- renderTable({
-    
-    req(adres_personen())
-    
-    adres_personen() %>%
-      filter(vwsdatuminschrijving == "") %>%
-      select(
-        naam, geboortedatum, geslacht, overleden
-      )
-    
-  })
-  
-  
-  output$tab_suite <- renderTable({
-    
-    req(person_suite())
-    
-    person_suite() %>%
-      select(
-        bron, begindatum, einddatum, omschrijving
-      )
-    
-  })
-  
-}
-
-
-
+ 
 # voorbeeld applicatie waar IZM-search een deel van uitmaakt.
 ui <- fluidPage(
   
   izmr::izmr_dependencies(),
-  
+   
   
   tabsetPanel(id = "main",
               tabPanel("Search", value = "search",

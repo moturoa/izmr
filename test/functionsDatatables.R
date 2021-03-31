@@ -1,8 +1,11 @@
 familyTable <- function(family, session){
 
+  # create cklickable and add missing pseudo bsn
 dat <- family() %>% filter(relation != 'persoon_poi')  %>% arrange(geboortedatum) %>%
                     mutate(adres = glue("{straatnaam} {huisnummer} {huisletter} {postcode}"),
-                           bsn = clickable_link(pseudo_bsn, bsn))  
+                           bsn = clickable_link(pseudo_bsn, bsn),
+                           pseudo_bsn = ifelse(pseudo_bsn=="", UUIDgenerate(), pseudo_bsn))  
+
 
 dat$pin = buttonInput(
   FUN = actionButton,
@@ -36,3 +39,22 @@ bold_table_row <- function(label, content){
     tags$td(content)
   )
 }
+
+
+
+datatableBron <- function(..., data, selectie = c('begindatum_formatted', 'omschrijving'),secret_cols=NULL,extra_selectie = NULL) {
+  if(!is.null(extra_selectie)){
+    selectie <-  c(selectie, extra_selectie)
+  }
+  # add secret cols at the end!
+  if(!is.null(secret_cols)){
+    selectie <-  c(selectie, secret_cols)
+  }  
+  # Adding indicatie triangles
+  data <- data %>%  select(any_of(selectie)) 
+   
+  
+  datatable(...,data=data)
+}
+
+

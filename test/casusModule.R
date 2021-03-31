@@ -38,11 +38,13 @@ casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
   fam <- .pdb$get_family_depseudo(clicked_id)
   bron <-.pdb$get_all_bronnen(clicked_id)
   observeEvent(bron(),{
-    print(bron())
+    print( bind_rows(bron()) )
   })
   
   callModule(casusOverzichtModule, id="overzichtsmodule", family=fam) 
+  
   #callModule(casusBronnenModule, id="bronmodule", bronnen=bron) 
+  #callModule(casusTijdlijnModule, id="tijdlijnmodule", bronnen=rbind(bron)) 
 
   
 }

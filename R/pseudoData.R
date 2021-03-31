@@ -247,11 +247,11 @@ pseudoData <- R6::R6Class(
       
       bron <- reactive({
         req(pseudo_bsn())
-        suite <- self$get_suite(pseudo_bsn())
-        menscentraal <- self$get_menscentraal(pseudo_bsn())
-        carel <- self$get_suite(pseudo_bsn())
-        allegro <- self$get_suite(pseudo_bsn())
-        openwave <- self$get_openwave(pseudo_bsn())
+        suite <- self$get_suite(pseudo_bsn()) 
+        menscentraal <- self$get_menscentraal(pseudo_bsn()) 
+        carel <- self$get_carel(pseudo_bsn()) 
+        allegro <- self$get_allegro(pseudo_bsn()) 
+        openwave <- self$get_openwave(pseudo_bsn()) 
       
       
       return( 
@@ -279,7 +279,7 @@ pseudoData <- R6::R6Class(
       }
       
       
-      suite <- mutate(suite,
+      suite <- mutate(suite, 
                       begindatum = coalesce(
                         a_dd_begin,
                         b_dd_aanvr,
@@ -299,7 +299,9 @@ pseudoData <- R6::R6Class(
         arrange(begindatum)
       
       
-      suite <- mutate(suite,
+      suite <- mutate(suite, 
+                      begindatum =  ymd(begindatum), 
+                      einddatum =  ymd(einddatum),bron = as.character(bron),
                       omschrijving = paste(
                         ifelse(!is.na(a_waarschuwingen), glue('Waarschuwing: {a_waarschuwingen} '), ''), 
                         ifelse(!is.na(b_huidige_behandelaar) | !is.na(b_regeling) | !is.na(b_soort_wp) | !is.na(b_reden), 'Afwijzing', ''),
@@ -340,7 +342,9 @@ pseudoData <- R6::R6Class(
                     "status, groepnr from menscentraal where klant_bsn = '{pseudo_id}';") 
       
       self$query(q_mens) %>% 
-        mutate(begindatum =  as_date(ymd_hms(begindatum)), 
+        mutate(bron = as.character(bron),
+               omschrijving = as.character(omschrijving), 
+               begindatum =  as_date(ymd_hms(begindatum)), 
                einddatum =  as_date(ymd_hms(einddatum)))  %>%
         arrange(desc(begindatum))
       
@@ -353,9 +357,11 @@ pseudoData <- R6::R6Class(
                      "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
                      " where bsn_nummer = '{pseudo_id}';")
       
-      self$query(q_wave) %>% 
-        mutate(begindatum = ymd(begindatum), einddatum = ymd(einddatum)) %>%
-        arrange(desc(begindatum)) 
+      self$query(q_wave) %>% mutate(bron = as.character(bron),
+                                    omschrijving = as.character(omschrijving),
+                                    begindatum = ymd(begindatum), 
+                                    einddatum = ymd(einddatum)) %>%
+                                      arrange(desc(begindatum)) 
     },
     
     get_carel = function(pseudo_id){
@@ -366,7 +372,10 @@ pseudoData <- R6::R6Class(
                       " einde_melding as einddatum, naam_school from carel where bsn ='{pseudo_id}';")
       
       self$query(q_carel) %>% 
-        mutate(begindatum = dmy(begindatum), einddatum = dmy(einddatum)) %>%
+        mutate(bron = as.character(bron),
+               omschrijving = as.character(omschrijving),
+               begindatum = dmy(begindatum), 
+               einddatum = dmy(einddatum)) %>%
         arrange(desc(begindatum))
       
     },
@@ -379,7 +388,7 @@ pseudoData <- R6::R6Class(
                         "eind_datum as einddatum from allegro where bsn = '{pseudo_id}';") 
       
       self$query(q_allegro) %>%
-        mutate(begindatum = ymd(begindatum), einddatum = ymd(einddatum))
+        mutate(bron = as.character(bron),omschrijving = as.character(omschrijving),begindatum = ymd(begindatum), einddatum = ymd(einddatum))
     },
     
     get_brp_verh_hst = function(pseudo_id){

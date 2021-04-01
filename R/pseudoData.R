@@ -254,9 +254,8 @@ pseudoData <- R6::R6Class(
         openwave <- self$get_openwave(pseudo_bsn()) 
         brp <- self$get_verhuizingen_depseudo(pseudo_bsn) 
       
-      
-      return( 
-        bind_rows(list(
+        
+        df_total <- bind_rows(list(
           suite,
           menscentraal, 
           carel,
@@ -264,7 +263,9 @@ pseudoData <- R6::R6Class(
           openwave,
           brp()
         )) %>% mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
-      )})
+ 
+      return( df_total)
+      })
     },
      
     
@@ -301,8 +302,9 @@ pseudoData <- R6::R6Class(
       
       
       suite <- mutate(suite, 
-                      begindatum =  ymd(begindatum), 
-                      einddatum =  ymd(einddatum),bron = as.character(bron),
+                      begindatum =  dmy(begindatum), 
+                      einddatum =  dmy(einddatum),
+                      bron = as.character(bron),
                       omschrijving = paste(
                         ifelse(!is.na(a_waarschuwingen), glue('Waarschuwing: {a_waarschuwingen} '), ''), 
                         ifelse(!is.na(b_huidige_behandelaar) | !is.na(b_regeling) | !is.na(b_soort_wp) | !is.na(b_reden), 'Afwijzing', ''),
@@ -352,7 +354,7 @@ pseudoData <- R6::R6Class(
     },
     
     get_openwave = function(pseudo_id, what='bsn_nummer'){
-      
+       
       q_wave <- glue("select 'Open Wave' as bron, module, zaaksoort, omschrijving, ",
                      "aanvraagdatum as begindatum, besluitdatum, besluit as einddatum, ",
                      "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
@@ -366,8 +368,7 @@ pseudoData <- R6::R6Class(
     },
     
     get_carel = function(pseudo_id){
-      
-      
+       
       q_carel <- glue("select 'Carel' as bron, 'Melding school: ' || naam_school as omschrijving, ",
                       " behandelaar, melding, start_melding as begindatum, ",
                       " einde_melding as einddatum, naam_school from carel where bsn ='{pseudo_id}';")
@@ -382,21 +383,21 @@ pseudoData <- R6::R6Class(
     },
     
     get_allegro = function(pseudo_id){
-      
+       
       q_allegro <- glue("select 'Allegro' as bron, aanvraag_schulhulp as omschrijving, ",
                         "naam_consulent, aanvraag_schulhulp as aanvraag_schuldhulp, ",
                         "traject_schuld_hulp, start_datum as begindatum, ",
                         "eind_datum as einddatum from allegro where bsn = '{pseudo_id}';") 
       
       self$query(q_allegro) %>%
-        mutate(bron = as.character(bron),omschrijving = as.character(omschrijving),begindatum = ymd(begindatum), einddatum = ymd(einddatum))
+        mutate(bron = as.character(bron),omschrijving = as.character(omschrijving), begindatum = dmy(begindatum), einddatum = dmy(einddatum))
     },
     
     
     
     #------ Adres -----
     get_verhuizingen = function(pseudo_id) {
-   
+
         q_brp_verh_hst = glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
         brp_verh_hst <- dbGetQuery(self$con, q_brp_verh_hst)  
         

@@ -262,7 +262,7 @@ R6 class for connection to anonymized database.
 \if{latex}{\out{\hypertarget{method-get_adres_depseudo}{}}}
 \subsection{Method \code{get_adres_depseudo()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adres_depseudo(adres, database_object)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adres_depseudo(adres)}\if{html}{\out{</div>}}
 }
 
 }

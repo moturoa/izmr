@@ -49,15 +49,7 @@ casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
         )
   })    
     
-    
-    
-    #observeEvent(bron(),{
-    #  print( bron() )
-    #})
-    #  verh <- .pdb$get_verhuizingen_depseudo(clicked_id)
-    #  observeEvent(verh(),{
-    #    print( verh() )
-    #  })
+  
   # -------------- Overzicht --------------
   callModule(casusOverzichtModule, id="overzichtsmodule", family=fam) 
   

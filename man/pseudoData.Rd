@@ -33,6 +33,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
 \item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-get_verhuizingen_depseudo}{\code{pseudoData$get_verhuizingen_depseudo()}}
+\item \href{#method-get_adres_depseudo}{\code{pseudoData$get_adres_depseudo()}}
 \item \href{#method-clone}{\code{pseudoData$clone()}}
 }
 }
@@ -198,7 +199,7 @@ R6 class for connection to anonymized database.
 \if{latex}{\out{\hypertarget{method-get_openwave}{}}}
 \subsection{Method \code{get_openwave()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_openwave(pseudo_id)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_openwave(pseudo_id, what = "bsn_nummer")}\if{html}{\out{</div>}}
 }
 
 }
@@ -253,6 +254,15 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_verhuizingen_depseudo()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_verhuizingen_depseudo(id_in)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_adres_depseudo"></a>}}
+\if{latex}{\out{\hypertarget{method-get_adres_depseudo}{}}}
+\subsection{Method \code{get_adres_depseudo()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adres_depseudo(adres, database_object)}\if{html}{\out{</div>}}
 }
 
 }

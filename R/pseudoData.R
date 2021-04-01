@@ -351,12 +351,12 @@ pseudoData <- R6::R6Class(
       
     },
     
-    get_openwave = function(pseudo_id){
+    get_openwave = function(pseudo_id, what='bsn_nummer'){
       
       q_wave <- glue("select 'Open Wave' as bron, module, zaaksoort, omschrijving, ",
                      "aanvraagdatum as begindatum, besluitdatum, besluit as einddatum, ",
                      "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
-                     " where bsn_nummer = '{pseudo_id}';")
+                     " where {what} = '{pseudo_id}';")
       
       self$query(q_wave) %>% mutate(bron = as.character(bron),
                                     omschrijving = as.character(omschrijving),
@@ -503,7 +503,39 @@ pseudoData <- R6::R6Class(
         replaceAll(verh(), f_out()) 
         
       }) 
-    }
+    },
+  
+  get_adres_depseudo = function(adres){
+    
+    
+    adres_data <- reactive({
+      
+      req(adres())
+      database_object$get_person_brp(what = "adres", adres = adres())
+      
+    })
+    
+    adres_id <- reactive({
+      adres_data() %>% pull(pseudo_bsn)
+    })
+    
+    rest_out <- callModule(restCallModule, "adres", pseudo_ids = adres_id, what = "lookup")
+    
+    
+    reactive({
+      
+      req(adres_data())
+      
+      # dwz: depseudonimiseer is klaar.
+      req(nrow(rest_out()) > 0)
+      
+      left_join(adres_data(), rest_out(), 
+                by = "pseudo_bsn", 
+                suffix = c(".y", ""))
+      
+    })
+    
+  }
   ), 
   
   private = list(

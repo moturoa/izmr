@@ -75,7 +75,8 @@ izmSearchUI <- function(id){
 #' @rdname izmSearchModule
 izmSearchModule <- function(input, output, session){
   
-  reactive(
+ 
+  reactive( 
     list(
       clicked = input$izmclickedid,
       n_results = input$izmnresults  

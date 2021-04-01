@@ -33,23 +33,40 @@ casusModuleUI <- function(id){
 
 
 casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
-  
-  
-#  verh <- .pdb$get_verhuizingen_depseudo(clicked_id)
-#  observeEvent(verh(),{
-#    print( verh() )
-#  })
-  
+   
   
   # -------------- Retrieve Data for pseudoID --------------
   fam <- .pdb$get_family_depseudo(clicked_id)
   bron <-.pdb$get_all_bronnen(clicked_id)
-  #observeEvent(bron(),{
-  #  print( bron() )
-  #})
   
+  this_adres <- reactive({
+    req(fam())
+    
+    .pdb$get_adres_depseudo(
+          fam() %>%
+            filter(relation == "persoon_poi") %>%
+            select(vblpostcode, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging)
+        )
+  })    
+    
+    
+    
+    #observeEvent(bron(),{
+    #  print( bron() )
+    #})
+    #  verh <- .pdb$get_verhuizingen_depseudo(clicked_id)
+    #  observeEvent(verh(),{
+    #    print( verh() )
+    #  })
   # -------------- Overzicht --------------
   callModule(casusOverzichtModule, id="overzichtsmodule", family=fam) 
+  
+  
+  
+  # -------------- Adres --------------
+  #callModule(casusAdresModule, id="adresmodule", adres=fam) 
+  
+  
   
   # -------------- Bronnen --------------
   output$bron_title_panel = renderUI({

@@ -63,17 +63,8 @@ casusAdresUI <- function(id){
   )
 }
 
-casusAdresModule <- function(input, output, session, bagId, peopleData, kvkData){
-  
-  rv <- reactiveValues(
-    peopleAtAdr=NULL,
-    kvkAtAdr=NULL,
-    bagData = NULL,
-    kvk_filtered=NULL,
-    openWaveData = NULL
-  )
-  
-  
+casusAdresModule <- function(input, output, session, peopleData, kvkData){
+    
   # ----------------------- Bagselectie  -------------------------------- 
   observeEvent(bagId, {
     
@@ -83,21 +74,7 @@ casusAdresModule <- function(input, output, session, bagId, peopleData, kvkData)
     
     if(!is.null(rv$bagData$vblpostcode)){
       rv$openWaveData <- .pseudo_db$getOpenWavePostcode(rv$bagData$vblpostcode) 
-    } 
-    # Lookup peolple living at adress!
-    if(is.null(peopleData) & nrow(rv$bagData) == 1) {
-      
-      # alter tab title to name!
-      title <- if(!is.na(rv$bagData$bag_adres)) {
-        rv$bagData$bag_adres
-      } else {
-        "No title yet."
-      }
-      session$sendCustomMessage("changetitle", title)
-      
-      #js$getRecordFromAdress(rest_url = rest_url_adr, huisnummer = sample(c('UuIaHomF6', 'f7uAiMlO4', 'Mi9XJDSKT') ,1), postcode='xiSUKsG9A', id = 'inhabitantsAdr') # FAKE
-      js$getRecordFromAdress(rest_url = rest_url_adr, huisletter = rv$bagData$huisletter,huisnummer = rv$bagData$huisnummer, postcode= rv$bagData$postcode, id = 'inhabitantsAdr') #REAL    
-    }
+    }  
     
   }) 
   

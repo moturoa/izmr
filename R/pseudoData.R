@@ -355,15 +355,15 @@ pseudoData <- R6::R6Class(
     
     get_openwave = function(pseudo_id, what='bsn_nummer'){
        
-      q_wave <- glue("select 'Open Wave' as bron, module, zaaksoort, omschrijving, ",
-                     "aanvraagdatum as begindatum, besluitdatum, besluit as einddatum, ",
+      q_wave <- glue("select 'Open Wave' as bron, module, besluit, zaaksoort, omschrijving, ",
+                     "aanvraagdatum as begindatum, besluitdatum as einddatum, ",
                      "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
                      " where {what} = '{pseudo_id}';")
       
       self$query(q_wave) %>% mutate(bron = as.character(bron),
                                     omschrijving = as.character(omschrijving),
-                                    begindatum = ymd(begindatum), 
-                                    einddatum = ymd(einddatum)) %>%
+                                    begindatum = ymd_hms(begindatum), 
+                                    einddatum = ymd_hms(einddatum)) %>%
                                       arrange(desc(begindatum)) 
     },
     

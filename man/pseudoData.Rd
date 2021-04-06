@@ -34,6 +34,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-get_verhuizingen_depseudo}{\code{pseudoData$get_verhuizingen_depseudo()}}
 \item \href{#method-get_adres_depseudo}{\code{pseudoData$get_adres_depseudo()}}
+\item \href{#method-meldingConstructor}{\code{pseudoData$meldingConstructor()}}
 \item \href{#method-clone}{\code{pseudoData$clone()}}
 }
 }
@@ -263,6 +264,15 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_adres_depseudo()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adres_depseudo(adres)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-meldingConstructor"></a>}}
+\if{latex}{\out{\hypertarget{method-meldingConstructor}{}}}
+\subsection{Method \code{meldingConstructor()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$meldingConstructor(days_ago = 42)}\if{html}{\out{</div>}}
 }
 
 }

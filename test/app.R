@@ -5,77 +5,16 @@ library(izmr)
 
 # Shiny packages
 
-# Shiny packages
-library(shiny)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(shinyjs)
-library(dqshiny)
-library(shinyWidgets)
-#library(shinyalert)
-library(shinycssloaders)
-#library(sortable)
-library(htmltools)
-library(shinytoastr)
-library(shinyjqui)
-library(shinybusy)
-#library(whereami)
-library(leaflet)  
-library(safer)
-
-#library(shinyfilterset)
-#library(shintodashboard)
-library(shintoanalytics)
-library(shintobag)
-#library(shinypasswordinput)
-#library(shinyinbox)
-
-# Logging / dev / code
-library(futile.logger)
-library(yaml)
-#library(devtools)
-library(config)
-library(gert)
-library(R6)
-library(rlang)
-library(uuid)
-library(jsonlite)
-
-# HTML tables
-library(knitr)
-library(kableExtra)
-library(izmr)
-
-# HTML Widgets
-#library(rintrojs)
-library(DT)
-library(plotly)
-library(scales)
+source("test/load_dependencies.R")
 
 
-# Data related 
-library(tidyverse)
-library(lubridate)
-library(stringr)
-library(glue)
-library(textclean)
-library(writexl)
-library(rvest) 
-library(data.table)
-
-# Database related
-library(DBI) 
-library(RSQLite)
-library(pool)
-library(dbplyr)
-#library(arrow)
-#library(openxlsx)
-library(forcats)
 source("test/casusModule.R")
 source("test/casusOverzichtModule.R")
 source("test/casusBronModule.R")  
 source("test/casusTijdlijn.R")  
 source("test/functionsDatatables.R")
+
+source("R/pinnedPerson.R")
 
 
 #---- Config ----
@@ -84,12 +23,13 @@ options(
   izm_rest_url = "http://127.0.0.1",  # of on-premise "https://izm2-rest.ad.ede.nl" 
   izm_search_timeout = 1000,          # throttle op de search API
   pm_decrypt_secret = yaml::read_yaml("test/secret.yml")$secret  # voor pseudomaker decrypt.
-)
+  )
 
 # Path (relative mag ook) naar SQLite met pseudo-data.
 # Komt uiteindelijk op postgres.
-.pdb <<- izmr::pseudoData$new(
-  filename = "C:/Users/MartijnHeijstek/Documents/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+.pdb <- izmr::pseudoData$new(
+  filename = "c:/repos/ede/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+  #filename = "C:/Users/MartijnHeijstek/Documents/izm_frontend/data/ede_izm_postgres_copy.sqlite"
 )
 
  

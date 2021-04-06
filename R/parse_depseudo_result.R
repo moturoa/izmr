@@ -28,8 +28,6 @@ parse_result <- function(res, column_names){
   },
   error=function(cond) {  
     
-    browser()
-    
     cat(file=stderr(), glue('Error in parseResDepseudo: {paste(cond, sep = ",")}'), sep= '\n')  
     return(empty_result)
   },

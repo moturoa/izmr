@@ -51,7 +51,7 @@ casusModule <- function(input, output, session, clicked_id = reactive(NULL)){
     
   
   # -------------- Overzicht --------------
-  callModule(casusOverzichtModule, id="overzichtsmodule", family=fam) 
+  callModule(casusOverzichtModule, id="overzichtsmodule", family = fam) 
   
   
   

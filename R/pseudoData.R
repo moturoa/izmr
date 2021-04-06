@@ -448,9 +448,7 @@ pseudoData <- R6::R6Class(
     
     
     
-    #------ Depseudonimiseren -----
-     
-  
+  #------ Depseudonimiseren -----
   get_family_depseudo = function(id_in){
     
     fam <- reactive({
@@ -464,7 +462,6 @@ pseudoData <- R6::R6Class(
     
     f_out <- callModule(restCallModule, "fam", pseudo_ids = fam_id, what = "lookup")
     
-    
     reactive({
       
       req(fam())
@@ -472,11 +469,19 @@ pseudoData <- R6::R6Class(
       
       left_join(fam(), f_out(), 
                 by = "pseudo_bsn", 
-                suffix = c(".y", ""))
+                suffix = c(".y", "")) %>%
+        mutate(
+          adres_display = paste(straatnaam,
+                                huisnummer,
+                                huisletter,
+                                #huisnummertoevoeging,
+                                postcode)
+        )
       
     })
     
-    },  
+    },
+  
     get_verhuizingen_depseudo = function(id_in){
       
       verh <- reactive({

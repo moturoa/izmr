@@ -1,27 +1,27 @@
 familyTable <- function(family, session){
 
-  # create cklickable and add missing pseudo bsn
-dat <- family() %>% filter(relation != 'persoon_poi')  %>% arrange(geboortedatum) %>%
-                    mutate(adres = glue("{straatnaam} {huisnummer} {huisletter} {postcode}"),
-                           bsn = clickable_link(pseudo_bsn, bsn),
-                           pseudo_bsn = ifelse(pseudo_bsn=="", UUIDgenerate(), pseudo_bsn))  
-
-
-dat$pin = buttonInput(
-  FUN = actionButton,
-  len = nrow(dat),
-  id =  dat$pseudo_bsn,
-  label = "+", 
-  onclick = glue('Shiny.onInputChange(\"{session$ns("expandPseudoBsn")}\",  (this.id))') 
-)  
-
-
-datatable(data=dat %>% select(pin, bsn, naam, geboortedatum, adres,  relation) ,
-          extensions = "Responsive", selection = "multi", 
-          options=list(dom=c('t'), lengthChange = FALSE,
-                       pageLength=15), 
-          escape = FALSE,
-          rownames= FALSE)
+    # create cklickable and add missing pseudo bsn
+  dat <- family() %>% filter(relation != 'persoon_poi')  %>% arrange(geboortedatum) %>%
+                      mutate(adres = glue("{straatnaam} {huisnummer} {huisletter} {postcode}"),
+                             bsn = clickable_link(pseudo_bsn, bsn),
+                             pseudo_bsn = ifelse(pseudo_bsn=="", uuid::UUIDgenerate(), pseudo_bsn))  
+  
+  dat$pin <- buttonInput(
+    FUN = actionButton,
+    len = nrow(dat),
+    id =  dat$pseudo_bsn,
+    label = "+", 
+    onclick = glue('Shiny.setInputValue(\"{session$ns("expandPseudoBsn")}\",  (this.id))') 
+  )  
+  
+  dat %>% 
+    select(pin, bsn, naam, geboortedatum, adres,  relation) %>%
+    datatable(extensions = "Responsive", 
+            selection = "none", 
+            options = list(dom = 't', lengthChange = FALSE,
+                         pageLength=15), 
+            escape = FALSE,
+            rownames= FALSE)
 }
 
 

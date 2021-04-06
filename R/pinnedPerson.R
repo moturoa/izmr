@@ -47,7 +47,9 @@ pinnedPerson <- function(input, output, session, pseudo_bsn = NULL){
     req(!is.na(person$bsn))
 
     
-    tags$div(style = "border: 1px solid black; padding: 30px; margin: 30px;",
+    #tags$div(style = "border: 1px solid black; padding: 30px; margin: 30px;",
+    shinydashboardPlus::box(collapsible = TRUE, collapsed = FALSE, closable = TRUE, 
+                            title =  person$naam, solidHeader = TRUE, status = "primary",
       shiny::fluidRow(
         shinydashboard::box(width=6, solidHeader=TRUE,
                             tags$table(

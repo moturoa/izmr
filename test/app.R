@@ -37,7 +37,11 @@ options(
 ui <- fluidPage(
   
   izmr::izmr_dependencies(),
-   
+  
+  # om te simuleren dat we een dashboardPage maken oid.
+  includeCSS(system.file("shinydashboardPlus-2.0.0/css/AdminLTE.min.css", package = "shinydashboardPlus")),
+  includeScript(system.file("shinydashboardPlus-2.0.0/js/shinydashboardPlus.min.js", package = "shinydashboardPlus")),
+  includeScript(system.file("shinydashboardPlus-2.0.0/js/app.min.js", package = "shinydashboardPlus")),
   
   tabsetPanel(id = "main",
               tabPanel("Search", value = "search",

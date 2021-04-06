@@ -12,11 +12,11 @@ pinnedPersonUI <- function(id){
 
 
   
-pinnedPerson <- function(input, output, session, pseudo_bsn = reactive(NULL)){
+pinnedPerson <- function(input, output, session, pseudo_bsn = NULL){
   
   
-  person_fam_data <- .pdb$get_family_depseudo(pseudo_bsn)
-  expand_bron <- .pdb$get_all_bronnen(pseudo_bsn)
+  person_fam_data <- .pdb$get_family_depseudo(reactive(pseudo_bsn))
+  expand_bron <- .pdb$get_all_bronnen(reactive(pseudo_bsn))
   
   output$txt_out <- renderPrint({
     person_fam_data()
@@ -46,7 +46,6 @@ pinnedPerson <- function(input, output, session, pseudo_bsn = reactive(NULL)){
     req(person$naam != "NA")
     req(!is.na(person$bsn))
 
-    print(paste("RENDERING:", isolate(pseudo_bsn())))
     
     tags$div(style = "border: 1px solid black; padding: 30px; margin: 30px;",
       shiny::fluidRow(

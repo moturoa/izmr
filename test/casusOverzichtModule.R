@@ -99,21 +99,26 @@ casusOverzichtModule <- function(input, output, session, family){
   
   
   
+  
+  
   # ----------  Dynamisch personen uitklappen (PINNEN!) ----------------- 
+  
+  
   observeEvent(input$expandPseudoBsn, ignoreNULL = TRUE, { 
- 
+   
     print(paste("PIN:",input$expandPseudoBsn))
     new_id <- uuid::UUIDgenerate()
-    
-    insertUI(selector = "#pin_person_placeholder", where = "afterBegin", 
+  
+    insertUI(selector = "#pin_person_placeholder", where = "afterBegin",
              ui = pinnedPersonUI(session$ns(new_id)))
-    
-    callModule(pinnedPerson, new_id, pseudo_bsn = reactive(input$expandPseudoBsn))
+
+    callModule(pinnedPerson, new_id, pseudo_bsn = isolate(input$expandPseudoBsn))
     
   })
   
   
   
+
   
  
 }

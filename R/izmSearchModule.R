@@ -49,20 +49,19 @@ izmSearchUI <- function(id){
     tags$section(
       tags$table(id = "searchresults", class = "display",
                  
-                 tags$thead(
-                   tags$tr(
-                     # Als REST API geen 7 kolommen terugpast, hier instellen!
-                     # TODO column names
-                     tags$th(""),
-                     tags$th(""),
-                     tags$th(""),
-                     tags$th(""),
-                     tags$th(""),
-                     tags$th(""),
-                     tags$th("")
-                   )
-                 )
-                 
+         tags$thead(
+           tags$tr(
+             # Als REST API geen 7 kolommen terugpast, hier instellen!
+             # TODO column names
+             tags$th(""),
+             tags$th(""),
+             tags$th(""),
+             tags$th(""),
+             tags$th(""),
+             tags$th(""),
+             tags$th("")
+           )
+         )
       )
     ) 
   )

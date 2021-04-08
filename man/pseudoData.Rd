@@ -31,6 +31,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
+\item \href{#method-table_depseudo}{\code{pseudoData$table_depseudo()}}
 \item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-get_verhuizingen_depseudo}{\code{pseudoData$get_verhuizingen_depseudo()}}
 \item \href{#method-get_adres_depseudo}{\code{pseudoData$get_adres_depseudo()}}
@@ -237,6 +238,18 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_brp_verh_hst()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_brp_verh_hst(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-table_depseudo"></a>}}
+\if{latex}{\out{\hypertarget{method-table_depseudo}{}}}
+\subsection{Method \code{table_depseudo()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$table_depseudo(
+  data = reactive(NULL),
+  pseudo_bsn_column = "pseudo_bsn"
+)}\if{html}{\out{</div>}}
 }
 
 }

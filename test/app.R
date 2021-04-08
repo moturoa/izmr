@@ -23,7 +23,7 @@ options(
   izm_rest_url = "http://127.0.0.1",  # of on-premise "https://izm2-rest.ad.ede.nl" 
   izm_search_timeout = 1000,          # throttle op de search API
   pm_decrypt_secret = yaml::read_yaml("test/secret.yml")$secret  # voor pseudomaker decrypt.
-  )
+)
 
 # Path (relative mag ook) naar SQLite met pseudo-data.
 # Komt uiteindelijk op postgres.
@@ -64,6 +64,10 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
+  
+  
+  # Global people collection
+  session$userData$collection <- izmr::Collection$new("pseudo_bsn")
   
   # De module vult de datatable in de izmSearchUI, en
   # returns een list met 'clicked' (id, nonce), 'nresults'.

@@ -34,16 +34,17 @@ casusOverzichtUI <- function(id){
 casusOverzichtModule <- function(input, output, session, family){
   
 
-  print("called casusOverzichtModule")
+  person <- reactive({
+    family() %>% 
+      filter(relation == "persoon_poi")
+  })
   
   # get all details from POI
   output$persoon_details <- renderUI({
     
     if(!is.null(family())){
-      print("Rendering persoon details")  
-      
-      # POI is altijd de eerste regel!
-      dat <- head(family(),1)   
+
+      dat <- person()
        
       # alter tab title to name!
       title <- if(!is.na(dat$naam)) {
@@ -64,7 +65,7 @@ casusOverzichtModule <- function(input, output, session, family){
                     )
                  ),
                  box(width=6, solidHeader=TRUE, 
-                     actionButton(session$ns("verzameling_addthis"), "Naar verzameling"))
+                     actionButton(session$ns("btn_verzameling_addthis"), "Naar verzameling"))
             )
         ) 
     }
@@ -79,7 +80,14 @@ casusOverzichtModule <- function(input, output, session, family){
   }) 
   
   
-  # TODO : koppelen aan verzamelingen
+  observeEvent(input$btn_verzameling_addthis, {
+    
+    session$userData$collection$add(person()$pseudo_bsn)
+    
+  })
+  
+  
+  
   # observeEvent(input$verzameling_addthis,ignoreInit = TRUE, { 
   #  req(returnable$pseudo_bsn[1])
   #  js$setInput(pid='added_person', data= returnable$pseudo_bsn[1])  
@@ -92,7 +100,6 @@ casusOverzichtModule <- function(input, output, session, family){
      
   output$dt_family <- DT::renderDT({   
     req(family()) 
-    print("making dt_family")
     familyTable(family, session=session)  
     
   })
@@ -106,7 +113,6 @@ casusOverzichtModule <- function(input, output, session, family){
   
   observeEvent(input$expandPseudoBsn, ignoreNULL = TRUE, { 
    
-    print(paste("PIN:",input$expandPseudoBsn))
     new_id <- uuid::UUIDgenerate()
   
     insertUI(selector = "#pin_person_placeholder", where = "afterBegin",

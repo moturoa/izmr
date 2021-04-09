@@ -5,12 +5,20 @@
 \alias{izmSearchModule}
 \title{De IZM als standalone shiny module}
 \usage{
-izmSearchUI(id)
+izmSearchUI(
+  id,
+  reset_button_class = "btn-secondary",
+  reset_button_icon = "refresh"
+)
 
 izmSearchModule(input, output, session)
 }
 \arguments{
 \item{id}{**Moet zijn** : "izm", anders werkt de onderliggende JS code niet.}
+
+\item{reset_button_class}{CSS Class to apply to the reset button (default: "btn-secondary")}
+
+\item{reset_button_icon}{Icon name to apply to the reset button (default: "refresh")}
 
 \item{input}{Shiny input, dont use.}
 

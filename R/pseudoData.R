@@ -404,16 +404,17 @@ pseudoData <- R6::R6Class(
     #------ Adres -----
     get_verhuizingen = function(pseudo_id) {
 
-        q_brp_verh_hst = glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
+        q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
         brp_verh_hst <- dbGetQuery(self$con, q_brp_verh_hst)  
         
+        # alle kolommen naar char - dit voorkomt een (wat zeldzame) bug:
+        brp_verh_hst <- dplyr::mutate_all(brp_verh_hst, as.character)
         
         # bzsprsq00 voor huidige adres binnen Ede (staat niet altijd in hst)
-        q_brp_pers = glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
+        q_brp_pers <- glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
         brp_persoon <- dbGetQuery(self$con, q_brp_pers)   %>% mutate_if(is.character, list(~na_if(., "")))
         
         # if prs adres is not in hst; add this as verhuizing
-        
         if( brp_persoon$begindatum %notin% brp_verh_hst$begindatum) {
           brp_verh <- brp_persoon %>% filter(begindatum %notin% brp_verh_hst$begindatum)   %>% mutate(omschrijving =  'is Verhuisd', bron = 'Verhuizing')
            

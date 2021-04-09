@@ -4,9 +4,11 @@
 #' @param input Shiny input, dont use.
 #' @param output Shiny input, dont use.
 #' @param session Shiny input, dont use.
+#' @param reset_button_class CSS Class to apply to the reset button (default: "btn-secondary")
+#' @param reset_button_icon Icon name to apply to the reset button (default: "refresh")
 #' @export
 #' @rdname izmSearchModule
-izmSearchUI <- function(id){
+izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_icon = "refresh"){
   
   ns <- NS(id)
   
@@ -40,11 +42,15 @@ izmSearchUI <- function(id){
               ) 
     ),
     
+    tags$br(),
     
-    actionButton(ns("btn_reset"), 
+    shiny::actionButton(ns("btn_reset"), 
                  "Reset", 
+                 icon = shiny::icon(reset_button_icon),
+                 class = reset_button_class,
                  onclick = "resetform();"),
     
+    tags$br(),
     
     tags$section(
       tags$table(id = "searchresults", class = "display",

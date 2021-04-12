@@ -58,7 +58,24 @@ function autosearch2(searchurl) {
                     searchvalues[i] = searchvalues[i].split('***').join('%')
                     searchvalues[i] = searchvalues[i].split('*').join('_')   
                  
-                    
+                    if (i == 5) {    
+                      searchvalues[i]= searchvalues[i].split('-').join('')  
+                         
+                      if(searchvalues[i][0] == '%' ){
+                        if (searchvalues[i].length <= 5) searchvalues[i] = searchvalues[i].slice(1,searchvalues[i].length);
+                        if (searchvalues[i].length == 6)searchvalues[i] = searchvalues[i][2] +  searchvalues[i][3] +  searchvalues[i][4] +  searchvalues[i][5] +  '-_' + searchvalues[i][1];
+                        if (searchvalues[i].length == 7) searchvalues[i] = searchvalues[i][3] +  searchvalues[i][4] +  searchvalues[i][5] +  searchvalues[i][6] + '-' +  searchvalues[i][1] + searchvalues[i][2];
+                        if (searchvalues[i].length == 8) searchvalues[i] = searchvalues[i][4] +  searchvalues[i][5] +  searchvalues[i][6] +  searchvalues[i][7] + '-' + searchvalues[i][2] + searchvalues[i][3] + '-_' + searchvalues[i][2];
+                      }
+                      else if(searchvalues[i].length == 8) searchvalues[i] = searchvalues[i][4] +  searchvalues[i][5] + searchvalues[i][6] + searchvalues[i][7] + '-' + searchvalues[i][2] +  searchvalues[i][3] + '-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 7) searchvalues[i] = searchvalues[i][4] +  searchvalues[i][5] + searchvalues[i][6] + '_-' + searchvalues[i][2] +  searchvalues[i][3] + '-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 6) searchvalues[i] = searchvalues[i][4] +  searchvalues[i][5] + '_'+ '_-' + searchvalues[i][2] +  searchvalues[i][3] + '-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 5) searchvalues[i] = searchvalues[i][4] + '_' + '_' + '_-' + searchvalues[i][2] +  searchvalues[i][3] + '-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 4) searchvalues[i] = '_' + '_' + '_' + '_-' + searchvalues[i][2] +  searchvalues[i][3] + '-' +  searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 3) searchvalues[i] = '_' + '_' + '_' + '_-' + searchvalues[i][2] +  '_-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 2) searchvalues[i] = '_' + '_' + '_'  +'_-' + '_' +  '_-' + searchvalues[i][0] +  searchvalues[i][1];
+                      else if(searchvalues[i].length == 1) searchvalues[i] = '_' + '_' + '_' + '_-' + '_' +  '_-' + searchvalues[i][0] + '_'; 
+                    }
                      
                     // autosearch functionaliteit: add '%' at the end   
                     if(searchvalues[i].substring(searchvalues[i].length-1) != '%' && 

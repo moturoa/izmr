@@ -36,8 +36,8 @@ izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_i
                        izm_search_input("huisnummer", "Huisnummer", url, timeout),
                 ),
                 column(4,
-                       izm_search_input("geboortedatum", "Geboortedatum", url, timeout),
-                       izm_search_input("postcode", "Postcode", url, timeout)
+                       izm_search_input("geboortedatum", "Geboortedatum", url, timeout, placeholder = 'dd-mm-jjjj/ddmmjjjj'),
+                       izm_search_input("postcode", "Postcode", url, timeout, placeholder = '1234AA')
                 )
               ) 
     ),
@@ -95,7 +95,7 @@ izmSearchModule <- function(input, output, session){
 
 #----- Utils ------
 # not exported.
-izm_search_input <- function(what, label, url, timeout){
+izm_search_input <- function(what, label, url, timeout, placeholder = ''){
   
   tagList(        
     tags$label(class="control-label", 
@@ -108,6 +108,7 @@ izm_search_input <- function(what, label, url, timeout){
       type = "text",
       class = "form-control izmsearch",
       names = what,
+      placeholder = placeholder,
       value = "")
   )
   

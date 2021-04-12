@@ -44,21 +44,32 @@ izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_i
     
     tags$br(),
     
-    shiny::actionButton(ns("btn_reset"), 
-                 "Reset", 
-                 icon = shiny::icon(reset_button_icon),
-                 class = reset_button_class,
-                 onclick = "resetform();"),
+    tags$div(style = "width: 100%; padding-bottom: 40px;",
+      
+          tags$div(style = "float: left;",   
+            shiny::actionButton(ns("btn_reset"), 
+                   "Reset", 
+                   icon = shiny::icon(reset_button_icon),
+                   class = reset_button_class,
+                   onclick = "resetform();")
+          ),
+          tags$div(style = "float: right;",
+                
+              helpMenuButton(ns("help_izmsearch"))
+                   
+          )
+    ),
+      
     
     tags$br(),
     
     tags$section(
-      tags$table(id = "searchresults", class = "display",
+      tags$table(id = "searchresults", class = "display", 
                  
          tags$thead(
            tags$tr(
              # Als REST API geen 7 kolommen terugpast, hier instellen!
-             # TODO column names
+
              tags$th(""),
              tags$th(""),
              tags$th(""),
@@ -81,6 +92,15 @@ izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_i
 izmSearchModule <- function(input, output, session){
   
  
+  callModule(helpMenu, "help_izmsearch", 
+             
+             tags$h4("Integrale Zoek Machine"),
+             tags$p("Doorzoek het BRP voor de gemeente Ede op basis van naam, BSN nummer, geboortedatum, of adres informatie."),
+             tags$p(HTML("Gebruik wildcards:")),
+             tags$p(HTML("<b>*</b> voor een enkele positie, of <b>***</b> voor 1 of meerdere posities"))
+             )
+  
+  
   reactive( 
     list(
       clicked = input$izmclickedid,

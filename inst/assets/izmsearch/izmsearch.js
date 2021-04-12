@@ -24,6 +24,8 @@ function loadPerson(id) {
         
 function autosearch(searchurl, throttle) {
   
+  $('#searchresults').display = "block";
+  
   if(timeout) {
     clearTimeout(timeout);
     timeout = null;
@@ -108,10 +110,19 @@ function fill_datatable(searchvalues,searchurl) {
         var dataTable = $('#searchresults').DataTable({
             "processing": true,
             "serverSide": true,
-            "order": [], 
+            "ordering": false, 
             "searching": false,
             "pageLength": 15,
             "dom": 'rtip',
+            "columnDefs": [
+              { "title": "BSN", "targets" : 0 },
+              { "title": "Naam", "targets" : 1 },
+              { "title": "Geboortedatum", "targets" : 2 },
+              { "title": "Straat", "targets" : 3 },
+              { "title": "Huisnummer", "targets" : 4 },
+              { "title": "Huisletter", "targets" : 5 },
+              { "title": "Postcode", "targets" : 6 }
+            ],
             "ajax": { 
                 url: searchurl,  
                 jsonpCallback: "formatSearchResults",
@@ -127,8 +138,7 @@ function fill_datatable(searchvalues,searchurl) {
                 }
             }
         }); 
-         
-          
+        
         return(dataTable) 
         
       }  

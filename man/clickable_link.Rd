@@ -4,7 +4,7 @@
 \alias{clickable_link}
 \title{Make a clickable link}
 \usage{
-clickable_link(value, label)
+clickable_link(value, label, inputId = "izm-izmclickedid")
 }
 \description{
 Make a clickable link

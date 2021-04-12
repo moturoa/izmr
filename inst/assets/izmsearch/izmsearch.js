@@ -121,8 +121,8 @@ function fill_datatable(searchvalues,searchurl) {
 
 
 
-setClickedId = function(id){
-  Shiny.setInputValue("izm-izmclickedid", 
+setClickedId = function(id, shinyid){
+  Shiny.setInputValue(shinyid, 
                         { 
                           id: id, 
                           nonce: Math.random()
@@ -145,7 +145,7 @@ function formatSearchResults(data) {
                 
                 // make bsn clickable
                 data.data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
-                                     data.data[i][0] + "')\">" + 
+                                     data.data[i][0] + "', 'izm-izmclickedid')\">" + 
                                      data.data[i][1] + "</a>" 
                 
                 // format birthdate

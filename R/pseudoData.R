@@ -497,6 +497,7 @@ pseudoData <- R6::R6Class(
     })
     
     fam_id <- reactive({
+      req(fam())
       fam() %>% pull(pseudo_bsn)
     })
     

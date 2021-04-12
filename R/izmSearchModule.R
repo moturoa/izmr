@@ -103,8 +103,8 @@ izmSearchModule <- function(input, output, session){
   
   reactive( 
     list(
-      clicked = input$izmclickedid,
-      n_results = input$izmnresults  
+      clicked = input$izmclickedid
+      #n_results = input$izmnresults  
     )
     
   )  

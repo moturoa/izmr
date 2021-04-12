@@ -33,6 +33,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
 \item \href{#method-table_depseudo}{\code{pseudoData$table_depseudo()}}
 \item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
+\item \href{#method-get_personen_adres_depseudo}{\code{pseudoData$get_personen_adres_depseudo()}}
 \item \href{#method-get_verhuizingen_depseudo}{\code{pseudoData$get_verhuizingen_depseudo()}}
 \item \href{#method-get_adres_depseudo}{\code{pseudoData$get_adres_depseudo()}}
 \item \href{#method-meldingConstructor}{\code{pseudoData$meldingConstructor()}}
@@ -258,7 +259,16 @@ R6 class for connection to anonymized database.
 \if{latex}{\out{\hypertarget{method-get_family_depseudo}{}}}
 \subsection{Method \code{get_family_depseudo()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family_depseudo(id_in)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family_depseudo(id_in = reactive(NULL))}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_personen_adres_depseudo"></a>}}
+\if{latex}{\out{\hypertarget{method-get_personen_adres_depseudo}{}}}
+\subsection{Method \code{get_personen_adres_depseudo()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_personen_adres_depseudo(adres = reactive(NULL))}\if{html}{\out{</div>}}
 }
 
 }
@@ -267,7 +277,7 @@ R6 class for connection to anonymized database.
 \if{latex}{\out{\hypertarget{method-get_verhuizingen_depseudo}{}}}
 \subsection{Method \code{get_verhuizingen_depseudo()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_verhuizingen_depseudo(id_in)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_verhuizingen_depseudo(id_in = reactive(NULL))}\if{html}{\out{</div>}}
 }
 
 }

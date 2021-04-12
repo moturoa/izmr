@@ -52,11 +52,23 @@ parse_depseudo_result <- function(res) {
 }
 
 
-parse_lookup_result <- function(res, format=FALSE) { 
+parse_lookup_result <- function(res) { 
   
   column_names <- c("pseudo_bsn","bsn", "naam", "geboortedatum",  
                     "straatnaam", "huisnummer","huisletter","postcode")
   
   parse_result(res, column_names)
+}
+
+
+
+parse_adres_result <- function(res) { 
+  
+  column_names <- c("pseudo_bsn","bsn","naam",
+                    "geboortedatum","straatnaam","huisnummer",
+                    "huisletter","postcode")
+  
+  parse_result(res, column_names)
+  
 }
 

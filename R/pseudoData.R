@@ -489,7 +489,7 @@ pseudoData <- R6::R6Class(
     
   },
   
-  get_family_depseudo = function(id_in){
+  get_family_depseudo = function(id_in = reactive(NULL)){
     
     fam <- reactive({
       req(id_in())
@@ -523,7 +523,18 @@ pseudoData <- R6::R6Class(
     
     },
   
-    get_verhuizingen_depseudo = function(id_in){
+    # Use /dev endpoint to search an address.
+    get_personen_adres_depseudo = function(adres = reactive(NULL)){
+      
+      callModule(restAddressCallModule, "adressearch", adres = adres)
+      
+    },
+  
+  
+  
+  
+  
+    get_verhuizingen_depseudo = function(id_in = reactive(NULL)){
       
       verh <- reactive({
         req(id_in())

@@ -2,15 +2,18 @@
 % Please edit documentation in R/restCallModule.R
 \name{restCallModule}
 \alias{restCallModule}
+\alias{restAddressCallModule}
 \title{Wrapper around imzsearch API}
 \usage{
 restCallModule(
   input,
   output,
   session,
-  what = c("depseudo", "lookup"),
+  what = c("depseudo", "lookup", "dev"),
   pseudo_ids = reactive(NULL)
 )
+
+restAddressCallModule(input, output, session, adres = reactive(NULL))
 }
 \arguments{
 \item{input}{Shiny module, don't use.}
@@ -19,11 +22,11 @@ restCallModule(
 
 \item{session}{Shiny module, don't use.}
 
-\item{what}{Either 'depseudo' or 'lookup'.}
+\item{what}{Either 'depseudo', 'lookup'}
 
 \item{pseudo_ids}{A reactive vector with pseudo BSNs to send to API.}
 }
 \description{
 A shiny module function (server only) that returns a reactive with parsed results
-from either the 'depseudo' or the 'lookup' endpoint.
+from either the 'depseudo' or the 'lookup' endpoint. For the 'dev' endpoint, use \code{\link{restAddressCallModule}}.
 }

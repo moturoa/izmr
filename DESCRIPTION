@@ -1,7 +1,7 @@
 Package: izmr
 Type: Package
 Title: De Integrale ZoekMachine als R package
-Version: 0.3-2
+Version: 0.3-3
 Author: Remko Duursma
 Depends: shiny,jsonlite,glue,dplyr,futile.logger,DBI,pool,safer
 Maintainer: Remko Duursma <remko@shintolabs.nl>

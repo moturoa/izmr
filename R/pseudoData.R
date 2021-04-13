@@ -526,7 +526,7 @@ pseudoData <- R6::R6Class(
           geboortedatum = as.Date(geboortedatum),
           begindatum = as.Date(begindatum),
           einddatum = as.Date(einddatum),
-          naam = format_naam(naam, overleden)
+          naam_tooltip = format_naam(naam, overleden)
         )
       
     })

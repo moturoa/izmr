@@ -516,7 +516,12 @@ pseudoData <- R6::R6Class(
                                 huisnummer,
                                 huisletter,
                                 #huisnummertoevoeging,
-                                postcode)
+                                postcode),
+          vwsdatuminschrijving = as.Date(vwsdatuminschrijving),
+          overleden = as.Date(overleden),
+          geboortedatum = as.Date(geboortedatum),
+          begindatum = as.Date(begindatum),
+          einddatum = as.Date(einddatum)
         )
       
     })

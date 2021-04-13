@@ -508,9 +508,13 @@ pseudoData <- R6::R6Class(
       req(fam())
       req(nrow(f_out()) > 0)
       
-      left_join(fam(), f_out(), 
+      
+      
+      out <- left_join(fam(), f_out(), 
                 by = "pseudo_bsn", 
-                suffix = c(".y", "")) %>%
+                suffix = c(".y", ""))
+      
+      out %>%
         mutate(
           adres_display = paste(straatnaam,
                                 huisnummer,
@@ -521,7 +525,8 @@ pseudoData <- R6::R6Class(
           overleden = as.Date(overleden),
           geboortedatum = as.Date(geboortedatum),
           begindatum = as.Date(begindatum),
-          einddatum = as.Date(einddatum)
+          einddatum = as.Date(einddatum),
+          naam = format_naam(naam, overleden)
         )
       
     })

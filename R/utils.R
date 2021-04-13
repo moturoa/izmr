@@ -15,3 +15,13 @@ empty_dataframe = function(nms){
   
 }
 
+
+format_naam <- function(naam, overleden){
+  tooltip <- ifelse(!is.na(overleden), 
+                    glue("<i class='fa fa-cross' data-toggle='tooltip' data-placement='right', 
+                                    title='Overleden op { format(overleden, '%d-%m-%Y')}'></i>"), 
+                    "")
+  paste(naam, tooltip)
+}
+
+

@@ -242,6 +242,55 @@ pseudoData <- R6::R6Class(
         
     },
     
+    # SQL heeft geen DATE kolom, dus dit is nodig voor juiste datum filtering.
+    
+    get_sinds_char_column = function(startdatum, table, column){
+  
+      dt <- format(startdatum, "%Y-%m-%d")
+      
+      dbGetQuery(self$con, 
+                 glue(
+                   "select * from {table} where DATE({column}) >= DATE('{dt}')")
+      )
+      
+      
+    },
+    
+    
+    
+    
+    get_adreswijzigingen_sinds = function(startdatum){
+      
+      self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
+      
+    },
+    
+    get_geboortes_sinds = function(startdatum){
+      
+      self$get_sinds_char_column(startdatum, "bzskinq00", "kndgeboortedatum")
+
+    },
+    
+    get_huwelijken_sinds = function(startdatum){
+      
+      self$get_sinds_char_column(startdatum, "bzsc55q00", "huwhstdatumsluitinghuwelijkpartnerschap")
+      
+    },
+    
+    get_scheidingen_sinds = function(startdatum){
+      
+      self$get_sinds_char_column(startdatum, "bzsc55q00", "huwhstdatumontbindinghuwelijkpartnerschap")
+      
+    },
+    
+    get_overlijdens = function(startdatum){
+      
+      self$get_sinds_char_column(startdatum, "bzsc56q00", "ovlhstdatumoverlijden")
+      
+    },
+    
+
+    
     #------ Bron constructor -----
     get_all_bronnen = function(pseudo_bsn) {
       

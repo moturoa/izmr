@@ -23,6 +23,12 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
 \item \href{#method-get_kinderen}{\code{pseudoData$get_kinderen()}}
 \item \href{#method-get_family}{\code{pseudoData$get_family()}}
+\item \href{#method-get_sinds_char_column}{\code{pseudoData$get_sinds_char_column()}}
+\item \href{#method-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
+\item \href{#method-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
+\item \href{#method-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
+\item \href{#method-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
+\item \href{#method-get_overlijdens}{\code{pseudoData$get_overlijdens()}}
 \item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
 \item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
@@ -167,6 +173,60 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_family()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family(pseudo_id, what = c("bsn", "anr"))}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_sinds_char_column"></a>}}
+\if{latex}{\out{\hypertarget{method-get_sinds_char_column}{}}}
+\subsection{Method \code{get_sinds_char_column()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_sinds_char_column(startdatum, table, column)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_adreswijzigingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-get_adreswijzigingen_sinds}{}}}
+\subsection{Method \code{get_adreswijzigingen_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adreswijzigingen_sinds(startdatum)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_geboortes_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-get_geboortes_sinds}{}}}
+\subsection{Method \code{get_geboortes_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_geboortes_sinds(startdatum)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_huwelijken_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-get_huwelijken_sinds}{}}}
+\subsection{Method \code{get_huwelijken_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_huwelijken_sinds(startdatum)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_scheidingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-get_scheidingen_sinds}{}}}
+\subsection{Method \code{get_scheidingen_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_scheidingen_sinds(startdatum)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_overlijdens"></a>}}
+\if{latex}{\out{\hypertarget{method-get_overlijdens}{}}}
+\subsection{Method \code{get_overlijdens()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens(startdatum)}\if{html}{\out{</div>}}
 }
 
 }

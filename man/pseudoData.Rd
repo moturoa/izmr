@@ -28,7 +28,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
 \item \href{#method-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
 \item \href{#method-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
-\item \href{#method-get_overlijdens}{\code{pseudoData$get_overlijdens()}}
+\item \href{#method-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
 \item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
 \item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
@@ -222,11 +222,11 @@ R6 class for connection to anonymized database.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_overlijdens"></a>}}
-\if{latex}{\out{\hypertarget{method-get_overlijdens}{}}}
-\subsection{Method \code{get_overlijdens()}}{
+\if{html}{\out{<a id="method-get_overlijdens_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-get_overlijdens_sinds}{}}}
+\subsection{Method \code{get_overlijdens_sinds()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens(startdatum)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens_sinds(startdatum)}\if{html}{\out{</div>}}
 }
 
 }

@@ -267,7 +267,7 @@ pseudoData <- R6::R6Class(
     
     get_geboortes_sinds = function(startdatum){
       
-      self$get_sinds_char_column(startdatum, "bzskinq00", "kndgeboortedatum")
+      self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
 
     },
     
@@ -279,6 +279,7 @@ pseudoData <- R6::R6Class(
     
     get_scheidingen_sinds = function(startdatum){
       
+      #!! Data gaat maar tot 2017! Waarom??
       self$get_sinds_char_column(startdatum, "bzsc55q00", "huwhstdatumontbindinghuwelijkpartnerschap")
       
     },
@@ -514,7 +515,9 @@ pseudoData <- R6::R6Class(
       
     })
     
-    f_out <- callModule(restCallModule, "persondep", pseudo_ids = pseudo_ids, what = "lookup")
+    f_out <- callModule(restCallModule, 
+                        uuid::UUIDgenerate(), 
+                        pseudo_ids = pseudo_ids, what = "lookup")
     
     reactive({
       

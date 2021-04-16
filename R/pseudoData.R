@@ -285,7 +285,7 @@ pseudoData <- R6::R6Class(
     
     get_overlijdens_sinds = function(startdatum){
       
-      self$get_sinds_char_column(startdatum, "bzsc56q00", "ovlhstdatumoverlijden")
+      self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
       
     },
     

@@ -2,6 +2,8 @@
 
 export(Collection)
 export(clickable_link)
+export(format_adres_tooltip)
+export(format_naam_tooltip)
 export(get_adres_depseudo)
 export(izmSearchModule)
 export(izmSearchUI)

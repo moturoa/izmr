@@ -578,8 +578,8 @@ pseudoData <- R6::R6Class(
           geboortedatum = as.Date(geboortedatum),
           begindatum = as.Date(begindatum),
           einddatum = as.Date(einddatum),
-          naam_tooltip = format_naam(naam, overleden),
-          adres_tooltip = format_adres(
+          naam_tooltip = format_naam_tooltip(naam, overleden),
+          adres_tooltip = format_adres_tooltip(
             vwsdatuminschrijving,
             vwsgemeentevaninschrijvingomschrijving,
             straatnaam,

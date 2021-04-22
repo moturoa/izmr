@@ -47,8 +47,7 @@ parse_depseudo_result <- function(res) {
   # evt. aan te passen, te checken, of te configureren
   column_names <- c("key", "value", "pseudo_value")
   
-  # 
-  if(res[1] != "POSTKOD"){
+  if(!is.null(res) && res[1] != "POSTKOD"){
     column_names <- c("value", "pseudo_value")
   }
   

@@ -553,7 +553,9 @@ pseudoData <- R6::R6Class(
       fam() %>% pull(pseudo_bsn)
     })
     
-    f_out <- callModule(restCallModule, "fam", pseudo_ids = fam_id, what = "lookup")
+    f_out <- callModule(restCallModule, 
+                        uuid::UUIDgenerate(), 
+                        pseudo_ids = fam_id, what = "lookup")
     
     reactive({
       
@@ -596,7 +598,8 @@ pseudoData <- R6::R6Class(
     # Use /dev endpoint to search an address.
     get_personen_adres_depseudo = function(adres = reactive(NULL)){
       
-      callModule(restAddressCallModule, "adressearch", adres = adres)
+      callModule(restAddressCallModule, 
+                 uuid::UUIDgenerate(), adres = adres)
       
     },
   
@@ -622,7 +625,9 @@ pseudoData <- R6::R6Class(
       })
       
       # calling REST service
-      f_out <- callModule(restCallModule, "verh", pseudo_ids = depseu, what = "depseudo")
+      f_out <- callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = depseu, what = "depseudo")
       
       # merge depseudo with pseudo!
       reactive({ 
@@ -647,7 +652,9 @@ pseudoData <- R6::R6Class(
       adres_data() %>% pull(pseudo_bsn)
     })
     
-    rest_out <- callModule(restCallModule, "adres", pseudo_ids = adres_id, what = "lookup")
+    rest_out <- callModule(restCallModule, 
+                         uuid::UUIDgenerate(), 
+                         pseudo_ids = adres_id, what = "lookup")
     
     
     reactive({
@@ -683,7 +690,6 @@ pseudoData <- R6::R6Class(
     as.data.frame(data.table::rbindlist(returnableList, idcol = TRUE, fill=TRUE)) %>% arrange(desc(begindatum))
     
   }
-  
   
   
   ), 

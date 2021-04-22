@@ -10,7 +10,8 @@
 #' @export
 restCallModule <- function(input, output, session, 
                            what = c("depseudo","lookup", "dev"),  # endpoint
-                           pseudo_ids = reactive(NULL)){
+                           pseudo_ids = reactive(NULL),
+                           parse_result = TRUE){
   
   what <- match.arg(what)
   
@@ -29,11 +30,16 @@ restCallModule <- function(input, output, session,
   
   reactive({
     
-    if(what == "depseudo"){
-      parse_depseudo_result(input$depseudo_result)  
-    } else if (what == "lookup"){
-      parse_lookup_result(input$depseudo_result)
+    if(parse_result){
+      if(what == "depseudo"){
+        parse_depseudo_result(input$depseudo_result)  
+      } else if (what == "lookup"){
+        parse_lookup_result(input$depseudo_result)
+      }  
+    } else {
+      return(input$depseudo_result)
     }
+    
     
   })
     

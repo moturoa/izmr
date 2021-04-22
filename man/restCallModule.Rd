@@ -10,7 +10,8 @@ restCallModule(
   output,
   session,
   what = c("depseudo", "lookup", "dev"),
-  pseudo_ids = reactive(NULL)
+  pseudo_ids = reactive(NULL),
+  parse_result = TRUE
 )
 
 restAddressCallModule(input, output, session, adres = reactive(NULL))

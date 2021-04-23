@@ -47,7 +47,12 @@ parse_depseudo_result <- function(res) {
   # evt. aan te passen, te checken, of te configureren
   column_names <- c("key", "value", "pseudo_value")
   
-  if(!is.null(res) && res[1] != "POSTKOD"){
+  # Dit is tijdelijk - voor backwards comp.
+  keys <-  c("CL_BSN","Adres","Achternaam","Telefoonnummer","E-mailadres",
+             "POSTKOD","CL_A_NR","HUISNUMMER","HUISLETTER","HUISNR_TOEV",
+             "ADRES","STRAATNAAM","NAAM","VOORVOEGSEL","GESLACHTSNAAM")
+  
+  if(!is.null(res) && !res[1] %in% keys){
     column_names <- c("value", "pseudo_value")
   }
   

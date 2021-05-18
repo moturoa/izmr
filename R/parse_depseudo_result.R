@@ -52,6 +52,7 @@ parse_depseudo_result <- function(res) {
              "POSTKOD","CL_A_NR","HUISNUMMER","HUISLETTER","HUISNR_TOEV",
              "ADRES","STRAATNAAM","NAAM","VOORVOEGSEL","GESLACHTSNAAM")
   
+  # oude rest api geeft de key kolom niet terug
   if(!is.null(res) && !res[1] %in% keys){
     column_names <- c("value", "pseudo_value")
   }

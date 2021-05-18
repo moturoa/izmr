@@ -140,6 +140,19 @@ pseudoData <- R6::R6Class(
       out
     },
     
+    # Find (pseudo) A-nummer from a (pseudo) BSN
+    anummer_from_bsn = function(pseudo_id){
+      
+      pseudo_id <- pseudo_id[pseudo_id != "" & !is.na(pseudo_id)]
+      
+      bsn_string <- private$to_sql_string(pseudo_id)
+      self$query(glue("select prsanummer from bzsprsq00 where prsburgerservicenummer IN {bsn_string}")) %>%
+        pull(prsanummer)
+      
+    },
+    
+    
+    
     set_relation = function(data, relation){
       
       data$relation <- as.character(relation)

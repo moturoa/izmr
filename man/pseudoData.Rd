@@ -17,6 +17,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-listTables}{\code{pseudoData$listTables()}}
 \item \href{#method-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-get_person_brp}{\code{pseudoData$get_person_brp()}}
+\item \href{#method-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
 \item \href{#method-set_relation}{\code{pseudoData$set_relation()}}
 \item \href{#method-set_parent_relation}{\code{pseudoData$set_parent_relation()}}
 \item \href{#method-set_kind_relation}{\code{pseudoData$set_kind_relation()}}
@@ -119,6 +120,15 @@ R6 class for connection to anonymized database.
   what = c("bsn", "anr", "adres"),
   adres = NULL
 )}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-anummer_from_bsn"></a>}}
+\if{latex}{\out{\hypertarget{method-anummer_from_bsn}{}}}
+\subsection{Method \code{anummer_from_bsn()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$anummer_from_bsn(pseudo_id)}\if{html}{\out{</div>}}
 }
 
 }

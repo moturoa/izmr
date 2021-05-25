@@ -8,13 +8,23 @@ R6 class for connection to anonymized database.
 
 R6 class for connection to anonymized database.
 }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{con}}{Database connection object}
+
+\item{\code{pool}}{Logical, whether the connection is pool(ed) or not.}
+
+\item{\code{schema}}{Database schema in use.}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{pseudoData$new()}}
 \item \href{#method-close}{\code{pseudoData$close()}}
 \item \href{#method-query}{\code{pseudoData$query()}}
-\item \href{#method-listTables}{\code{pseudoData$listTables()}}
 \item \href{#method-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-get_person_brp}{\code{pseudoData$get_person_brp()}}
 \item \href{#method-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
@@ -38,6 +48,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
+\item \href{#method-rest_lookup}{\code{pseudoData$rest_lookup()}}
 \item \href{#method-table_depseudo}{\code{pseudoData$table_depseudo()}}
 \item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-get_personen_adres_depseudo}{\code{pseudoData$get_personen_adres_depseudo()}}
@@ -51,6 +62,7 @@ R6 class for connection to anonymized database.
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new pseudoData (IZM) object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$new(
   config_file = getOption("shintobag_conf", "conf/config.yml"),
@@ -63,21 +75,25 @@ R6 class for connection to anonymized database.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{config_file}}{Not used at the moment (data in SQLite).}
+\item{\code{config_file}}{Location of the config file with database passwords.}
 
-\item{\code{schema}}{Not used at the moment.}
+\item{\code{schema}}{Schema of the DB where data is stored.}
 
-\item{\code{filename}}{Full path to the SQLite database.}
+\item{\code{filename}}{If SQLite (so far, the default), path to the SQLite database file.}
 
 \item{\code{pool}}{If TRUE, uses pool to connect.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new pseudoData object
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-close"></a>}}
 \if{latex}{\out{\hypertarget{method-close}{}}}
 \subsection{Method \code{close()}}{
+Close the database connection
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$close()}\if{html}{\out{</div>}}
 }
@@ -87,33 +103,43 @@ R6 class for connection to anonymized database.
 \if{html}{\out{<a id="method-query"></a>}}
 \if{latex}{\out{\hypertarget{method-query}{}}}
 \subsection{Method \code{query()}}{
+Perform dbGetQuery on the DB connection
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$query(txt, glue = TRUE)}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-listTables"></a>}}
-\if{latex}{\out{\hypertarget{method-listTables}{}}}
-\subsection{Method \code{listTables()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$listTables()}\if{html}{\out{</div>}}
-}
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{txt}}{The SQL query}
 
+\item{\code{glue}}{Logical, if TRUE glues the txt param.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-replace_na_char"></a>}}
 \if{latex}{\out{\hypertarget{method-replace_na_char}{}}}
 \subsection{Method \code{replace_na_char()}}{
+Replace all NAs in a dataframe with ""
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$replace_na_char(data)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{A dataframe (/tibble)}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_person_brp"></a>}}
 \if{latex}{\out{\hypertarget{method-get_person_brp}{}}}
 \subsection{Method \code{get_person_brp()}}{
+Read personal data based on pseudo-id(s).
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_person_brp(
   pseudo_id = NULL,
@@ -122,78 +148,214 @@ R6 class for connection to anonymized database.
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_id}}{Vector of pseudo-ids.}
+
+\item{\code{what}}{The pseudo-id is either a (pseudo) BSN, A-nummer, or adres.}
+
+\item{\code{adres}}{If what="adres", provide the address as a list with components vblpostcode, etc.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+Reads pseudo data from bzsprsq00.
+}
+
+\subsection{Returns}{
+A dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-anummer_from_bsn"></a>}}
 \if{latex}{\out{\hypertarget{method-anummer_from_bsn}{}}}
 \subsection{Method \code{anummer_from_bsn()}}{
+Find (pseudo) A-nummer from a (pseudo) BSN
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$anummer_from_bsn(pseudo_id)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_id}}{Vector of pseudo-ids.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A vector
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-set_relation"></a>}}
 \if{latex}{\out{\hypertarget{method-set_relation}{}}}
 \subsection{Method \code{set_relation()}}{
+Set relation column in a dataframe
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$set_relation(data, relation)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{A dataframe}
+
+\item{\code{relation}}{The relation to be set}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-set_parent_relation"></a>}}
 \if{latex}{\out{\hypertarget{method-set_parent_relation}{}}}
 \subsection{Method \code{set_parent_relation()}}{
+Write parent relation to dataframe
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$set_parent_relation(data)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{Dataframe}}{with at least 'geslacht' column}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+If Geslacht = "M", set relation = "vader", otherwise "moeder"
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-set_kind_relation"></a>}}
 \if{latex}{\out{\hypertarget{method-set_kind_relation}{}}}
 \subsection{Method \code{set_kind_relation()}}{
+Write child relation to dataframe
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$set_kind_relation(data)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{Dataframe}}{with at least 'geslacht' column}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+If Geslacht = "M", set relation = "zoon", otherwise "dochter"
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_huwelijk"></a>}}
 \if{latex}{\out{\hypertarget{method-get_huwelijk}{}}}
 \subsection{Method \code{get_huwelijk()}}{
+Read huwelijk data
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_huwelijk(pseudo_id, what = "bsn")}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_id}}{Vector of pseudo-ids (BSN)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+Read from bzshuwq00 table, based on provided pseudo-ids.
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_kinderen"></a>}}
 \if{latex}{\out{\hypertarget{method-get_kinderen}{}}}
 \subsection{Method \code{get_kinderen()}}{
+Read children data
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_kinderen(pseudo_id, what = "bsn")}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_id}}{Vector of pseudo-ids (BSN)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+Read from bzskinq00 table, based on provided pseudo-ids.
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_family"></a>}}
 \if{latex}{\out{\hypertarget{method-get_family}{}}}
 \subsection{Method \code{get_family()}}{
+Read (pseudo) family data for provided pseudo-ids.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family(pseudo_id, what = c("bsn", "anr"))}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_id}}{A single pseudo-id}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+Read BRP data for provided pseudo-id,
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_sinds_char_column"></a>}}
 \if{latex}{\out{\hypertarget{method-get_sinds_char_column}{}}}
 \subsection{Method \code{get_sinds_char_column()}}{
+Filter a table based on 'after this date'
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_sinds_char_column(startdatum, table, column)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{startdatum}}{Date after (and including), must be Date class.}
+
+\item{\code{table}}{Name of table to filter}
+
+\item{\code{column}}{Name of column with date}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Details}{
+SQLite does not have a DATE class, so we need this special method.
+}
+
+\subsection{Returns}{
+Dataframe
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_adreswijzigingen_sinds"></a>}}
@@ -244,10 +406,24 @@ R6 class for connection to anonymized database.
 \if{html}{\out{<a id="method-get_all_bronnen"></a>}}
 \if{latex}{\out{\hypertarget{method-get_all_bronnen}{}}}
 \subsection{Method \code{get_all_bronnen()}}{
+Retrieve all 'bronnen' for a person based on pseudo-id
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_all_bronnen(pseudo_bsn)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_bsn}}{A reactive vector with pseudo-ids (BSN)}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A reactive dataframe
+Only perform the lookup method
+Returns a reactive
+Depseudo a table, merge with original data, format adres
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_suite"></a>}}
@@ -309,6 +485,15 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{get_brp_verh_hst()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_brp_verh_hst(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-rest_lookup"></a>}}
+\if{latex}{\out{\hypertarget{method-rest_lookup}{}}}
+\subsection{Method \code{rest_lookup()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$rest_lookup(pseudo_ids)}\if{html}{\out{</div>}}
 }
 
 }

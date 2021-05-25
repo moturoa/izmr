@@ -8,11 +8,20 @@ pseudoData <- R6::R6Class(
   
   public = list(
     
+    #' @field con Database connection object
     con = NULL,  
+    
+    #' @field pool Logical, whether the connection is pool(ed) or not.
     pool = NULL,
+    
+    #' @field schema Database schema in use.
     schema = '',
     
-    
+    #' @description Create a new pseudoData (IZM) object
+    #' @param config_file Location of the config file with database passwords.
+    #' @param schema Schema of the DB where data is stored.
+    #' @param filename If SQLite (so far, the default), path to the SQLite database file.
+    #' @return A new pseudoData object
     initialize = function(config_file = getOption("shintobag_conf", "conf/config.yml"), 
                           schema = "", 
                           filename = NULL,
@@ -35,6 +44,7 @@ pseudoData <- R6::R6Class(
     
     #----- Algemene methodes ------
     
+    #' @description Close the database connection
     close = function() { 
       
       if(self$pool){
@@ -45,6 +55,9 @@ pseudoData <- R6::R6Class(
       
     },
     
+    #' @description Perform dbGetQuery on the DB connection
+    #' @param txt The SQL query
+    #' @param glue Logical, if TRUE glues the txt param.
     query = function(txt, glue = TRUE){
       
       if(glue)txt <- glue::glue(txt)
@@ -57,25 +70,25 @@ pseudoData <- R6::R6Class(
       
     },
     
-    listTables = function(){
-      dbListTables(self$con)
-    },
-    
     
     
     #----- IZM specifieke methodes -----
     
-    
+    #' @description Replace all NAs in a dataframe with ""
+    #' @param data A dataframe (/tibble)
     replace_na_char = function(data){
       data %>% mutate_if(is.character, list(~na_if(., "")))
     },
     
     
-    
     #------ Family constructors -------
     
-    # 1 functie om persoon/personen op te halen op basis van bsn, anummer of adres.
-    # haalt alle nodige data uit bzsprsq00.
+    #' @description Read personal data based on pseudo-id(s).
+    #' @details Reads pseudo data from bzsprsq00.
+    #' @param pseudo_id Vector of pseudo-ids.
+    #' @param what The pseudo-id is either a (pseudo) BSN, A-nummer, or adres.
+    #' @param adres If what="adres", provide the address as a list with components vblpostcode, etc.
+    #' @return A dataframe
     get_person_brp = function(pseudo_id = NULL, what = c("bsn", "anr", "adres"), adres = NULL){
       
       # Is the pseudo_id a BSN or an ANR?
@@ -87,7 +100,7 @@ pseudoData <- R6::R6Class(
                    "prsgeslachtsaanduidingcode",  # as geslacht, 
                    "ovldatumoverlijden", #as overleden, 
                    "prsanummer", #as anr, 
-                   "ou1anummer", #as  anrouder1, 
+                   "ou1anummer", #as anrouder1, 
                    "ou2anummer", #as anrouder2, 
                    "prsburgerservicenummer", #as pseudo_bsn, 
                    "vblpostcode", 
@@ -140,7 +153,9 @@ pseudoData <- R6::R6Class(
       out
     },
     
-    # Find (pseudo) A-nummer from a (pseudo) BSN
+    #' @description  Find (pseudo) A-nummer from a (pseudo) BSN
+    #' @param pseudo_id Vector of pseudo-ids.
+    #' @return A vector
     anummer_from_bsn = function(pseudo_id){
       
       pseudo_id <- pseudo_id[pseudo_id != "" & !is.na(pseudo_id)]
@@ -152,7 +167,10 @@ pseudoData <- R6::R6Class(
     },
     
     
-    
+    #' @description Set relation column in a dataframe
+    #' @param data A dataframe
+    #' @param relation The relation to be set
+    #' @return Dataframe
     set_relation = function(data, relation){
       
       data$relation <- as.character(relation)
@@ -160,6 +178,10 @@ pseudoData <- R6::R6Class(
       
     },
     
+    #' @description Write parent relation to dataframe
+    #' @details If Geslacht = "M", set relation = "vader", otherwise "moeder"
+    #' @param Dataframe with at least 'geslacht' column
+    #' @return Dataframe
     set_parent_relation = function(data){
       
       relation <- ifelse(data$geslacht == "M", "vader", "moeder")
@@ -167,11 +189,19 @@ pseudoData <- R6::R6Class(
       self$set_relation(data, relation)
     },
     
+    #' @description Write child relation to dataframe
+    #' @details If Geslacht = "M", set relation = "zoon", otherwise "dochter"
+    #' @param Dataframe with at least 'geslacht' column
+    #' @return Dataframe
     set_kind_relation = function(data){
       relation <- ifelse(data$geslacht == 'M', 'zoon', 'dochter')
       self$set_relation(data, relation)
     },
     
+    #' @description Read huwelijk data
+    #' @details Read from bzshuwq00 table, based on provided pseudo-ids.
+    #' @param pseudo_id Vector of pseudo-ids (BSN)
+    #' @return Dataframe
     get_huwelijk = function(pseudo_id, what = "bsn"){
       
       # mag hier alleen bsn zijn!
@@ -204,7 +234,10 @@ pseudoData <- R6::R6Class(
     },
     
 
-    
+    #' @description Read children data
+    #' @details Read from bzskinq00 table, based on provided pseudo-ids.
+    #' @param pseudo_id Vector of pseudo-ids (BSN)
+    #' @return Dataframe
     get_kinderen = function(pseudo_id, what = "bsn"){
       
       # mag hier alleen bsn zijn!
@@ -223,11 +256,16 @@ pseudoData <- R6::R6Class(
       
     },
     
-    
+    #' @description Read (pseudo) family data for provided pseudo-ids.
+    #' @details Read BRP data for provided pseudo-id, 
+    #' @param pseudo_id A single pseudo-id
+    #' @return Dataframe
     get_family = function(pseudo_id, what = c("bsn", "anr")){
       
         what <- match.arg(what)
       
+        stopifnot(length(pseudo_id) == 1)
+        
         poi <- self$get_person_brp(pseudo_id, what = what) %>%
           self$set_relation("persoon_poi")
       
@@ -255,8 +293,12 @@ pseudoData <- R6::R6Class(
         
     },
     
-    # SQL heeft geen DATE kolom, dus dit is nodig voor juiste datum filtering.
-    
+    #' @description Filter a table based on 'after this date'
+    #' @details SQLite does not have a DATE class, so we need this special method.
+    #' @param startdatum Date after (and including), must be Date class.
+    #' @param table Name of table to filter
+    #' @param column Name of column with date
+    #' @return Dataframe
     get_sinds_char_column = function(startdatum, table, column){
   
       dt <- format(startdatum, "%Y-%m-%d")
@@ -268,8 +310,6 @@ pseudoData <- R6::R6Class(
       
       
     },
-    
-    
     
     
     get_adreswijzigingen_sinds = function(startdatum){
@@ -306,6 +346,10 @@ pseudoData <- R6::R6Class(
 
     
     #------ Bron constructor -----
+    
+    #' @description Retrieve all 'bronnen' for a person based on pseudo-id
+    #' @param pseudo_bsn A reactive vector with pseudo-ids (BSN)
+    #' @return A reactive dataframe
     get_all_bronnen = function(pseudo_bsn) {
       
       # Reactive met de-pseudo gegevens.
@@ -322,7 +366,7 @@ pseudoData <- R6::R6Class(
         carel <- self$get_carel(pseudo_bsn()) 
         allegro <- self$get_allegro(pseudo_bsn()) 
         openwave <- self$get_openwave(pseudo_bsn()) 
-        
+      
         bind_rows(list(
           suite,
           menscentraal, 
@@ -519,6 +563,19 @@ pseudoData <- R6::R6Class(
     
     
   #------ Depseudonimiseren -----
+
+  #' Only perform the lookup method
+  #' Returns a reactive
+  rest_lookup = function(pseudo_ids){
+
+    callModule(restCallModule, 
+                        uuid::UUIDgenerate(), 
+                        pseudo_ids = pseudo_ids, what = "lookup")
+
+  },
+
+
+  #' Depseudo a table, merge with original data, format adres
   table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
     
     pseudo_ids <- reactive({
@@ -645,10 +702,10 @@ pseudoData <- R6::R6Class(
       # merge depseudo with pseudo!
       reactive({ 
         req(verh())
-        req(nrow(f_out()) > 0)
+        #req(nrow(f_out()) > 0)
         replaceAll(verh(), f_out()) 
-        
       }) 
+      
     },
   
   get_adres_depseudo = function(adres){
@@ -727,11 +784,17 @@ pseudoData <- R6::R6Class(
 
 # depseudonimiseer adres gegevens, postcode voor bronnen
 replaceAll <- function(df, encoded){
-  df_orig <- copy(df)
+  
+  df_orig <- df
+  
+  if(nrow(encoded) == 0){
+    return(df_orig)
+  }
+  
   out <- tryCatch(
     { 
       # create named list
-      lookup = setNames(as.character(encoded$value), encoded$pseudo_value)
+      lookup <- setNames(as.character(encoded$value), encoded$pseudo_value)
       
       # replace specific values from named list
       df <- transform(df, vblhstadresopgemaakt=ifelse(vblhstadresopgemaakt %in% names(lookup), str_replace(str_replace_all(lookup[vblhstadresopgemaakt], "(?!^)(?=[A-Z])", " "), "(?=\\d)", " "), vblhstadresopgemaakt),
@@ -756,8 +819,7 @@ replaceAll <- function(df, encoded){
       return(df_orig)
     })
   return(out)
-  #df <- transform(df, vblhstadresopgemaakt= lookup[vblhstadresopgemaakt] , stringsAsFactors=FALSE)
-  
+
 }
     
     

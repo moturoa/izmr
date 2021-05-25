@@ -38,4 +38,5 @@ p <- .pdb$get_person_brp("y6EgMcHfG")
 
 .pdb$get_suite(h$prsburgerservicenummer[100])
 
+.pdb$get_suite(h$prsburgerservicenummer[100:101])
 

@@ -348,7 +348,7 @@ pseudoData <- R6::R6Class(
     #------ Bron constructor -----
     
     #' @description Retrieve all 'bronnen' for a person based on pseudo-id
-    #' @param pseudo_bsn A reactive vector with pseudo-ids (BSN)
+    #' @param pseudo_bsn A single pseudo-id (BSN) (not vectorized!)
     #' @return A reactive dataframe
     get_all_bronnen = function(pseudo_bsn) {
       
@@ -379,6 +379,38 @@ pseudoData <- R6::R6Class(
                 einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
  
       })
+      
+    },
+    
+    #' @description Retrieve only depseudo bronnen (no BRP) for multiple persons
+    #' @param pseudo_bsn Vector of pseudo-ids, *not* reactive
+    get_pseudo_bronnen = function(pseudo_bsn) {
+
+      person_function <- function(id){
+        
+        # Pseudo bronnen
+        suite <- self$get_suite(id) 
+        menscentraal <- self$get_menscentraal(id) 
+        carel <- self$get_carel(id) 
+        allegro <- self$get_allegro(id) 
+        openwave <- self$get_openwave(id) 
+        
+        bind_rows(list(
+          suite,
+          menscentraal, 
+          carel,
+          allegro,
+          openwave
+        )) %>% 
+          mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), 
+                 einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
+        
+      }
+
+      lapply(pseudo_bsn, person_function) %>%
+        setNames(pseudo_bsn)
+    
+      
     },
      
     

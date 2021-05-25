@@ -41,6 +41,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
 \item \href{#method-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
 \item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
+\item \href{#method-get_pseudo_bronnen}{\code{pseudoData$get_pseudo_bronnen()}}
 \item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
 \item \href{#method-get_openwave}{\code{pseudoData$get_openwave()}}
@@ -414,15 +415,32 @@ Retrieve all 'bronnen' for a person based on pseudo-id
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{pseudo_bsn}}{A reactive vector with pseudo-ids (BSN)}
+\item{\code{pseudo_bsn}}{A single pseudo-id (BSN) (not vectorized!)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
 A reactive dataframe
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_pseudo_bronnen"></a>}}
+\if{latex}{\out{\hypertarget{method-get_pseudo_bronnen}{}}}
+\subsection{Method \code{get_pseudo_bronnen()}}{
+Retrieve only depseudo bronnen (no BRP) for multiple persons
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_pseudo_bronnen(pseudo_bsn)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_bsn}}{Vector of pseudo-ids, *not* reactive
 Only perform the lookup method
 Returns a reactive
-Depseudo a table, merge with original data, format adres
+Depseudo a table, merge with original data, format adres}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

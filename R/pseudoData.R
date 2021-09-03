@@ -103,11 +103,16 @@ pseudoData <- R6::R6Class(
                    "ou1anummer", #as anrouder1, 
                    "ou2anummer", #as anrouder2, 
                    "prsburgerservicenummer", #as pseudo_bsn, 
+                   "prsgeboortelandcode",
+                   "prsgeboortelandomschrijving",
+                   "prsburgerlijkestaat",
                    "vblpostcode", 
                    "vblstraatnaam", 
                    "vblhuisnummer", 
                    "vblhuisletter", 
-                   "vblhuisnummertoevoeging")
+                   "vblhuisnummertoevoeging",
+                   "vblwoonplaatsnaam")
+                   
       sel_sql <- paste(columns, collapse= ", ")
       
       
@@ -619,12 +624,10 @@ pseudoData <- R6::R6Class(
     
     f_out <- callModule(restCallModule, 
                         uuid::UUIDgenerate(), 
-                        pseudo_ids = pseudo_ids, what = "lookup")
+                        pseudo_ids = pseudo_ids, what = "lookup",
+                        parse_result = TRUE)
     
     reactive({
-      
-      req(data())
-      req(nrow(f_out()) > 0)
       
       j <- setNames("pseudo_bsn", pseudo_bsn_column)
       

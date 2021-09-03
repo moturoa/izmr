@@ -23,7 +23,7 @@ restAddressCallModule(input, output, session, adres = reactive(NULL))
 
 \item{session}{Shiny module, don't use.}
 
-\item{what}{Either 'depseudo', 'lookup'}
+\item{what}{Either 'depseudo', 'lookup', 'dev'}
 
 \item{pseudo_ids}{A reactive vector with pseudo BSNs to send to API.}
 }

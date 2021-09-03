@@ -4,7 +4,7 @@
 #' @param input Shiny module, don't use.
 #' @param output Shiny module, don't use.
 #' @param session Shiny module, don't use.
-#' @param what Either 'depseudo', 'lookup'
+#' @param what Either 'depseudo', 'lookup', 'dev'
 #' @param pseudo_ids A reactive vector with pseudo BSNs to send to API.
 #' @rdname restCallModule
 #' @export

@@ -10,11 +10,7 @@ get_search_path <- function(endpoint){
 
 empty_dataframe = function(nms){
   
-  data.frame(matrix(vector(), 0, length(nms),
+  data.frame(matrix(vector("character"), 0, length(nms),
                     dimnames=list(c(), nms)))
   
 }
-
-
-
-  

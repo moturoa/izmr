@@ -70,6 +70,22 @@ pseudoData <- R6::R6Class(
       
     },
     
+    read_table = function(table, lazy = FALSE){
+      
+      if(self$schema != ""){
+        out <- tbl(self$con, in_schema(self$schema, table))  
+      } else {
+        out <- tbl(self$con, table)
+      }
+      
+      
+      if(!lazy){
+        out <- collect(out)
+      }
+      
+      out
+      
+    },
     
     
     #----- IZM specifieke methodes -----
@@ -423,7 +439,8 @@ pseudoData <- R6::R6Class(
       
       if(is.null(pseudo_bsn))return(NULL)
       
-      q_suite <- glue("select 'Suite' as bron, * from suite where bsn = '{pseudo_bsn}';")
+      bsns <- private$to_sql_string(pseudo_bsn)
+      q_suite <- glue("select 'Suite' as bron, * from suite where bsn in {bsns};")
       suite <- self$query(q_suite)
       
       if(nrow(suite) > 0){
@@ -488,20 +505,7 @@ pseudoData <- R6::R6Class(
     },
     
     
-    get_menscentraal = function(pseudo_id){
-      
-      q_mens <- glue("select 'Mens Centraal' as bron, 'Groepnummer ' || groepnr as omschrijving, ",
-                    " zaaktype_id, begindatum	as begindatum, einddatum as einddatum, ",
-                    "status, groepnr from menscentraal where klant_bsn = '{pseudo_id}';") 
-      
-      self$query(q_mens) %>% 
-        mutate(bron = as.character(bron),
-               omschrijving = as.character(omschrijving), 
-               begindatum =  as_date(ymd_hms(begindatum)), 
-               einddatum =  as_date(ymd_hms(einddatum)))  %>%
-        arrange(desc(begindatum))
-      
-    },
+    
     
     get_openwave = function(pseudo_id, what='bsn_nummer'){
        
@@ -532,15 +536,50 @@ pseudoData <- R6::R6Class(
       
     },
     
+    
     get_allegro = function(pseudo_id){
-       
-      q_allegro <- glue("select 'Allegro' as bron, aanvraag_schulhulp as omschrijving, ",
-                        "naam_consulent, aanvraag_schulhulp as aanvraag_schuldhulp, ",
-                        "traject_schuld_hulp, start_datum as begindatum, ",
-                        "eind_datum as einddatum from allegro where bsn = '{pseudo_id}';") 
       
-      self$query(q_allegro) %>%
-        mutate(bron = as.character(bron),omschrijving = as.character(omschrijving), begindatum = dmy(begindatum), einddatum = dmy(einddatum))
+      self$read_table("allegro", lazy = TRUE) %>%
+        filter(bsn %in% !!pseudo_id) %>%
+        select(
+          omschrijving = aanvraag_schulhulp,
+          naam_consulent,
+          aanvraag_schuldhulp = aanvraag_schulhulp,
+          traject_schuld_hulp,
+          begindatum = start_datum,
+          einddatum = eind_datum,
+          pseudo_bsn = bsn
+        ) %>%
+        collect %>%
+        mutate(bron = "Allegro",
+               einddatum = as.Date(einddatum, format = "%d-%m-%Y"),
+               begindatum = as.Date(begindatum, format = "%d-%m-%Y")
+               ) %>%
+        relocate(bron)
+      
+    },
+    
+    
+    get_menscentraal = function(pseudo_id){
+      
+      self$read_table("menscentraal", lazy = TRUE) %>%
+        filter(klant_bsn %in% !!pseudo_id) %>%
+        select(
+          omschrijving = groepnr,
+          zaaktype_id,
+          begindatum,
+          einddatum,
+          status,
+          pseudo_bsn = klant_bsn
+        ) %>%
+        collect %>%
+        mutate(bron = "Menscentraal",
+               begindatum = as.Date(begindatum),
+               einddatum = as.Date(einddatum)
+               ) %>%
+        relocate(bron) %>%
+        arrange(desc(begindatum))
+      
     },
     
     

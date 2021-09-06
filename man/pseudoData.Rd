@@ -25,6 +25,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-new}{\code{pseudoData$new()}}
 \item \href{#method-close}{\code{pseudoData$close()}}
 \item \href{#method-query}{\code{pseudoData$query()}}
+\item \href{#method-read_table}{\code{pseudoData$read_table()}}
 \item \href{#method-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-get_person_brp}{\code{pseudoData$get_person_brp()}}
 \item \href{#method-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
@@ -43,10 +44,10 @@ R6 class for connection to anonymized database.
 \item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
 \item \href{#method-get_pseudo_bronnen}{\code{pseudoData$get_pseudo_bronnen()}}
 \item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
-\item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
 \item \href{#method-get_openwave}{\code{pseudoData$get_openwave()}}
 \item \href{#method-get_carel}{\code{pseudoData$get_carel()}}
 \item \href{#method-get_allegro}{\code{pseudoData$get_allegro()}}
+\item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
 \item \href{#method-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
 \item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
 \item \href{#method-rest_lookup}{\code{pseudoData$rest_lookup()}}
@@ -118,6 +119,15 @@ Perform dbGetQuery on the DB connection
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-read_table"></a>}}
+\if{latex}{\out{\hypertarget{method-read_table}{}}}
+\subsection{Method \code{read_table()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$read_table(table, lazy = FALSE)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-replace_na_char"></a>}}
@@ -453,15 +463,6 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_menscentraal"></a>}}
-\if{latex}{\out{\hypertarget{method-get_menscentraal}{}}}
-\subsection{Method \code{get_menscentraal()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal(pseudo_id)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_openwave"></a>}}
 \if{latex}{\out{\hypertarget{method-get_openwave}{}}}
 \subsection{Method \code{get_openwave()}}{
@@ -485,6 +486,15 @@ Depseudo a table, merge with original data, format adres}
 \subsection{Method \code{get_allegro()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_allegro(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_menscentraal"></a>}}
+\if{latex}{\out{\hypertarget{method-get_menscentraal}{}}}
+\subsection{Method \code{get_menscentraal()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal(pseudo_id)}\if{html}{\out{</div>}}
 }
 
 }

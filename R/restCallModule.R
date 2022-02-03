@@ -9,7 +9,7 @@
 #' @rdname restCallModule
 #' @export
 restCallModule <- function(input, output, session, 
-                           what = c("depseudo","lookup", "dev"),  # endpoint
+                           what = c("depseudo","lookup", "dev", "test"),  # endpoint
                            pseudo_ids = reactive(NULL),
                            parse_result = TRUE){
   

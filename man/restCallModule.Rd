@@ -9,7 +9,7 @@ restCallModule(
   input,
   output,
   session,
-  what = c("depseudo", "lookup", "dev"),
+  what = c("depseudo", "lookup", "dev", "test"),
   pseudo_ids = reactive(NULL),
   parse_result = TRUE
 )

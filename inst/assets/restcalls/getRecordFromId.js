@@ -10,7 +10,7 @@ Shiny.addCustomMessageHandler("getRecordFromId", function(params) {
  
   $.ajax({ 
       url: params.rest_url,
-      dataType: "jsonp",
+      dataType: "json",
           type: "get", 
       data: {   
           pseudo_ids: params.pseudo_ids
@@ -37,7 +37,7 @@ Shiny.addCustomMessageHandler("getRecordFromAdress",  function(params) {
  } else{
     $.ajax({ 
         url: params.rest_url,
-        dataType: "jsonp",
+        dataType: "json",
             type: "get", 
         data: {   
             postcode: params.postcode,

@@ -126,7 +126,7 @@ function fill_datatable(searchvalues,searchurl) {
             "ajax": { 
                 url: searchurl,  
                 jsonpCallback: "formatSearchResults",
-                dataType: "jsonp", 
+                dataType: "json", 
                 data: {   
                     rest_version: true, 
                     naam: searchvalues[0],

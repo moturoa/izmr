@@ -1,6 +1,6 @@
 
 
-parse_result <- function(res, column_names){
+parse_result <- function(res, column_names, func){
   
   n_columns <- length(column_names)
   empty_result <- empty_dataframe(column_names)
@@ -12,8 +12,7 @@ parse_result <- function(res, column_names){
   if("status" %in% names(res) && res$status == 404){
     flog.info("Error in REST Call - 404 !")
     return(empty_result)
-  }
-  
+  }  
   out <- tryCatch({
     
     dfr <- as.data.frame(t(matrix(res, ncol = length(res)/n_columns))) %>%
@@ -28,7 +27,7 @@ parse_result <- function(res, column_names){
   },
   error=function(cond) {  
     
-    cat(file=stderr(), glue('Error in parseResDepseudo: {paste(cond, sep = ",")}'), sep= '\n')  
+    cat(file=stderr(), glue('Error in {func}: {paste(cond, sep = ",")}'), sep= '\n')  
     return(empty_result)
   },
   warning=function(cond) {
@@ -55,9 +54,8 @@ parse_depseudo_result <- function(res) {
   # oude rest api geeft de key kolom niet terug
   if(!is.null(res) && !res[1] %in% keys){
     column_names <- c("value", "pseudo_value")
-  }
-  
-  parse_result(res, column_names)
+  } 
+  parse_result(res, column_names, func="deps")
   
 }
 
@@ -67,7 +65,7 @@ parse_lookup_result <- function(res) {
   column_names <- c("pseudo_bsn","bsn", "naam", "geboortedatum",  
                     "straatnaam", "huisnummer","huisletter","postcode")   #,"voornamen")
   
-  parse_result(res, column_names)
+  parse_result(res, column_names, func="lookup")
 }
 
 
@@ -78,7 +76,7 @@ parse_adres_result <- function(res) {
                     "geboortedatum","straatnaam","huisnummer",
                     "huisletter","postcode")
   
-  parse_result(res, column_names)
+  parse_result(res, column_names, func="adres")
   
 }
 

@@ -20,7 +20,7 @@ suppressPackageStartupMessages({
   
   #library(shinyfilterset)
   #library(shintodashboard)
-  library(shintoanalytics)
+  #library(shintoanalytics)
   library(shintobag)
   #library(shinypasswordinput)
   #library(shinyinbox)

@@ -10,11 +10,12 @@ Shiny.addCustomMessageHandler("getRecordFromId", function(params) {
  
   $.ajax({ 
       url: params.rest_url,
+      contentType: "application/json; charset=utf-8",
       dataType: "json",
-          type: "get", 
-      data: {   
+      type: "POST", 
+      data: JSON.stringify({   
           pseudo_ids: params.pseudo_ids
-      },
+      }),
       success: function (jsonResults) {  
         
         // NOTE: calling param.id will add namespace around label
@@ -37,13 +38,14 @@ Shiny.addCustomMessageHandler("getRecordFromAdress",  function(params) {
  } else{
     $.ajax({ 
         url: params.rest_url,
-        dataType: "json",
-            type: "get", 
-        data: {   
+        contentType: "application/json; charset=utf-8",
+      dataType: "json",
+        type: "POST", 
+        data:  JSON.stringify({   
             postcode: params.postcode,
             huisnummer: params.huisnummer,
             huisletter: params.huisletter
-        },
+        }),
         success: function (jsonResults) {  
          
           console.log(jsonResults.data)

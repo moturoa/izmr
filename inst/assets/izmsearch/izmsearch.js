@@ -103,7 +103,9 @@ function autosearch2(searchurl) {
         
         
 function fill_datatable(searchvalues,searchurl) {
-            
+  
+  
+ 
       //alert(zoeken_achternaam);
             
       if(searchvalues){
@@ -124,10 +126,10 @@ function fill_datatable(searchvalues,searchurl) {
               { "title": "Postcode", "targets" : 6 }
             ],
             "ajax": { 
-                url: searchurl,  
-                jsonpCallback: "formatSearchResults",
-                dataType: "json", 
-                data: {   
+                url: searchurl,    
+                dataType: "json",
+                type: "POST", 
+                data: {     
                     rest_version: true, 
                     naam: searchvalues[0],
                     from_id: searchvalues[1],
@@ -135,10 +137,21 @@ function fill_datatable(searchvalues,searchurl) {
                     straatnaam: searchvalues[3],
                     huisnummer: searchvalues[4],
                     geboortedatum: searchvalues[5]
-                }
-            }
+                },
+                // cannnot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax
+                dataFilter: function(reps) { 
+                    return formatSearchResults(reps);
+                  },
+                  error:function(err){
+                        console.log(err);
+                  }
+                
+                
+                
+             
+      } 
         }); 
-        
+        console.log(dataTable)
         return(dataTable) 
         
       }  
@@ -162,27 +175,27 @@ setClickedId = function(id, shinyid){
                         
 
 function formatSearchResults(data) {
-  
-            var len = data.data.length;
-            
+ 
+            var len = data.recordsFiltered;
+ 
             Shiny.setInputValue("izm-izmnresults", len);
             
             // Maak link naar casus
             for (i = 0; i < len; i += 1) {  
                 
                 // make bsn clickable
-                data.data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
-                                     data.data[i][0] + "', 'izm-izmclickedid')\">" + 
-                                     data.data[i][1] + "</a>" 
+                data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
+                                     data[i][0] + "', 'izm-izmclickedid')\">" + 
+                                     data[i][1] + "</a>" 
                 
                 // format birthdate
-                date = data.data[i][3]
-                data.data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
+                date = data[i][3]
+                data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
                 
                 // abbreviate
-                data.data[i] = data.data[i].slice(1,8);
+                data[i] = data[i].slice(1,8);
             }
-            
+            console.log(data)
             return (data);
         }
         

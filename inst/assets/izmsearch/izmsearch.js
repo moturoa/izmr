@@ -94,8 +94,7 @@ function autosearch2(searchurl) {
               
         
         //alert(searchvalues);
-              
-                $('#searchresults').DataTable().destroy();
+               
                 
                 fill_datatable(searchvalues, searchurl);
             
@@ -109,24 +108,10 @@ function fill_datatable(searchvalues,searchurl) {
       //alert(zoeken_achternaam);
             
       if(searchvalues){
-        var dataTable = $('#searchresults').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ordering": false, 
-            "searching": false,
-            "pageLength": 15,
-            "dom": 'rtip',
-            "columnDefs": [
-              { "title": "BSN", "targets" : 0 },
-              { "title": "Naam", "targets" : 1 },
-              { "title": "Geboortedatum", "targets" : 2 },
-              { "title": "Straat", "targets" : 3 },
-              { "title": "Huisnummer", "targets" : 4 },
-              { "title": "Huisletter", "targets" : 5 },
-              { "title": "Postcode", "targets" : 6 }
-            ],
-            "ajax": { 
-                url: searchurl,    
+        return($.ajax( { 
+                url: searchurl,  
+                // cannot use contentType because it invokes HTTP400
+                //, "contentType": "application/json; charset=utf-8"  
                 dataType: "json",
                 type: "POST", 
                 data: {     
@@ -138,10 +123,10 @@ function fill_datatable(searchvalues,searchurl) {
                     huisnummer: searchvalues[4],
                     geboortedatum: searchvalues[5]
                 },
-                // cannnot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax
-                dataFilter: function(reps) { 
-                    return formatSearchResults(reps);
-                  },
+                // cannot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax 
+                   success: function (res) { 
+                    justDataTable(formatSearchResults(res)); 
+                },
                   error:function(err){
                         console.log(err);
                   }
@@ -149,16 +134,31 @@ function fill_datatable(searchvalues,searchurl) {
                 
                 
              
-      } 
-        }); 
-        console.log(dataTable)
-        return(dataTable) 
-        
-      }  
+      }))  }
             
              
 }
 
+function justDataTable(data) {
+   
+   $('#searchresults').DataTable({ 
+     "processing": false,
+        "serverSide": false,
+        destroy: true,
+        paging: true,
+            pageLength: 15,
+            dom: 'rtip',
+        data:data.data,
+            columnDefs: [
+              { "title": "BSN", "targets" : 0 },
+              { "title": "Naam", "targets" : 1 },
+              { "title": "Geboortedatum", "targets" : 2 },
+              { "title": "Straat", "targets" : 3 },
+              { "title": "Huisnummer", "targets" : 4 },
+              { "title": "Huisletter", "targets" : 5 },
+              { "title": "Postcode", "targets" : 6 }
+            ],
+})}
 
 
 setClickedId = function(id, shinyid){
@@ -174,28 +174,26 @@ setClickedId = function(id, shinyid){
 
                         
 
-function formatSearchResults(data) {
- 
+function formatSearchResults(data) { 
             var len = data.recordsFiltered;
  
             Shiny.setInputValue("izm-izmnresults", len);
-            
+              
             // Maak link naar casus
             for (i = 0; i < len; i += 1) {  
                 
                 // make bsn clickable
-                data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
-                                     data[i][0] + "', 'izm-izmclickedid')\">" + 
-                                     data[i][1] + "</a>" 
+                data.data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
+                                     data.data[i][0] + "', 'izm-izmclickedid')\">" + 
+                                     data.data[i][1] + "</a>" 
                 
                 // format birthdate
-                date = data[i][3]
-                data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
+                date = data.data[i][3]
+                data.data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
                 
                 // abbreviate
-                data[i] = data[i].slice(1,8);
-            }
-            console.log(data)
+                data.data[i] = data.data[i].slice(1,8);
+            } 
             return (data);
         }
         

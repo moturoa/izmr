@@ -269,6 +269,10 @@ pseudoData <- R6::R6Class(
       q_txt <- glue("select kndanummer from bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
       kids_poi_anr <- self$query(q_txt)
       
+      if(nrow(kids_poi_anr) == 0){
+        return(NULL)
+      }
+      
       out <- self$get_person_brp(kids_poi_anr$kndanummer, what = "anr")
       
       out <- self$set_kind_relation(out)

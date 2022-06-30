@@ -329,8 +329,7 @@ pseudoData <- R6::R6Class(
       dt <- format(startdatum, "%Y-%m-%d")
       
       dbGetQuery(self$con, 
-                 glue(
-                   "select * from {table} where DATE({column}) >= DATE('{dt}')")
+        glue("select * from {table} where DATE({column}) >= DATE('{dt}')")
       )
       
       
@@ -566,7 +565,7 @@ pseudoData <- R6::R6Class(
     
     get_menscentraal = function(pseudo_id){
       
-      self$read_table("menscentraal", lazy = TRUE) %>%
+      out <- self$read_table("menscentraal", lazy = TRUE) %>%
         filter(klant_bsn %in% !!pseudo_id) %>%
         select(
           omschrijving = groepnr,
@@ -576,13 +575,26 @@ pseudoData <- R6::R6Class(
           status,
           pseudo_bsn = klant_bsn
         ) %>%
-        collect %>%
-        mutate(bron = "Menscentraal",
+        collect 
+      
+      if(nrow(out) > 0){
+        out <- out %>% 
+          mutate(bron = "Menscentraal",
                begindatum = as.Date(begindatum),
                einddatum = as.Date(einddatum)
                ) %>%
         relocate(bron) %>%
         arrange(desc(begindatum))
+      } else {
+        out <- out %>%
+          mutate(bron = "Menscentraal",
+                      begindatum = as.Date(NA),
+                      einddatum = as.Date(NA)
+        ) %>%
+          relocate(bron)
+      }
+      
+      out
       
     },
     
@@ -726,8 +738,8 @@ pseudoData <- R6::R6Class(
           vwsdatuminschrijving = as.Date(vwsdatuminschrijving),
           overleden = as.Date(overleden),
           geboortedatum = as.Date(geboortedatum),
-          begindatum = as.Date(begindatum),
-          einddatum = as.Date(einddatum),
+          begindatum = as.Date(begindatum, "%Y%m%d"),
+          einddatum = as.Date(einddatum, "%Y%m%d"),
           naam_tooltip = format_naam_tooltip(naam, overleden),
           adres_tooltip = format_adres_tooltip(
             vwsdatuminschrijving,

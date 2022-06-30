@@ -110,6 +110,8 @@ pseudoData <- R6::R6Class(
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
 
+      pseudo_id[pseudo_id == ""] <- NA_character_
+      
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vwsdatuminschrijving", 
@@ -298,7 +300,6 @@ pseudoData <- R6::R6Class(
           self$set_parent_relation()
         parent2 <- self$get_person_brp(poi$anrouder2, what = "anr") %>%
           self$set_parent_relation()
-        
         
         huwelijk <- self$get_huwelijk(poi$pseudo_bsn) 
         

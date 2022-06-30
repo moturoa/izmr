@@ -177,7 +177,7 @@ function formatSearchResults(data) {
                 
                 // format birthdate
                 date = data.data[i][3]
-                data.data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
+                data.data[i][3] = date.slice(6,8)+ '-' + date.slice(4,6) + '-' + date.slice(0,4) 
                 
                 // abbreviate
                 data.data[i] = data.data[i].slice(1,8);

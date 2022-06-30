@@ -723,8 +723,6 @@ pseudoData <- R6::R6Class(
       req(fam())
       req(nrow(f_out()) > 0)
       
-      
-      
       out <- left_join(fam(), f_out(), 
                 by = "pseudo_bsn", 
                 suffix = c(".y", ""))

@@ -112,7 +112,7 @@ function fill_datatable(searchvalues,searchurl) {
             "serverSide": true,
             "ordering": false, 
             "searching": false,
-            "pageLength": 15,
+            "pageLength": 50,
             "dom": 'rtip',
             "columnDefs": [
               { "title": "BSN", "targets" : 0 },

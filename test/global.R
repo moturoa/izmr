@@ -25,7 +25,7 @@ library(safer)
 
 #library(shinyfilterset)
 #library(shintodashboard)
-library(shintoanalytics)
+#library(shintoanalytics)
 library(shintobag)
 #library(shinypasswordinput)
 #library(shinyinbox)
@@ -81,13 +81,13 @@ source("functionsDatatables.R")
 options(
   izm_rest_url = "http://127.0.0.1",  # of on-premise "https://izm2-rest.ad.ede.nl" 
   izm_search_timeout = 1000,          # throttle op de search API
-  pm_decrypt_secret = yaml::read_yaml("secret.yml")$secret  # voor pseudomaker decrypt.
+  pm_decrypt_secret = yaml::read_yaml("c:/repos/ede_izm_frontend/conf/secret.yml")$secret  # voor pseudomaker decrypt.
 )
 
 # Path (relative mag ook) naar SQLite met pseudo-data.
 # Komt uiteindelijk op postgres.
 .pdb <<- izmr::pseudoData$new(
-  filename = "C:/Users/MartijnHeijstek/Documents/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+  filename = "c:/repos/ede_izm_frontend/data/ede_izm_postgres_copy.sqlite"
 )
 
   

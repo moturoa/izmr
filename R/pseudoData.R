@@ -622,7 +622,8 @@ pseudoData <- R6::R6Class(
           brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_verh)
         }  
         if(!is.na(brp_persoon$ovldatumoverlijden)) { 
-          brp_ovl <- data.frame(omschrijving =  'Overleden', bron = 'Overleden', begindatum = brp_persoon$ovldatumoverlijden) 
+          brp_ovl <- data.frame(omschrijving =  'Overleden', bron = 'Overleden', 
+                                begindatum = brp_persoon$ovldatumoverlijden) 
           brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_ovl)
         }
         if(!is.na(brp_persoon$vwsgemeentevaninschrijvingomschrijving) | !is.na(brp_persoon$vwsdatuminschrijving)) {
@@ -634,7 +635,10 @@ pseudoData <- R6::R6Class(
           brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_geboren)
         }
         
-        brp_verh_hst <- brp_verh_hst %>% mutate(begindatum = ymd(begindatum)) %>% arrange(desc(begindatum)) 
+        
+        brp_verh_hst <- brp_verh_hst %>% 
+          mutate(begindatum = ymd(begindatum)) %>% 
+          arrange(desc(begindatum)) 
         #print(brp_verh_hst)
         brp_verh_hst
      

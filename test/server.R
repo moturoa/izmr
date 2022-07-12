@@ -21,10 +21,5 @@ server <- function(input, output, session) {
   callModule(casusModule, "casus_izm", clicked_id = clicked_id)
   
   
-  output$txt_out <- renderPrint({
-    out <- .pdb$get_family_depseudo(reactive(input$txt_test))
-    out()
-  })
-  
   
 } 

@@ -10,11 +10,21 @@ server <- function(input, output, session) {
   )
  
   observeEvent(izm_search()$clicked$nonce, {
+    
+    print(paste("ID Search:",clicked_id() ))
+    
     updateTabsetPanel(session, "main", selected = "casus")
   })
   
   # De clicked_id doorsturen naar andere modules in je applicatie, 
   # als een reactive.
   callModule(casusModule, "casus_izm", clicked_id = clicked_id)
+  
+  
+  output$txt_out <- renderPrint({
+    out <- .pdb$get_family_depseudo(reactive(input$txt_test))
+    out()
+  })
+  
   
 } 

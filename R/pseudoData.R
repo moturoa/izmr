@@ -109,6 +109,9 @@ pseudoData <- R6::R6Class(
       
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
+      
+      # missing IDs
+      pseudo_id[pseudo_id == ""] <- NA_character_
 
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
@@ -269,6 +272,8 @@ pseudoData <- R6::R6Class(
       q_txt <- glue("select kndanummer from bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
       kids_poi_anr <- self$query(q_txt)
       
+      if(nrow(kids_poi_anr) == 0)return(NULL)
+      
       out <- self$get_person_brp(kids_poi_anr$kndanummer, what = "anr")
       
       out <- self$set_kind_relation(out)
@@ -299,7 +304,6 @@ pseudoData <- R6::R6Class(
         huwelijk <- self$get_huwelijk(poi$pseudo_bsn) 
         
         kinderen <- self$get_kinderen(poi$pseudo_bsn)
-        
         
         return(bind_rows(
             list(
@@ -562,7 +566,7 @@ pseudoData <- R6::R6Class(
     
     get_menscentraal = function(pseudo_id){
       
-      self$read_table("menscentraal", lazy = TRUE) %>%
+      out <- self$read_table("menscentraal", lazy = TRUE) %>%
         filter(klant_bsn %in% !!pseudo_id) %>%
         select(
           omschrijving = groepnr,
@@ -572,13 +576,26 @@ pseudoData <- R6::R6Class(
           status,
           pseudo_bsn = klant_bsn
         ) %>%
-        collect %>%
-        mutate(bron = "Menscentraal",
-               begindatum = as.Date(begindatum),
-               einddatum = as.Date(einddatum)
-               ) %>%
-        relocate(bron) %>%
-        arrange(desc(begindatum))
+        collect 
+      
+      if(nrow(out) > 0){
+        out <- out %>% 
+          mutate(bron = "Menscentraal",
+                 begindatum = as.Date(begindatum),
+                 einddatum = as.Date(einddatum)
+          ) %>%
+          relocate(bron) %>%
+          arrange(desc(begindatum))
+      } else {
+        out <- out %>%
+          mutate(bron = "Menscentraal",
+                 begindatum = as.Date(NA),
+                 einddatum = as.Date(NA)
+          ) %>%
+          relocate(bron)
+      }
+      
+      out
       
     },
     
@@ -706,8 +723,6 @@ pseudoData <- R6::R6Class(
       req(fam())
       req(nrow(f_out()) > 0)
       
-      
-      
       out <- left_join(fam(), f_out(), 
                 by = "pseudo_bsn", 
                 suffix = c(".y", ""))
@@ -719,11 +734,11 @@ pseudoData <- R6::R6Class(
                                 huisletter,
                                 #huisnummertoevoeging,
                                 postcode),
-          vwsdatuminschrijving = as.Date(vwsdatuminschrijving),
-          overleden = as.Date(overleden),
-          geboortedatum = as.Date(geboortedatum),
-          begindatum = as.Date(begindatum),
-          einddatum = as.Date(einddatum),
+          vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
+          overleden = as.Date(overleden, "%y%m%d"),
+          geboortedatum = as.Date(geboortedatum, "%y%m%d"),
+          begindatum = as.Date(begindatum, "%y%m%d"),
+          einddatum = as.Date(einddatum, "%y%m%d"),
           naam_tooltip = format_naam_tooltip(naam, overleden),
           adres_tooltip = format_adres_tooltip(
             vwsdatuminschrijving,

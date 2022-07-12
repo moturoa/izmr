@@ -51,6 +51,13 @@ body <- dashboardBody(
                        tags$h4("Voorbeeld module"),
                        casusModuleUI("casus_izm")
                        
+              ),
+              tabPanel("test", value = "test",
+
+                        textInput("txt_test", "Pseudo ID", value = "TgOvrUKZC"),
+                       verbatimTextOutput("txt_out")
+
+
               )
               
   )

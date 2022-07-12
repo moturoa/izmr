@@ -130,7 +130,7 @@ function fill_datatable(searchvalues,searchurl) {
                 dataType: "json",
                 type: "POST", 
                 data: {     
-                    rest_version: true, 
+                    rest_version: false, 
                     naam: searchvalues[0],
                     from_id: searchvalues[1],
                     postcode: searchvalues[2],

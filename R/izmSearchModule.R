@@ -8,15 +8,36 @@
 #' @param reset_button_icon Icon name to apply to the reset button (default: "refresh")
 #' @export
 #' @rdname izmSearchModule
-izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_icon = "refresh"){
+izmSearchUI <- function(id, 
+                        reset_button_class = "btn-secondary", 
+                        reset_button_icon = "refresh",
+                        design = c("shinydashboard","softui")
+                        ){
   
+  design <- match.arg(design)
   ns <- NS(id)
   
   url <- get_search_path("dev")
   timeout <- getOption("izm_search_timeout", 1000)
   
+  pagefun <- if(design == "shinydashboard")shiny::fluidPage else softui::fluid_page
   
-  fluidPage(
+  reset_button <- if(design == "shinydashboard"){
+    shiny::actionButton(ns("btn_reset"), 
+                        "Reset", 
+                        icon = shiny::icon(reset_button_icon),
+                        class = reset_button_class,
+                        onclick = "resetform();")
+  } else {
+    softui::action_button(ns("btn_reset"), 
+                        "Reset", 
+                        status = "secondary",
+                        icon = softui::bsicon("arrow-clockwise"),
+                        onclick = "resetform();")
+  }
+  
+  
+  pagefun(
     
     tags$head(
       tags$script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
@@ -47,11 +68,7 @@ izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_i
     tags$div(style = "width: 100%; padding-bottom: 40px;",
       
           tags$div(style = "float: left;",   
-            shiny::actionButton(ns("btn_reset"), 
-                   "Reset", 
-                   icon = shiny::icon(reset_button_icon),
-                   class = reset_button_class,
-                   onclick = "resetform();")
+                   reset_button
           ),
           tags$div(style = "float: right;",
                 
@@ -84,6 +101,12 @@ izmSearchUI <- function(id, reset_button_class = "btn-secondary", reset_button_i
   )
   
 }
+
+
+
+
+
+
 
 
 

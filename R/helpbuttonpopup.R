@@ -11,7 +11,8 @@ helpModal <- function(...){
     footer = actionButton("xyz", "Sluiten", 
                           icon = icon("remove"), 
                           class= "btn-danger",
-                          `data-dismiss` = "modal")
+                          `data-dismiss` = "modal",
+                          `data-bs-dismiss` = "modal")
     
   )
   

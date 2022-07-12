@@ -28,7 +28,7 @@ izmSearchUI <- function(id,
                         icon = shiny::icon(reset_button_icon),
                         class = reset_button_class,
                         onclick = "resetform();")
-  } else {
+  } else if(design == "softui"){
     softui::action_button(ns("btn_reset"), 
                         "Reset", 
                         status = "secondary",

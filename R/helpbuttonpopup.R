@@ -12,7 +12,7 @@ helpModal <- function(...){
                           icon = icon("remove"), 
                           class= "btn-danger",
                           `data-dismiss` = "modal",
-                          `data-bs-dismiss` = "modal")
+                          `data-bs-dismiss` = "modal")  # BS >= 4
     
   )
   

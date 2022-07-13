@@ -161,8 +161,9 @@ function justDataTable(data) {
         "serverSide": false,
         destroy: true,
         paging: true,
-            pageLength: 15,
-            dom: 'rtip',
+        pageLength: 25,
+        dom: 'rtip',
+        
         data:data.data,
             columnDefs: [
               { "title": "BSN", "targets" : 0 },

@@ -40,11 +40,20 @@ izmSearchUI <- function(id,
   pagefun(
     
     tags$head(
-      tags$script(src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
+      tags$script(src = "https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"),
+      
+      # JS for BS5; gives clash with softui :(    
+      # tags$script(src = "https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"),
+      # tags$script(src = "https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js")
     ),
     
     includeCSS("https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css"),
     includeCSS("https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"),
+
+    # CSS for BS5; gives clash with softui :(    
+    # includeCSS("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css"),
+    # includeCSS("https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css"),
+    
     
     tags$form(name = "izmsearch",
               fluidRow(

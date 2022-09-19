@@ -1,13 +1,16 @@
 
 
-library(izmr)
+#library(izmr)
+devtools::load_all()
+
+# .pdb <- pseudoData$new(
+#   filename = "c:/repos/ede/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+# )
 
 .pdb <- pseudoData$new(
-  filename = "c:/repos/ede/izm_frontend/data/ede_izm_postgres_copy.sqlite"
+  config_file = "c:/repos/ede_izm_frontend/conf/config.yml",
+  schema = "pseudodata"
 )
-
-
-h <- .pdb$query("select * from bzsprsq00 limit 100")
 
 
 # zelfde persoon
@@ -26,17 +29,8 @@ h <- .pdb$query("select * from bzsprsq00 limit 100")
 # mensen op adres (inc. verhuisd/overleden!)
 p <- .pdb$get_person_brp("y6EgMcHfG")
 
-.pdb$get_person_brp(what = "adres", adres = list(
-  postcode = p$vblpostcode,
-  huisnummer = p$vblhuisnummer,
-  huisletter = p$vblhuisletter,
-  huisnummertoevoeging = p$vblhuisnummertoevoeging
-))
+.pdb$get_person_brp(what = "adres", adres = p)
 
 
 
-
-.pdb$get_suite(h$prsburgerservicenummer[100])
-
-.pdb$get_suite(h$prsburgerservicenummer[100:101])
 

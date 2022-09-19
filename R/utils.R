@@ -14,3 +14,6 @@ empty_dataframe = function(nms){
                     dimnames=list(c(), nms)))
   
 }
+
+`%notin%` <- Negate(`%in%`)
+

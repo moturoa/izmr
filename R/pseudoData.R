@@ -4,7 +4,7 @@
 #' @param filename Full path to the SQLite database.
 #' @param pool If TRUE, uses pool to connect.
 #' @export
-pseudoData <- R6::R6Class(
+pseudoData <- R6::R6Class(lock_objects = FALSE,
   
   public = list(
     
@@ -22,21 +22,35 @@ pseudoData <- R6::R6Class(
     #' @param schema Schema of the DB where data is stored.
     #' @param filename If SQLite (so far, the default), path to the SQLite database file.
     #' @return A new pseudoData object
-    initialize = function(config_file = getOption("shintobag_conf", "conf/config.yml"), 
+    initialize = function(config_file = NULL, 
                           schema = "", 
                           filename = NULL,
                           pool = FALSE){
+      
       self$schema <- schema
+      self$schema_sql <- if(self$schema == "")"" else paste0(self$schema, ".")
       
       self$pool <- pool
       
-      if(!pool){
-        self$con <- DBI::dbConnect(RSQLite::SQLite(),
+      # SQLite
+      if(!is.null(filename)){
+        if(!pool){
+          self$con <- DBI::dbConnect(RSQLite::SQLite(),
+                                     dbname = filename)  
+        } else {
+          self$con <- pool::dbPool(RSQLite::SQLite(),
                                    dbname = filename)  
+        }  
+
+      # Postgres        
       } else {
-        self$con <- pool::dbPool(RSQLite::SQLite(),
-                                   dbname = filename)  
+        
+        self$con <- shintobag::shinto_db_connection(file = config_file, 
+                                                    what = "ede-izm-data",
+                                                    pool = pool)
+        
       }
+      
       
       
       
@@ -62,13 +76,22 @@ pseudoData <- R6::R6Class(
       
       if(glue)txt <- glue::glue(txt)
       
-      #flog.info(glue("query({txt})"), name = "DBR6")
-      
       try(
         dbGetQuery(self$con, txt)
       )
       
     },
+    
+    execute_query = function(txt, glue = TRUE){
+      
+      if(glue)txt <- glue::glue(txt)
+      
+      try(
+        dbExecute(self$con, txt)
+      )
+      
+    },
+    
     
     read_table = function(table, lazy = FALSE){
       
@@ -145,12 +168,12 @@ pseudoData <- R6::R6Class(
         
         id_search <- private$to_sql_string(pseudo_id)
         
-        out <- self$query(glue("select {sel_sql} from bzsprsq00 where",
+        out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
                                " {search_col} IN {id_search};")) 
         
       } else if(what == "adres"){
         
-        q7 <- glue("select {sel_sql} from bzsprsq00 where ",
+        q7 <- glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where ",
                   "vblpostcode = '{adres$vblpostcode}' and ",
                   "vblhuisnummer = '{adres$vblhuisnummer}' and ",
                   "vblhuisletter = '{adres$vblhuisletter}' and ",
@@ -185,7 +208,7 @@ pseudoData <- R6::R6Class(
       pseudo_id <- pseudo_id[pseudo_id != "" & !is.na(pseudo_id)]
       
       bsn_string <- private$to_sql_string(pseudo_id)
-      self$query(glue("select prsanummer from bzsprsq00 where prsburgerservicenummer IN {bsn_string}")) %>%
+      self$query(glue("select prsanummer from {self$schema_sql}bzsprsq00 where prsburgerservicenummer IN {bsn_string}")) %>%
         pull(prsanummer)
       
     },
@@ -235,7 +258,7 @@ pseudoData <- R6::R6Class(
       
       q_txt <- glue("select huwdatumsluitinghuwelijkpartnerschap as begindatum,", 
                 "huwanummer as anr, huwdatumontbindinghuwelijkpartnerschap as einddatum, ",
-                "huwburgerservicenummer as pseudo_bsn from bzshuwq00 where ",
+                "huwburgerservicenummer as pseudo_bsn from {self$schema_sql}bzshuwq00 where ",
                 "prsburgerservicenummer = '{pseudo_id}';") 
       
       out <- self$query(q_txt)
@@ -269,7 +292,7 @@ pseudoData <- R6::R6Class(
       what <- match.arg(what)
       
       
-      q_txt <- glue("select kndanummer from bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
+      q_txt <- glue("select kndanummer from {self$schema_sql}bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
       kids_poi_anr <- self$query(q_txt)
       
       if(nrow(kids_poi_anr) == 0)return(NULL)
@@ -330,7 +353,7 @@ pseudoData <- R6::R6Class(
       
       dbGetQuery(self$con, 
                  glue(
-                   "select * from {table} where DATE({column}) >= DATE('{dt}')")
+                   "select * from {self$schema_sql}{table} where DATE({column}) >= DATE('{dt}')")
       )
       
       
@@ -444,7 +467,7 @@ pseudoData <- R6::R6Class(
       if(is.null(pseudo_bsn))return(NULL)
       
       bsns <- private$to_sql_string(pseudo_bsn)
-      q_suite <- glue("select 'Suite' as bron, * from suite where bsn in {bsns};")
+      q_suite <- glue("select 'Suite' as bron, * from {self$schema_sql}suite where bsn in {bsns};")
       suite <- self$query(q_suite)
       
       if(nrow(suite) > 0){
@@ -515,7 +538,7 @@ pseudoData <- R6::R6Class(
        
       q_wave <- glue("select 'Open Wave' as bron, module, besluit, zaaksoort, omschrijving, ",
                      "aanvraagdatum as begindatum, besluitdatum as einddatum, ",
-                     "bedrijfsnaaam as Bedrijfsnaam, handelsregister from openwave ",
+                     "bedrijfsnaaam as Bedrijfsnaam, handelsregister from {self$schema_sql}openwave ",
                      " where {what} = '{pseudo_id}';")
       
       self$query(q_wave) %>% mutate(bron = as.character(bron),
@@ -529,7 +552,7 @@ pseudoData <- R6::R6Class(
        
       q_carel <- glue("select 'Carel' as bron, 'Melding school: ' || naam_school as omschrijving, ",
                       " behandelaar, melding, start_melding as begindatum, ",
-                      " einde_melding as einddatum, naam_school from carel where bsn ='{pseudo_id}';")
+                      " einde_melding as einddatum, naam_school from {self$schema_sql}carel where bsn ='{pseudo_id}';")
       
       self$query(q_carel) %>% 
         mutate(bron = as.character(bron),
@@ -604,14 +627,14 @@ pseudoData <- R6::R6Class(
     #------ Adres -----
     get_verhuizingen = function(pseudo_id) {
 
-        q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
+        q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from {self$schema_sql}bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
         brp_verh_hst <- dbGetQuery(self$con, q_brp_verh_hst)  
         
         # alle kolommen naar char - dit voorkomt een (wat zeldzame) bug:
         brp_verh_hst <- dplyr::mutate_all(brp_verh_hst, as.character)
         
         # bzsprsq00 voor huidige adres binnen Ede (staat niet altijd in hst)
-        q_brp_pers <- glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
+        q_brp_pers <- glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from {self$schema_sql}bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
         brp_persoon <- dbGetQuery(self$con, q_brp_pers)   %>% mutate_if(is.character, list(~na_if(., "")))
         
         # if prs adres is not in hst; add this as verhuizing
@@ -650,7 +673,7 @@ pseudoData <- R6::R6Class(
                              "'' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente,",
                              " vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, ",
                              "'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum ",
-                             " from bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';")
+                             " from {self$schema_sql}bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';")
       
       self$query(q_brp_verh_hst)
       
@@ -767,9 +790,6 @@ pseudoData <- R6::R6Class(
     },
   
   
-  
-  
-  
     get_verhuizingen_depseudo = function(id_in = reactive(NULL)){
       
       verh <- reactive({
@@ -777,7 +797,7 @@ pseudoData <- R6::R6Class(
         self$get_verhuizingen(id_in())
       })
       
-      # select the values to depsuedo
+      # select the values to depseudo
       depseu <- reactive({
         x <- c(verh() %>% pull(vblpostcode),   
                verh() %>% pull(vblhuisnummer), 
@@ -801,78 +821,81 @@ pseudoData <- R6::R6Class(
       
     },
   
-  get_adres_depseudo = function(adres){
-    
-    
-    adres_data <- reactive({
-      
-      req(adres())
-      database_object$get_person_brp(what = "adres", adres = adres())
-      
-    })
-    
-    adres_id <- reactive({
-      adres_data() %>% pull(pseudo_bsn)
-    })
-    
-    rest_out <- callModule(restCallModule, 
-                         uuid::UUIDgenerate(), 
-                         pseudo_ids = adres_id, what = "lookup")
-    
-    
-    reactive({
-      
-      req(adres_data())
-      
-      # dwz: depseudonimiseer is klaar.
-      req(nrow(rest_out()) > 0)
-      
-      left_join(adres_data(), rest_out(), 
-                by = "pseudo_bsn", 
-                suffix = c(".y", ""))
-      
-    })
-    
-  },
   
-  #------ Wijzigingen -----
-  meldingConstructor = function(days_ago=42){
-    
-    
-    # Getting BRP mutaties                                                                                                               
-    q_brp_huw <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is getrouwd' as omschrijving, huwhstdatumsluitinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from bzsc55q00 where  DATE(NULLIF(huwhstdatumsluitinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
-    q_brp_gesch <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is gescheiden' as omschrijving,  huwhstdatumontbindinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from bzsc55q00 where  DATE(NULLIF(huwhstdatumontbindinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
-    q_brp_verh <-  dbGetQuery(self$con, glue("select 'verhuizing' as bron,'is verhuisd' as omschrijving,  vblhstdatuminschrijving as begindatum,  prsburgerservicenummer as pseudo_bsn from bzsc58q00 where DATE(NULLIF(vblhstdatuminschrijving, '')) > DATETIME('now','-{days_ago} day');"))
-    q_brp_kind <-  dbGetQuery(self$con, glue("select 'kind' as bron, 'heeft een kind gekregen' as omschrijving,  kndgeboortedatum as begindatum, prsburgerservicenummer as pseudo_bsn from bzskinq00 where DATE(NULLIF(kndgeboortedatum, '')) > DATETIME('now','-{days_ago} day');"))
-    q_brp_cura <-  dbGetQuery(self$con, glue("select 'curatele' as bron, 'is onder curatele gesteld' as omschrijving, gzvhstdatumvanopneming as begindatum, prsburgerservicenummer as pseudo_bsn from bzsc61q00 where  DATE(NULLIF(gzvhstdatumvanopneming, '')) > DATETIME('now','-{days_ago} day');"))
-    q_brp_overl <-  dbGetQuery(self$con, glue("select 'overleden' as bron, 'is overleden' as omschrijving, ovlhstdatumoverlijden as begindatum, prsburgerservicenummer as pseudo_bsn from bzsc56q00 where DATE(NULLIF(ovlhstdatumoverlijden, '')) > DATETIME('now','-{days_ago} day');"))
-    
-    
-    returnableList <- list(q_brp_huw,q_brp_gesch, q_brp_verh, q_brp_kind, q_brp_overl,q_brp_cura) 
-    
-    as.data.frame(data.table::rbindlist(returnableList, idcol = TRUE, fill=TRUE)) %>% arrange(desc(begindatum))
-    
-  }
-  
-  
-  ), 
-  
-  private = list(
-    to_sql_string = function(x){
+    get_adres_depseudo = function(adres){
       
-      paste0(
-        "('",
-        paste(x, collapse="','"),
-        "')"
-      )
+      
+      adres_data <- reactive({
+        
+        req(adres())
+        database_object$get_person_brp(what = "adres", adres = adres())
+        
+      })
+      
+      adres_id <- reactive({
+        adres_data() %>% pull(pseudo_bsn)
+      })
+      
+      rest_out <- callModule(restCallModule, 
+                           uuid::UUIDgenerate(), 
+                           pseudo_ids = adres_id, what = "lookup")
+      
+      
+      reactive({
+        
+        req(adres_data())
+        
+        # dwz: depseudonimiseer is klaar.
+        req(nrow(rest_out()) > 0)
+        
+        left_join(adres_data(), rest_out(), 
+                  by = "pseudo_bsn", 
+                  suffix = c(".y", ""))
+        
+      })
+      
+    },
+  
+    #------ Wijzigingen -----
+    
+    # Wordt niet gebruikt in frontend 
+    meldingConstructor = function(days_ago=42){
+      
+      # PAS OP: niet alle datasets zijn meer beschikbaar
+      # Getting BRP mutaties                                                                                                               
+      q_brp_huw <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is getrouwd' as omschrijving, huwhstdatumsluitinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumsluitinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
+      q_brp_gesch <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is gescheiden' as omschrijving,  huwhstdatumontbindinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumontbindinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
+      q_brp_verh <-  dbGetQuery(self$con, glue("select 'verhuizing' as bron,'is verhuisd' as omschrijving,  vblhstdatuminschrijving as begindatum,  prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc58q00 where DATE(NULLIF(vblhstdatuminschrijving, '')) > DATETIME('now','-{days_ago} day');"))
+      q_brp_kind <-  dbGetQuery(self$con, glue("select 'kind' as bron, 'heeft een kind gekregen' as omschrijving,  kndgeboortedatum as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzskinq00 where DATE(NULLIF(kndgeboortedatum, '')) > DATETIME('now','-{days_ago} day');"))
+      q_brp_cura <-  dbGetQuery(self$con, glue("select 'curatele' as bron, 'is onder curatele gesteld' as omschrijving, gzvhstdatumvanopneming as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc61q00 where  DATE(NULLIF(gzvhstdatumvanopneming, '')) > DATETIME('now','-{days_ago} day');"))
+      q_brp_overl <-  dbGetQuery(self$con, glue("select 'overleden' as bron, 'is overleden' as omschrijving, ovlhstdatumoverlijden as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc56q00 where DATE(NULLIF(ovlhstdatumoverlijden, '')) > DATETIME('now','-{days_ago} day');"))
+      
+      
+      returnableList <- list(q_brp_huw,q_brp_gesch, q_brp_verh, q_brp_kind, q_brp_overl,q_brp_cura) 
+      
+      as.data.frame(data.table::rbindlist(returnableList, idcol = TRUE, fill=TRUE)) %>% arrange(desc(begindatum))
       
     }
-  ) 
+    
+    
+    ), 
+    
+    private = list(
+      to_sql_string = function(x){
+        
+        paste0(
+          "('",
+          paste(x, collapse="','"),
+          "')"
+        )
+        
+      }
+    ) 
   
   
   
 )
-`%notin%` <- Negate(`%in%`)
+
 
 
 # depseudonimiseer adres gegevens, postcode voor bronnen

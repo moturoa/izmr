@@ -55,6 +55,7 @@ parse_depseudo_result <- function(res) {
   if(!is.null(res) && !res[1] %in% keys){
     column_names <- c("value", "pseudo_value")
   } 
+
   parse_result(res, column_names, func="deps")
   
 }
@@ -63,7 +64,7 @@ parse_depseudo_result <- function(res) {
 parse_lookup_result <- function(res) { 
   
   column_names <- c("pseudo_bsn","bsn", "naam", "geboortedatum",  
-                    "straatnaam", "huisnummer","huisletter","postcode","voornamen")
+                    "straatnaam", "huisnummer","huisletter","postcode") #,"voornamen")
   
   n <- length(column_names)
   

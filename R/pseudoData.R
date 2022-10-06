@@ -145,6 +145,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                    "ou1anummer", #as anrouder1, 
                    "ou2anummer", #as anrouder2, 
                    "prsburgerservicenummer", #as pseudo_bsn, 
+                   "prsgeboortedatum",
                    "prsgeboortelandcode",
                    "prsgeboortelandomschrijving",
                    "prsburgerlijkestaat",
@@ -190,12 +191,14 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       # Rename cols.
       out <- dplyr::rename(out,
                            geslacht = prsgeslachtsaanduidingcode,
+                           geboortedatum = prsgeboortedatum,
                            overleden = ovldatumoverlijden,
                            anr = prsanummer,
                            anrouder1 = ou1anummer,
                            anrouder2 = ou2anummer,
                            pseudo_bsn = prsburgerservicenummer
-                           )
+                           ) %>%
+        mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"))
       
       out
     },
@@ -269,7 +272,9 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       # relation, datums
       out <- out %>% 
         mutate(relation = ifelse(is.na(einddatum) |  einddatum == '', 'partner','ex partner'),
-               relation = as.character(relation))
+               relation = as.character(relation),
+               begindatum = as.Date(begindatum, "%Y%m%d"),
+               einddatum = as.Date(einddatum, "%Y%m%d"))
       
                # begindatum = strftime(ymd(begindatum), '%d-%m-%Y'), 
                # einddatum = strftime(ymd(einddatum), '%d-%m-%Y'))
@@ -291,8 +296,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       # match.arg dus niet nodig, alleen voor safety
       what <- match.arg(what)
       
-      
-      q_txt <- glue("select kndanummer from {self$schema_sql}bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
+      anr <- self$anummer_from_bsn(pseudo_id)
+      q_txt <- glue("select kndanummer from {self$schema_sql}bzskinq00 where prsanummer = '{anr}';")
       kids_poi_anr <- self$query(q_txt)
       
       if(nrow(kids_poi_anr) == 0)return(NULL)
@@ -374,14 +379,13 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     get_huwelijken_sinds = function(startdatum){
       
-      self$get_sinds_char_column(startdatum, "bzsc55q00", "huwhstdatumsluitinghuwelijkpartnerschap")
+      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwhstdatumsluitinghuwelijkpartnerschap")
       
     },
     
     get_scheidingen_sinds = function(startdatum){
       
-      #!! Data gaat maar tot 2017! Waarom??
-      self$get_sinds_char_column(startdatum, "bzsc55q00", "huwhstdatumontbindinghuwelijkpartnerschap")
+      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
       
     },
     
@@ -752,7 +756,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       out <- left_join(fam(), f_out(), 
                 by = "pseudo_bsn", 
-                suffix = c(".y", ""))
+                suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
       
       out %>%
         mutate(

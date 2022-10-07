@@ -26,7 +26,6 @@ parse_result <- function(res, column_names, func){
     dfr
   },
   error=function(cond) {  
-    
     cat(file=stderr(), glue('Error in {func}: {paste(cond, sep = ",")}'), sep= '\n')  
     return(empty_result)
   },

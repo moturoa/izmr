@@ -245,6 +245,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' @return Dataframe
     set_kind_relation = function(data){
       relation <- ifelse(data$geslacht == 'M', 'zoon', 'dochter')
+      relation[is.na(relation)] <- "kind (geslacht onbekend)"
       self$set_relation(data, relation)
     },
     
@@ -297,12 +298,16 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       what <- match.arg(what)
       
       anr <- self$anummer_from_bsn(pseudo_id)
-      q_txt <- glue("select kndanummer from {self$schema_sql}bzskinq00 where prsanummer = '{anr}';")
+      q_txt <- glue("select prsanummer as anr, kndanummer, kndgeboortedatum from {self$schema_sql}bzskinq00 where prsanummer = '{anr}';")
       kids_poi_anr <- self$query(q_txt)
       
       if(nrow(kids_poi_anr) == 0)return(NULL)
       
       out <- self$get_person_brp(kids_poi_anr$kndanummer, what = "anr")
+      
+      out <- left_join(kids_poi_anr, out, by = "anr") %>%
+        mutate(geboortedatum = as.Date(kndgeboortedatum, "%Y%m%d"))
+      
       
       out <- self$set_kind_relation(out)
         
@@ -742,7 +747,9 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     fam_id <- reactive({
       req(fam())
-      fam() %>% pull(pseudo_bsn)
+      bsns <- fam() %>% 
+        pull(pseudo_bsn)
+      bsns[!is.na(bsns)]
     })
     
     f_out <- callModule(restCallModule, 

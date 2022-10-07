@@ -13,6 +13,10 @@ devtools::load_all()
 )
 
 
+# kinderen zonder bsn
+.pdb$get_kinderen("0AqV5Fpij") # Giessen 27041935
+.pdb$get_person_brp("0AqV5Fpij", what = "bsn")
+
 # zelfde persoon
 .pdb$get_person_brp("QlJRetmqc", what = "anr")
 .pdb$get_person_brp("KRqBpXnO3", what = "bsn")

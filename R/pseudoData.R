@@ -305,7 +305,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       out <- self$get_person_brp(kids_poi_anr$kndanummer, what = "anr")
       
-      out <- left_join(kids_poi_anr, out, by = "anr") %>%
+      out <- left_join(kids_poi_anr, out, by = c("kndanummer" = "anr")) %>%
         mutate(geboortedatum = as.Date(kndgeboortedatum, "%Y%m%d"))
       
       

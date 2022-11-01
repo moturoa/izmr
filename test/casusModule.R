@@ -16,14 +16,15 @@ casusModuleUI <- function(id){
                     #casusAdresUI(ns('adresmodule')) 
                     
            ),
-           tabPanel(value='panel_netwerk',  title=HTML('<i class="fa fa-clock-o"></i> Netwerk'),
-                    #casusNetwerkUI(ns('netwerkmodule')) 
-           ),
+           # tabPanel(value='panel_netwerk',  title=HTML('<i class="fa fa-clock-o"></i> Netwerk'),
+           #          #casusNetwerkUI(ns('netwerkmodule')) 
+           # ),
            tabPanel(value='panel_bronnen',  uiOutput(ns("bron_title_panel")),  
                     casusBronnenUI(ns('bronmodule'))
                     
            ),
-           tabPanel(value='panel_tijdlijn', title=HTML('<i class="fa fa-clock-o"></i> Tijdlijn'),   
+           tabPanel(value='panel_tijdlijn',
+                    title = tagList(icon("clock"), " Tijdlijn"),
                     casusTijdlijnUI(ns('tijdlijnmodule'))
                     
            )

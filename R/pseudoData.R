@@ -52,6 +52,18 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       }
       
       
+      # burgerlijke staat
+      self$burgstaat_key <- tibble::tribble(
+        ~code, ~label,
+        "0","Onbekend",
+        "1","Ongehuwd en nooit gehuwd geweest",
+        "2","Gehuwd",
+        "3","Gescheiden",
+        "4","Weduwe/weduwnaar",
+        "5","Partnerschap",
+        "6","Partnerschap beëindigd",
+        "7","Achtergebleven partner")
+      
       
       
     },
@@ -363,7 +375,10 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       dbGetQuery(self$con, 
                  glue(
-                   "select * from {self$schema_sql}{table} where DATE({column}) >= DATE('{dt}')")
+                   "select * from {self$schema_sql}{table} where {column} <> '' ",
+                   "AND {column} <> '0' ",
+                   "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
+                 )
       )
       
       
@@ -384,7 +399,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     get_huwelijken_sinds = function(startdatum){
       
-      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwhstdatumsluitinghuwelijkpartnerschap")
+      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
       
     },
     
@@ -401,6 +416,14 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     },
     
 
+    label_burgerlijke_staat = function(code){
+      code <- as.character(code)
+      ii <- match(code, self$burgstaat_key$code)
+      self$burgstaat_key$label[ii]
+      
+    },
+    
+    
     
     #------ Bron constructor -----
     
@@ -433,7 +456,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
           brp()
         )) %>% 
          mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), 
-                einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
+                einddatum_formatted = strftime(einddatum, "%d-%m-%Y")) %>%
+          arrange(desc(begindatum))
  
       })
       
@@ -874,16 +898,16 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       # PAS OP: niet alle datasets zijn meer beschikbaar
       # Getting BRP mutaties                                                                                                               
-      q_brp_huw <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is getrouwd' as omschrijving, huwhstdatumsluitinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumsluitinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
-      q_brp_gesch <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is gescheiden' as omschrijving,  huwhstdatumontbindinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumontbindinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
+      # q_brp_huw <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is getrouwd' as omschrijving, huwdatumsluitinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumsluitinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
+      # q_brp_gesch <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is gescheiden' as omschrijving,  huwdatumontbindinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumontbindinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
       q_brp_verh <-  dbGetQuery(self$con, glue("select 'verhuizing' as bron,'is verhuisd' as omschrijving,  vblhstdatuminschrijving as begindatum,  prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc58q00 where DATE(NULLIF(vblhstdatuminschrijving, '')) > DATETIME('now','-{days_ago} day');"))
       q_brp_kind <-  dbGetQuery(self$con, glue("select 'kind' as bron, 'heeft een kind gekregen' as omschrijving,  kndgeboortedatum as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzskinq00 where DATE(NULLIF(kndgeboortedatum, '')) > DATETIME('now','-{days_ago} day');"))
       q_brp_cura <-  dbGetQuery(self$con, glue("select 'curatele' as bron, 'is onder curatele gesteld' as omschrijving, gzvhstdatumvanopneming as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc61q00 where  DATE(NULLIF(gzvhstdatumvanopneming, '')) > DATETIME('now','-{days_ago} day');"))
       q_brp_overl <-  dbGetQuery(self$con, glue("select 'overleden' as bron, 'is overleden' as omschrijving, ovlhstdatumoverlijden as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc56q00 where DATE(NULLIF(ovlhstdatumoverlijden, '')) > DATETIME('now','-{days_ago} day');"))
       
       
-      returnableList <- list(q_brp_huw,q_brp_gesch, q_brp_verh, q_brp_kind, q_brp_overl,q_brp_cura) 
-      
+      returnableList <- list( q_brp_verh, q_brp_kind, q_brp_overl,q_brp_cura) 
+      #q_brp_huw,q_brp_gesch,
       as.data.frame(data.table::rbindlist(returnableList, idcol = TRUE, fill=TRUE)) %>% arrange(desc(begindatum))
       
     }

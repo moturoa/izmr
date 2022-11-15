@@ -152,6 +152,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vwsdatuminschrijving", 
                    "prsgeslachtsaanduidingcode",  # as geslacht, 
+                   "prsvoornamen",
                    "ovldatumoverlijden", #as overleden, 
                    "prsanummer", #as anr, 
                    "ou1anummer", #as anrouder1, 
@@ -715,104 +716,150 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     
     
-  #------ Depseudonimiseren -----
-
-  #' Only perform the lookup method
-  #' Returns a reactive
-  rest_lookup = function(pseudo_ids){
-
-    callModule(restCallModule, 
-                        uuid::UUIDgenerate(), 
-                        pseudo_ids = pseudo_ids, what = "lookup")
-
-  },
-
-
-  #' Depseudo a table, merge with original data, format adres
-  table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
-    
-    pseudo_ids <- reactive({
-      
-      data() %>%
-        pull(!!pseudo_bsn_column)
-      
-    })
-    
-    f_out <- callModule(restCallModule, 
-                        uuid::UUIDgenerate(), 
-                        pseudo_ids = pseudo_ids, what = "lookup",
-                        parse_result = TRUE)
-    
-    reactive({
-      
-      j <- setNames("pseudo_bsn", pseudo_bsn_column)
-      
-      left_join(
-        data(),
-        f_out(),
-        by = j) %>% 
-        mutate(adres_display = paste(straatnaam,
-                                     huisnummer,
-                                     huisletter,
-                                     #huisnummertoevoeging,
-                                     postcode)
-        )
-      
-    })
-    
-  },
+    #------ Depseudonimiseren -----
   
-  get_family_depseudo = function(id_in = reactive(NULL)){
-    
-    fam <- reactive({
-      req(id_in())
-      self$get_family(id_in(), what = "bsn")
-    })
-    
-    fam_id <- reactive({
-      req(fam())
-      bsns <- fam() %>% 
-        pull(pseudo_bsn)
-      bsns[!is.na(bsns)]
-    })
-    
-    f_out <- callModule(restCallModule, 
-                        uuid::UUIDgenerate(), 
-                        pseudo_ids = fam_id, what = "lookup")
-    
-    reactive({
+    #' Only perform the lookup method
+    #' Returns a reactive
+    rest_lookup = function(pseudo_ids){
+  
+      callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = pseudo_ids, what = "lookup")
+  
+    },
+
+
+    #' Depseudo a table, merge with original data, format adres
+    table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
       
-      req(fam())
-      req(nrow(f_out()) > 0)
+      pseudo_ids <- reactive({
+        
+        data() %>%
+          pull(!!pseudo_bsn_column)
+        
+      })
       
-      out <- left_join(fam(), f_out(), 
-                by = "pseudo_bsn", 
-                suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
+      f_out <- callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = pseudo_ids, what = "lookup",
+                          parse_result = TRUE)
       
-      out %>%
-        mutate(
-          adres_display = paste(straatnaam,
-                                huisnummer,
-                                huisletter,
-                                #huisnummertoevoeging,
-                                postcode),
-          vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
-          overleden = as.Date(overleden, "%y%m%d"),
-          geboortedatum = as.Date(geboortedatum, "%y%m%d"),
-          begindatum = as.Date(begindatum, "%y%m%d"),
-          einddatum = as.Date(einddatum, "%y%m%d"),
-          naam_tooltip = format_naam_tooltip(naam, overleden),
-          adres_tooltip = format_adres_tooltip(
-            vwsdatuminschrijving,
-            vwsgemeentevaninschrijvingomschrijving,
-            straatnaam,
-            huisnummer,
-            huisletter,
-            postcode
+      reactive({
+        
+        j <- setNames("pseudo_bsn", pseudo_bsn_column)
+        
+        left_join(
+          data(),
+          f_out(),
+          by = j) %>% 
+          mutate(adres_display = paste(straatnaam,
+                                       huisnummer,
+                                       huisletter,
+                                       #huisnummertoevoeging,
+                                       postcode)
           )
-        )
+        
+      })
       
-    })
+    },
+    
+    #' Depseudo a vector, send back as dataframe to be merged
+    vector_depseudo = function(data = reactive(NULL), pseudo_column = "pseudo_bsn"){
+      
+      pseudo_ids <- reactive({
+        
+        ids <- data() %>%
+          pull(!!pseudo_column)
+        
+        ids[!is.na(ids)]
+        
+      })
+      
+      f_out <- callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = pseudo_ids, what = "depseudo",
+                          parse_result = FALSE)
+      
+      reactive({
+        
+        out <- f_out()
+        req(out)
+        
+        as.data.frame(matrix(out, ncol=3, byrow=TRUE)) %>% 
+          setNames(c("key","value","hash")) %>% 
+          mutate(value = pm_decrypt(value))  
+        
+      })
+      
+    },
+    
+
+    
+    
+    get_family_depseudo = function(id_in = reactive(NULL)){
+      
+      fam <- reactive({
+        req(id_in())
+        self$get_family(id_in(), what = "bsn")
+      })
+      
+      fam_id <- reactive({
+        req(fam())
+        bsns <- fam() %>% 
+          pull(pseudo_bsn)
+        bsns[!is.na(bsns)]
+      })
+      
+      f_out <- callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = fam_id, what = "lookup")
+      
+      
+      vn_out <- self$vector_depseudo(fam, "prsvoornamen")
+      
+      reactive({
+        
+        req(fam())
+        req(nrow(f_out()) > 0)
+        
+        req(vn_out())
+        
+        out <- left_join(fam(), f_out(), 
+                  by = "pseudo_bsn", 
+                  suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
+        
+        # voornamen toevoegen
+        # stond ooit in keystore maar wordt nu laat toegevpegd, zodat we de API niet hoeven te updaten
+        out <- left_join(out, 
+                         select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
+        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        out$prsvoornamen <- out$prsvoornamen_dep
+        out$prsvoornamen_dep <- NULL
+        
+        out %>%
+          mutate(
+            adres_display = paste(straatnaam,
+                                  huisnummer,
+                                  huisletter,
+                                  #huisnummertoevoeging,
+                                  postcode),
+            vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
+            overleden = as.Date(overleden, "%y%m%d"),
+            geboortedatum = as.Date(geboortedatum, "%y%m%d"),
+            begindatum = as.Date(begindatum, "%y%m%d"),
+            einddatum = as.Date(einddatum, "%y%m%d"),
+            naam_tooltip = format_naam_tooltip(naam, overleden),
+            adres_tooltip = format_adres_tooltip(
+              vwsdatuminschrijving,
+              vwsgemeentevaninschrijvingomschrijving,
+              straatnaam,
+              huisnummer,
+              huisletter,
+              postcode
+            )
+          )
+        
+      })
     
     },
   

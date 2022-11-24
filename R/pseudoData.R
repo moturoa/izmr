@@ -211,7 +211,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                            anrouder2 = ou2anummer,
                            pseudo_bsn = prsburgerservicenummer
                            ) %>%
-        mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"))
+        mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
+               overleden = as.Date(lubridate::ymd_hms(overleden)))
       
       out
     },

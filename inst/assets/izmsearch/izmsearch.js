@@ -138,17 +138,17 @@ function fill_datatable(searchvalues,searchurl) {
                     huisnummer: searchvalues[4],
                     geboortedatum: searchvalues[5]
                 },
-                // cannot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax 
-                   success: function (res) { 
+                
+                // cannot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax
+                
+                success: function (res) { 
                     justDataTable(formatSearchResults(res)); 
                 },
-                  error:function(err){
-                        console.log(err);
-                  }
                 
+                error:function(err){
+                    console.log(err);
+                }
                 
-                
-             
       }))  }
             
              

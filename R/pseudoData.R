@@ -167,7 +167,12 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                    "vblhuisnummer", 
                    "vblhuisletter", 
                    "vblhuisnummertoevoeging",
-                   "vblwoonplaatsnaam")
+                   "vblwoonplaatsnaam",
+                   "ou1voornamen",
+                   "ou1geslachtsnaam",
+                   "ou2voornamen",
+                   "ou2geslachtsnaam"
+                   )
                    
       sel_sql <- paste(columns, collapse= ", ")
       
@@ -211,7 +216,9 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                            anrouder2 = ou2anummer,
                            pseudo_bsn = prsburgerservicenummer
                            ) %>%
-        mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
+        mutate(ouder1naam = paste(ou1voornamen, ou1geslachtsnaam),
+               ouder2naam = paste(ou2voornamen, ou2geslachtsnaam),
+               geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
                overleden = as.Date(lubridate::ymd_hms(overleden)))
       
       out
@@ -818,12 +825,21 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       vn_out <- self$vector_depseudo(fam, "prsvoornamen")
       
+      ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
+      ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
+      ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
+      ou2an <- self$vector_depseudo(fam, "ou2geslachtsnaam")
+      
       reactive({
         
         req(fam())
         req(nrow(f_out()) > 0)
         
         req(vn_out())
+        req(ou1vn())
+        req(ou1an())
+        req(ou2vn())
+        req(ou2an())
         
         out <- left_join(fam(), f_out(), 
                   by = "pseudo_bsn", 
@@ -837,6 +853,39 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         out$prsvoornamen <- out$prsvoornamen_dep
         out$prsvoornamen_dep <- NULL
         
+        # ou1
+        out <- left_join(out, 
+                         select(ou1vn(),hash, prsvoornamen_dep = value), by = c("ou1voornamen" = "hash"))
+        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        out$ou1voornamen <- out$prsvoornamen_dep
+        out$prsvoornamen_dep <- NULL
+        
+        # ou2
+        out <- left_join(out, 
+                         select(ou2vn(),hash, prsvoornamen_dep = value), by = c("ou2voornamen" = "hash"))
+        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        out$ou2voornamen <- out$prsvoornamen_dep
+        out$prsvoornamen_dep <- NULL
+        
+        # achternamen
+        
+        # ou1
+        out <- left_join(out, 
+                         select(ou1an(),hash, prsvoornamen_dep = value), by = c("ou1geslachtsnaam" = "hash"))
+        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        out$ou1geslachtsnaam <- out$prsvoornamen_dep
+        out$prsvoornamen_dep <- NULL
+        
+        # ou2
+        out <- left_join(out, 
+                         select(ou2an(),hash, prsvoornamen_dep = value), by = c("ou2geslachtsnaam" = "hash"))
+        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        out$ou2geslachtsnaam <- out$prsvoornamen_dep
+        out$prsvoornamen_dep <- NULL
+        
+        
+        
+        
         out %>%
           mutate(
             adres_display = paste(straatnaam,
@@ -849,6 +898,10 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
             geboortedatum = as.Date(geboortedatum, "%y%m%d"),
             begindatum = as.Date(begindatum, "%y%m%d"),
             einddatum = as.Date(einddatum, "%y%m%d"),
+            
+            ouder1_naam = paste(ou1voornamen, ou1geslachtsnaam),
+            ouder2_naam = paste(ou2voornamen, ou2geslachtsnaam),
+            
             naam_tooltip = format_naam_tooltip(naam, overleden),
             adres_tooltip = format_adres_tooltip(
               vwsdatuminschrijving,

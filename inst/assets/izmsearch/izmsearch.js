@@ -11,6 +11,10 @@ function resetform() {
       
      $('#searchresults').DataTable().clear().destroy();
      
+     $('#searchresults_ui_wrapper').empty();
+     $('#searchresults_ui_wrapper').append("<table id=\"searchresults\" class=\"display\"></table>");
+     
+
 }
         
 

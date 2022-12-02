@@ -14,6 +14,7 @@ function resetform() {
      $('#searchresults_ui_wrapper').empty();
      $('#searchresults_ui_wrapper').append("<table id=\"searchresults\" class=\"display\"></table>");
      
+     Shiny.setInputValue("izm_reset_form_clicked", Math.random());
 
 }
         
@@ -127,6 +128,7 @@ function fill_datatable(searchvalues,searchurl) {
       //alert(zoeken_achternaam);
             
       if(searchvalues){
+        
         return($.ajax( { 
                 url: searchurl,  
                 // cannot use contentType because it invokes HTTP400
@@ -160,6 +162,8 @@ function fill_datatable(searchvalues,searchurl) {
 
 function justDataTable(data) {
    
+   //console.log(data);
+   
    $('#searchresults').DataTable({ 
      "processing": false,
         "serverSide": false,
@@ -178,7 +182,9 @@ function justDataTable(data) {
               { "title": "Huisletter", "targets" : 5 },
               { "title": "Postcode", "targets" : 6 }
             ],
-})}
+})
+  
+}
 
 
 setClickedId = function(id, shinyid){
@@ -195,9 +201,13 @@ setClickedId = function(id, shinyid){
                         
 
 function formatSearchResults(data) { 
+  
             var len = data.recordsFiltered;
  
             Shiny.setInputValue("izm-izmnresults", len);
+              
+            console.log("input data to formatSearchResults");
+            console.log(data.data[0]);
               
             // Maak link naar casus
             for (i = 0; i < len; i += 1) {  
@@ -214,7 +224,11 @@ function formatSearchResults(data) {
                 
                 // abbreviate
                 data.data[i] = data.data[i].slice(1,8);
-            } 
+            }
+            
+            console.log("output data from formatSearchResults");
+            console.log(data.data[0]);
+            
             return (data);
         }
         

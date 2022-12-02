@@ -276,6 +276,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' @return Dataframe
     get_huwelijk = function(pseudo_id, what = "bsn"){
       
+      flog.info("get_huwelijk")
+      
       # mag hier alleen bsn zijn!
       # match.arg dus niet nodig, alleen voor safety
       what <- match.arg(what)
@@ -314,6 +316,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' @return Dataframe
     get_kinderen = function(pseudo_id, what = "bsn"){
       
+      flog.info("get_kinderen")
+      
       # mag hier alleen bsn zijn!
       # match.arg dus niet nodig, alleen voor safety
       what <- match.arg(what)
@@ -341,6 +345,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' @param pseudo_id A single pseudo-id
     #' @return Dataframe
     get_family = function(pseudo_id, what = c("bsn", "anr")){
+      
+      flog.info("get_family")
       
         what <- match.arg(what)
       
@@ -440,6 +446,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' @param pseudo_bsn A single pseudo-id (BSN) (not vectorized!)
     #' @return A reactive dataframe
     get_all_bronnen = function(pseudo_bsn) {
+      
+      flog.info("get_all_bronnen")
       
       # Reactive met de-pseudo gegevens.
       brp <- self$get_verhuizingen_depseudo(pseudo_bsn) 
@@ -730,6 +738,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' Returns a reactive
     rest_lookup = function(pseudo_ids){
   
+      flog.info("rest_lookup")
+      
       callModule(restCallModule, 
                           uuid::UUIDgenerate(), 
                           pseudo_ids = pseudo_ids, what = "lookup")
@@ -739,6 +749,9 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
 
     #' Depseudo a table, merge with original data, format adres
     table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
+      
+      
+      flog.info("table_depseudo")
       
       pseudo_ids <- reactive({
         
@@ -774,6 +787,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     #' Depseudo a vector, send back as dataframe to be merged
     vector_depseudo = function(data = reactive(NULL), pseudo_column = "pseudo_bsn"){
       
+      flog.info("vector_depseudo")
+      
       pseudo_ids <- reactive({
         
         ids <- data() %>%
@@ -793,6 +808,13 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         out <- f_out()
         req(out)
         
+        if(length(out) < 2){
+          return(data.frame(key = character(0),
+                            value = character(0),
+                            hash = character(0)
+                            ))
+        }
+        
         as.data.frame(matrix(out, ncol=3, byrow=TRUE)) %>% 
           setNames(c("key","value","hash")) %>% 
           mutate(value = pm_decrypt(value))  
@@ -806,6 +828,8 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     get_family_depseudo = function(id_in = reactive(NULL)){
       
+      flog.info("get_family_depseudo")
+      
       fam <- reactive({
         req(id_in())
         self$get_family(id_in(), what = "bsn")
@@ -813,6 +837,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       fam_id <- reactive({
         req(fam())
+        
         bsns <- fam() %>% 
           pull(pseudo_bsn)
         bsns[!is.na(bsns)]
@@ -822,9 +847,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                           uuid::UUIDgenerate(), 
                           pseudo_ids = fam_id, what = "lookup")
       
-      
       vn_out <- self$vector_depseudo(fam, "prsvoornamen")
-      
       ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
       ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
       ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
@@ -847,44 +870,53 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         
         # voornamen toevoegen
         # stond ooit in keystore maar wordt nu laat toegevpegd, zodat we de API niet hoeven te updaten
-        out <- left_join(out, 
-                         select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
-        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        out$prsvoornamen <- out$prsvoornamen_dep
-        out$prsvoornamen_dep <- NULL
+        
+        if(nrow(vn_out()) > 0){
+          out <- left_join(out, 
+                           select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
+          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+          out$prsvoornamen <- out$prsvoornamen_dep
+          out$prsvoornamen_dep <- NULL  
+        }
+        
         
         # ou1
-        out <- left_join(out, 
-                         select(ou1vn(),hash, prsvoornamen_dep = value), by = c("ou1voornamen" = "hash"))
-        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        out$ou1voornamen <- out$prsvoornamen_dep
-        out$prsvoornamen_dep <- NULL
+        if(nrow(ou1vn()) > 0){
+          out <- left_join(out, 
+                           select(ou1vn(),hash, prsvoornamen_dep = value), by = c("ou1voornamen" = "hash"))
+          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+          out$ou1voornamen <- out$prsvoornamen_dep
+          out$prsvoornamen_dep <- NULL
+        }
         
         # ou2
-        out <- left_join(out, 
-                         select(ou2vn(),hash, prsvoornamen_dep = value), by = c("ou2voornamen" = "hash"))
-        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        out$ou2voornamen <- out$prsvoornamen_dep
-        out$prsvoornamen_dep <- NULL
+        if(nrow(ou2vn()) > 0){
+          out <- left_join(out, 
+                           select(ou2vn(),hash, prsvoornamen_dep = value), by = c("ou2voornamen" = "hash"))
+          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+          out$ou2voornamen <- out$prsvoornamen_dep
+          out$prsvoornamen_dep <- NULL
+        }
         
         # achternamen
         
         # ou1
-        out <- left_join(out, 
-                         select(ou1an(),hash, prsvoornamen_dep = value), by = c("ou1geslachtsnaam" = "hash"))
-        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        out$ou1geslachtsnaam <- out$prsvoornamen_dep
-        out$prsvoornamen_dep <- NULL
+        if(nrow(ou1an()) > 0){
+          out <- left_join(out, 
+                           select(ou1an(),hash, prsvoornamen_dep = value), by = c("ou1geslachtsnaam" = "hash"))
+          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+          out$ou1geslachtsnaam <- out$prsvoornamen_dep
+          out$prsvoornamen_dep <- NULL
+        }
         
         # ou2
-        out <- left_join(out, 
-                         select(ou2an(),hash, prsvoornamen_dep = value), by = c("ou2geslachtsnaam" = "hash"))
-        out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        out$ou2geslachtsnaam <- out$prsvoornamen_dep
-        out$prsvoornamen_dep <- NULL
-        
-        
-        
+        if(nrow(ou2an()) > 0){
+          out <- left_join(out, 
+                           select(ou2an(),hash, prsvoornamen_dep = value), by = c("ou2geslachtsnaam" = "hash"))
+          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+          out$ou2geslachtsnaam <- out$prsvoornamen_dep
+          out$prsvoornamen_dep <- NULL
+        }
         
         out %>%
           mutate(

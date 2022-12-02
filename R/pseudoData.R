@@ -192,6 +192,13 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         
       } else if(what == "adres"){
         
+        if(all(adres$vblpostcode == "")){
+          return(NULL)
+        }
+        if(all(adres$vblhuisnummer == "")){
+          return(NULL)
+        }
+        
         q7 <- glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where ",
                   "vblpostcode = '{adres$vblpostcode}' and ",
                   "vblhuisnummer = '{adres$vblhuisnummer}' and ",
@@ -755,8 +762,12 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       pseudo_ids <- reactive({
         
-        data() %>%
-          pull(!!pseudo_bsn_column)
+        if(is.null(data())){
+          return(NULL)
+        } else {
+          data() %>%
+            pull(!!pseudo_bsn_column)  
+        }
         
       })
       
@@ -767,18 +778,25 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       reactive({
         
-        j <- setNames("pseudo_bsn", pseudo_bsn_column)
-        
-        left_join(
-          data(),
-          f_out(),
-          by = j) %>% 
-          mutate(adres_display = paste(straatnaam,
-                                       huisnummer,
-                                       huisletter,
-                                       #huisnummertoevoeging,
-                                       postcode)
-          )
+        if(is.null(data())){
+          NULL
+        } else {
+          
+          j <- setNames("pseudo_bsn", pseudo_bsn_column)
+          
+          left_join(
+            data(),
+            f_out(),
+            by = j) %>% 
+            mutate(adres_display = paste(straatnaam,
+                                         huisnummer,
+                                         huisletter,
+                                         #huisnummertoevoeging,
+                                         postcode)
+            )
+          
+        }
+
         
       })
       

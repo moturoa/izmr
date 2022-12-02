@@ -806,7 +806,6 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       reactive({
         
         out <- f_out()
-        req(out)
         
         if(length(out) < 2){
           return(data.frame(key = character(0),
@@ -863,6 +862,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         req(ou1an())
         req(ou2vn())
         req(ou2an())
+
         
         out <- left_join(fam(), f_out(), 
                   by = "pseudo_bsn", 

@@ -62,9 +62,9 @@ parse_depseudo_result <- function(res) {
 
 parse_lookup_result <- function(res) { 
   
-  column_names <- c("pseudo_bsn","bsn", "naam", "geboortedatum",  
-                    "straatnaam", "huisnummer","huisletter",
-                    "huisnummertoevoeging","postcode","voornamen")
+  column_names <- c("pseudo_bsn","bsn", "naam", "voornamen", 
+                    "geboortedatum", "straatnaam", "huisnummer","huisletter",
+                    "huisnummertoevoeging","postcode")
   
   n <- length(column_names)
   
@@ -79,10 +79,9 @@ parse_lookup_result <- function(res) {
 
 parse_adres_result <- function(res) { 
   
-  column_names <- c("pseudo_bsn","bsn","naam",
+  column_names <- c("pseudo_bsn","bsn","naam","voornamen",
                     "geboortedatum","straatnaam","huisnummer",
-                    "huisletter","huisnummertoevoeging", 
-                    "postcode","prsvoornamen")
+                    "huisletter","huisnummertoevoeging", "postcode")
   
   parse_result(res, column_names, func="adres")
   

@@ -441,8 +441,9 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     label_burgerlijke_staat = function(code){
       code <- as.character(code)
       ii <- match(code, self$burgstaat_key$code)
-      self$burgstaat_key$label[ii]
-      
+      out <- self$burgstaat_key$label[ii]
+      out[is.na(out)] <- "Onbekend"
+      out
     },
     
     
@@ -864,7 +865,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                           uuid::UUIDgenerate(), 
                           pseudo_ids = fam_id, what = "lookup")
       
-      vn_out <- self$vector_depseudo(fam, "prsvoornamen")
+      #vn_out <- self$vector_depseudo(fam, "prsvoornamen")
       ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
       ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
       ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
@@ -873,15 +874,16 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       reactive({
         
         req(fam())
-        req(nrow(f_out()) > 0)
         
-        req(vn_out())
+        #req(nrow(f_out()) > 0)
+        req(f_out())
+        
+        #req(vn_out())
         req(ou1vn())
         req(ou1an())
         req(ou2vn())
         req(ou2an())
 
-        
         out <- left_join(fam(), f_out(), 
                   by = "pseudo_bsn", 
                   suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
@@ -889,13 +891,13 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         # voornamen toevoegen
         # stond ooit in keystore maar wordt nu laat toegevpegd, zodat we de API niet hoeven te updaten
         
-        if(nrow(vn_out()) > 0){
-          out <- left_join(out, 
-                           select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
-          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-          out$prsvoornamen <- out$prsvoornamen_dep
-          out$prsvoornamen_dep <- NULL  
-        }
+        # if(nrow(vn_out()) > 0){
+        #   out <- left_join(out, 
+        #                    select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
+        #   out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
+        #   out$prsvoornamen <- out$prsvoornamen_dep
+        #   out$prsvoornamen_dep <- NULL  
+        # }
         
         
         # ou1
@@ -941,7 +943,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
             adres_display = paste(straatnaam,
                                   huisnummer,
                                   huisletter,
-                                  #huisnummertoevoeging,
+                                  huisnummertoevoeging,
                                   postcode),
             vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
             overleden = as.Date(overleden, "%y%m%d"),

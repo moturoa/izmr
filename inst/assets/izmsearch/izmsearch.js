@@ -216,8 +216,8 @@ function formatSearchResults(data) {
  
             Shiny.setInputValue("izm-izmnresults", len);
               
-            console.log("input data to formatSearchResults");
-            console.log(data.data[0]);
+            //console.log("input data to formatSearchResults");
+            //console.log(data.data[0]);
               
             // Maak link naar casus
             for (i = 0; i < len; i += 1) {  
@@ -233,8 +233,8 @@ function formatSearchResults(data) {
                 
             }
             
-            console.log("output data from formatSearchResults");
-            console.log(data.data[0]);
+            //console.log("output data from formatSearchResults");
+            //console.log(data.data[0]);
             
             return (data);
         }

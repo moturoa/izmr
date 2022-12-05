@@ -174,18 +174,28 @@ function justDataTable(data) {
         
         data:data.data,
             columnDefs: [
-              { "title": "BSN", "targets" : 0 },
-              { "title": "Naam", "targets" : 1 },
-              { "title": "Geboortedatum", "targets" : 2 },
-              { "title": "Straat", "targets" : 3 },
-              { "title": "Huisnummer", "targets" : 4 },
-              { "title": "Huisletter", "targets" : 5 },
-              { "title": "Postcode", "targets" : 6 }
+
+              { "targets" : 0, "visible" : false },
+              { "title": "BSN", "targets" : 1 },
+              { "title": "Naam", "targets" : 2 },
+              { "title": "Voornamen",  "targets" : 3 },
+              { "title": "Geboortedatum",  
+                "targets" : 4,
+                "render": DataTable.render.date()
+              },
+              { "title": "Adres", "targets" : 10 },
+              { "title": "Postcode",  "targets" : 9 },
+              { "targets" : 5, "visible" : false },
+              { "targets" : 6, "visible" : false },
+              { "targets" : 7, "visible" : false },
+              { "targets" : 8, "visible" : false }
             ],
 })
   
 }
 
+
+            
 
 setClickedId = function(id, shinyid){
   Shiny.setInputValue(shinyid, 
@@ -217,13 +227,10 @@ function formatSearchResults(data) {
                                      data.data[i][0] + "', 'izm-izmclickedid')\">" + 
                                      data.data[i][1] + "</a>" 
                 
-                // format birthdate
-                date = data.data[i][3]
-                //old : data.data[i][3] = date.slice(8,10)+ '-' + date.slice(5,7) + '-' + date.slice(0,4) 
-                data.data[i][3] = date.slice(6,8)+ '-' + date.slice(4,6) + '-' + date.slice(0,4)
+                // formatted adres in field 10
+                data.data[i][10] = data.data[i][5] + ' ' + data.data[i][6] + ' ' +
+                                   data.data[i][7] + ' ' + data.data[i][8]
                 
-                // abbreviate
-                data.data[i] = data.data[i].slice(1,8);
             }
             
             console.log("output data from formatSearchResults");

@@ -185,6 +185,7 @@ function justDataTable(data) {
               },
               { "title": "Adres", "targets" : 10 },
               { "title": "Postcode",  "targets" : 9 },
+              { "targets" : 11, "title" : "Woonplaats"},
               { "targets" : 5, "visible" : false },
               { "targets" : 6, "visible" : false },
               { "targets" : 7, "visible" : false },
@@ -226,6 +227,9 @@ function formatSearchResults(data) {
                 data.data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
                                      data.data[i][0] + "', 'izm-izmclickedid')\">" + 
                                      data.data[i][1] + "</a>" 
+                
+                // move woonplaats to field 11 (after formatted address below)
+                data.data[i][11] = data.data[i][10]
                 
                 // formatted adres in field 10
                 data.data[i][10] = data.data[i][5] + ' ' + data.data[i][6] + ' ' +

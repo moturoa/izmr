@@ -103,11 +103,6 @@ izmSearchUI <- function(id,
 
 
 
-
-
-
-
-
 #' @export
 #' @rdname izmSearchModule
 izmSearchModule <- function(input, output, session){

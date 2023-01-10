@@ -21,6 +21,9 @@ Shiny.addCustomMessageHandler("getRecordFromId", function(params) {
       }),
       success: function (jsonResults) {  
         
+        
+        //console.log(jsonResults.data);
+        
         // NOTE: calling param.id will add namespace around label
          Shiny.setInputValue(params.id, jsonResults.data)
          

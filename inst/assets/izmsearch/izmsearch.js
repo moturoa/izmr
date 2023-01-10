@@ -183,13 +183,14 @@ function justDataTable(data) {
                 "targets" : 4,
                 "render": DataTable.render.date()
               },
-              { "title": "Adres", "targets" : 10 },
-              { "title": "Postcode",  "targets" : 9 },
-              { "targets" : 11, "title" : "Woonplaats"},
               { "targets" : 5, "visible" : false },
               { "targets" : 6, "visible" : false },
               { "targets" : 7, "visible" : false },
-              { "targets" : 8, "visible" : false }
+              { "targets" : 8, "visible" : false },
+              { "title": "Postcode",  "targets" : 9 },
+              { "title": "Adres", "targets" : 10 },
+              { "targets" : 11, "title" : "Woonplaats"}
+
             ],
 })
   

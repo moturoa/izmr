@@ -386,7 +386,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     },
     
     #' @description Filter a table based on 'after this date'
-    #' @details SQLite does not have a DATE class, so we need this special method.
+    #' @details Does not work with SQLite!
     #' @param startdatum Date after (and including), must be Date class.
     #' @param table Name of table to filter
     #' @param column Name of column with date
@@ -433,8 +433,22 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
     
     get_overlijdens_sinds = function(startdatum){
       
-      self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
+      #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
+      # heeft 00:00:00 erachter. Eigen methode dus...
       
+      #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
+
+      table <- "bzsprsq00"
+      column <- "ovldatumoverlijden"
+      dt <- format(startdatum, "%Y-%m-%d")
+      
+      dbGetQuery(self$con, 
+                 glue(
+                   "select * from {self$schema_sql}{table} where {column} <> '' ",
+                   "AND {column} <> '0' ",
+                   "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
+                 )
+      )
     },
     
 

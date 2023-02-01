@@ -665,7 +665,7 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
         filter(klant_bsn %in% !!pseudo_id) %>%
         select(
           omschrijving = groepnr,
-          zaaktype_id,
+          zaaktype,
           begindatum,
           einddatum,
           status,

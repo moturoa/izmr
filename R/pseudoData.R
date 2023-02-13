@@ -691,6 +691,32 @@ pseudoData <- R6::R6Class(
     },
 
 
+    table_depseudo2 = function(table_data = reactive(NULL), columns = NULL){
+      
+      ids <- reactive({
+        
+        dat <- table_data()
+        if(is.null(dat))return(NULL)
+        
+        if(is.null(columns)){
+          columns <- self$find_pseudo_columns(dat)
+        }
+        
+        u <- unique(unlist(dat[,columns]))
+        u[!is.na(u)]
+      })
+      
+      f_out <- callModule(restCallModule, 
+                          uuid::UUIDgenerate(), 
+                          pseudo_ids = ids, 
+                          what = "depseudo",
+                          parse_result = TRUE)
+      
+      f_out
+      
+    },
+    
+    
     #' Depseudo a table, merge with original data, format adres
     table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
       
@@ -778,6 +804,15 @@ pseudoData <- R6::R6Class(
     },
     
 
+    find_pseudo_columns = function(data, length_pseudo = 9){
+      
+      data <- data[sapply(data, class) == "character"]
+      
+      nc <- lapply(data, function(x)setdiff(unique(nchar(x[!is.na(x)])),0))
+      i_col <- which(sapply(nc, function(x)length(x) == 1  & x[1] == length_pseudo))
+      names(data)[i_col]
+      
+    },
     
     
     get_family_depseudo = function(id_in = reactive(NULL)){
@@ -789,38 +824,43 @@ pseudoData <- R6::R6Class(
         self$get_family(id_in(), what = "bsn")
       })
       
-      fam_id <- reactive({
+      fam_d <- reactive({
         req(fam())
-        
-        bsns <- fam() %>% 
-          pull(pseudo_bsn)
-        bsns[!is.na(bsns)]
+        browser()
+        self$table_depseudo2(table_data = fam)
       })
       
-      f_out <- callModule(restCallModule, 
-                          uuid::UUIDgenerate(), 
-                          pseudo_ids = fam_id, what = "lookup")
       
-      #vn_out <- self$vector_depseudo(fam, "prsvoornamen")
-      ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
-      ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
-      ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
-      ou2an <- self$vector_depseudo(fam, "ou2geslachtsnaam")
+      # 
+      # 
+      # fam_id <- reactive({
+      #   req(fam())
+      #   
+      #   bsns <- fam() %>% 
+      #     pull(pseudo_bsn)
+      #   bsns[!is.na(bsns)]
+      # })
+      # 
+      # f_out <- callModule(restCallModule, 
+      #                     uuid::UUIDgenerate(), 
+      #                     pseudo_ids = fam_id, what = "lookup")
+      # 
+      # 
+      # 
+      # 
+      # #vn_out <- self$vector_depseudo(fam, "prsvoornamen")
+      # ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
+      # ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
+      # ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
+      # ou2an <- self$vector_depseudo(fam, "ou2geslachtsnaam")
+      # 
       
       reactive({
         
-        req(fam())
+        req(fam_d())
         
-        #req(nrow(f_out()) > 0)
-        req(f_out())
-        
-        #req(vn_out())
-        req(ou1vn())
-        req(ou1an())
-        req(ou2vn())
-        req(ou2an())
-
-        out <- left_join(fam(), f_out(), 
+browser()
+        out <- left_join(fam(), fam_d(), 
                   by = "pseudo_bsn", 
                   suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
         

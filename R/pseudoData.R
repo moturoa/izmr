@@ -1,22 +1,17 @@
 #' R6 class for connection to anonymized database.
+#' @importFrom shintodb databaseClass
 #' @param config_file Not used at the moment (data in SQLite).
 #' @param schema Not used at the moment.
 #' @param filename Full path to the SQLite database.
 #' @param pool If TRUE, uses pool to connect.
 #' @export
-pseudoData <- R6::R6Class(lock_objects = FALSE,
+pseudoData <- R6::R6Class(
+  inherit = shintodb::databaseClass, 
+  lock_objects = FALSE,
   
   public = list(
     
-    #' @field con Database connection object
-    con = NULL,  
-    
-    #' @field pool Logical, whether the connection is pool(ed) or not.
-    pool = NULL,
-    
-    #' @field schema Database schema in use.
-    schema = '',
-    
+
     #' @description Create a new pseudoData (IZM) object
     #' @param config_file Location of the config file with database passwords.
     #' @param schema Schema of the DB where data is stored.
@@ -27,30 +22,12 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
                           filename = NULL,
                           pool = FALSE){
       
-      self$schema <- schema
+      
+      super$initialize(what = "ede-izm-data",
+                       config_file = config_file, schema = schema, sqlite = filename, 
+                       pool = pool)
+      
       self$schema_sql <- if(self$schema == "")"" else paste0(self$schema, ".")
-      
-      self$pool <- pool
-      
-      # SQLite
-      if(!is.null(filename)){
-        if(!pool){
-          self$con <- DBI::dbConnect(RSQLite::SQLite(),
-                                     dbname = filename)  
-        } else {
-          self$con <- pool::dbPool(RSQLite::SQLite(),
-                                   dbname = filename)  
-        }  
-
-      # Postgres        
-      } else {
-        
-        self$con <- shintobag::shinto_db_connection(file = config_file, 
-                                                    what = "ede-izm-data",
-                                                    pool = pool)
-        
-      }
-      
       
       # burgerlijke staat
       self$burgstaat_key <- tibble::tribble(
@@ -67,61 +44,6 @@ pseudoData <- R6::R6Class(lock_objects = FALSE,
       
       
     },
-    
-    #----- Algemene methodes ------
-    
-    #' @description Close the database connection
-    close = function() { 
-      
-      if(self$pool){
-        pool::poolClose(self$pool)
-      } else {
-        dbDisconnect(self$con)
-      }
-      
-    },
-    
-    #' @description Perform dbGetQuery on the DB connection
-    #' @param txt The SQL query
-    #' @param glue Logical, if TRUE glues the txt param.
-    query = function(txt, glue = TRUE){
-      
-      if(glue)txt <- glue::glue(txt)
-      
-      try(
-        dbGetQuery(self$con, txt)
-      )
-      
-    },
-    
-    execute_query = function(txt, glue = TRUE){
-      
-      if(glue)txt <- glue::glue(txt)
-      
-      try(
-        dbExecute(self$con, txt)
-      )
-      
-    },
-    
-    
-    read_table = function(table, lazy = FALSE){
-      
-      if(self$schema != ""){
-        out <- tbl(self$con, in_schema(self$schema, table))  
-      } else {
-        out <- tbl(self$con, table)
-      }
-      
-      
-      if(!lazy){
-        out <- collect(out)
-      }
-      
-      out
-      
-    },
-    
     
     #----- IZM specifieke methodes -----
     

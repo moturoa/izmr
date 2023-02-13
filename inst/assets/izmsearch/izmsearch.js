@@ -225,7 +225,7 @@ function formatSearchResults(data) {
             for (i = 0; i < len; i += 1) {  
                 
                 // make bsn clickable
-                data.data[i][1] = "<a style=\"cursor: pointer;\" onclick=\"setClickedId('" + 
+                data.data[i][1] = "<a style=\"cursor: pointer;\" href='javascript:;' onclick=\"setClickedId('" + 
                                      data.data[i][0] + "', 'izm-izmclickedid')\">" + 
                                      data.data[i][1] + "</a>" 
                 

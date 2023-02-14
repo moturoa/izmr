@@ -74,7 +74,10 @@ pseudoData <- R6::R6Class(
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vwsdatuminschrijving", 
                    "prsgeslachtsaanduidingcode",  # as geslacht, 
+                   "prsgeslachtsaanduidingomschrijving",  # as geslacht, 
                    "prsvoornamen",
+                   "prsgeslachtsnaam",
+                   "prsnaamopgemaakt",
                    "ovldatumoverlijden", #as overleden, 
                    "prsanummer", #as anr, 
                    "ou1anummer", #as anrouder1, 
@@ -131,24 +134,31 @@ pseudoData <- R6::R6Class(
         
       }
       
-      
-      # fill missing
-      #out <- self$replace_na_char(out)
-      
       # Rename cols.
       out <- dplyr::rename(out,
-                           geslacht = prsgeslachtsaanduidingcode,
+                           pseudo_bsn = prsburgerservicenummer,
+                           
+                           naam = prsnaamopgemaakt,
+                           voornamen = prsvoornamen,
+                           geslachtsnaam = prsgeslachtsnaam,
+                           geslacht = prsgeslachtsaanduidingomschrijving,
                            geboortedatum = prsgeboortedatum,
                            overleden = ovldatumoverlijden,
                            anr = prsanummer,
                            anrouder1 = ou1anummer,
                            anrouder2 = ou2anummer,
-                           pseudo_bsn = prsburgerservicenummer
+                           
+                           straatnaam = vblstraatnaam,
+                           huisnummer = vblhuisnummer,
+                           huisletter = vblhuisletter,
+                           huisnummertoevoeging = vblhuisnummertoevoeging,
+                           postcode = vblpostcode,
+                           woonplaatsnaam = vblwoonplaatsnaam
                            ) %>%
-        mutate(ouder1naam = paste(ou1voornamen, ou1geslachtsnaam),
-               ouder2naam = paste(ou2voornamen, ou2geslachtsnaam),
-               geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
-               overleden = as.Date(lubridate::ymd_hms(overleden)))
+        mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
+               overleden = as.Date(lubridate::ymd_hms(overleden)),
+               ou1geslachtsnaam = na_if(ou1geslachtsnaam, "."),
+               ou2geslachtsnaam = na_if(ou2geslachtsnaam, "."))
       
       out
     },
@@ -693,17 +703,25 @@ pseudoData <- R6::R6Class(
 
     table_depseudo2 = function(table_data = reactive(NULL), columns = NULL){
       
+      pseudo_columns <- reactive({
+        cols <- columns
+        
+        if(is.null(cols)){
+          cols <- self$find_pseudo_columns(table_data())
+        }
+        
+        cols
+      })
+      
       ids <- reactive({
         
         dat <- table_data()
         if(is.null(dat))return(NULL)
         
-        if(is.null(columns)){
-          columns <- self$find_pseudo_columns(dat)
-        }
+        columns <- pseudo_columns()
         
         u <- unique(unlist(dat[,columns]))
-        u[!is.na(u)]
+        u[!is.na(u) & u != ""]
       })
       
       f_out <- callModule(restCallModule, 
@@ -712,7 +730,31 @@ pseudoData <- R6::R6Class(
                           what = "depseudo",
                           parse_result = TRUE)
       
-      f_out
+      out <- reactive({
+        req(f_out())
+        req(nrow(f_out())>0)
+        dat <- table_data()
+        columns <- pseudo_columns()
+        vals <- f_out()
+        
+        # store pseudo_bsn separately unencrypted
+        if("pseudo_bsn" %in% columns){
+          dat$bsn <- dat$pseudo_bsn
+          columns[columns == "pseudo_bsn"] <- "bsn"
+        }
+        
+        dat[columns] <- lapply(dat[columns], function(col){
+          
+          ii <- match(col, vals$pseudo_value)
+          vals$value[ii]
+          
+        })
+        
+        dat
+      })
+      
+      
+      out
       
     },
     
@@ -765,44 +807,6 @@ pseudoData <- R6::R6Class(
       
     },
     
-    #' Depseudo a vector, send back as dataframe to be merged
-    vector_depseudo = function(data = reactive(NULL), pseudo_column = "pseudo_bsn"){
-      
-      flog.info("vector_depseudo")
-      
-      pseudo_ids <- reactive({
-        
-        ids <- data() %>%
-          pull(!!pseudo_column)
-        
-        ids[!is.na(ids)]
-        
-      })
-      
-      f_out <- callModule(restCallModule, 
-                          uuid::UUIDgenerate(), 
-                          pseudo_ids = pseudo_ids, what = "depseudo",
-                          parse_result = FALSE)
-      
-      reactive({
-        
-        out <- f_out()
-        
-        if(length(out) < 2){
-          return(data.frame(key = character(0),
-                            value = character(0),
-                            hash = character(0)
-                            ))
-        }
-        
-        as.data.frame(matrix(out, ncol=3, byrow=TRUE)) %>% 
-          setNames(c("key","value","hash")) %>% 
-          mutate(value = pm_decrypt(value))  
-        
-      })
-      
-    },
-    
 
     find_pseudo_columns = function(data, length_pseudo = 9){
       
@@ -824,121 +828,47 @@ pseudoData <- R6::R6Class(
         self$get_family(id_in(), what = "bsn")
       })
       
-      fam_d <- reactive({
-        req(fam())
-        browser()
-        self$table_depseudo2(table_data = fam)
-      })
-      
-      
-      # 
-      # 
-      # fam_id <- reactive({
-      #   req(fam())
-      #   
-      #   bsns <- fam() %>% 
-      #     pull(pseudo_bsn)
-      #   bsns[!is.na(bsns)]
-      # })
-      # 
-      # f_out <- callModule(restCallModule, 
-      #                     uuid::UUIDgenerate(), 
-      #                     pseudo_ids = fam_id, what = "lookup")
-      # 
-      # 
-      # 
-      # 
-      # #vn_out <- self$vector_depseudo(fam, "prsvoornamen")
-      # ou1vn <- self$vector_depseudo(fam, "ou1voornamen")
-      # ou1an <- self$vector_depseudo(fam, "ou1geslachtsnaam")
-      # ou2vn <- self$vector_depseudo(fam, "ou2voornamen")
-      # ou2an <- self$vector_depseudo(fam, "ou2geslachtsnaam")
-      # 
-      
+      fam_d <- self$table_depseudo2(table_data = fam)
+        
+
       reactive({
         
         req(fam_d())
         
-browser()
-        out <- left_join(fam(), fam_d(), 
-                  by = "pseudo_bsn", 
-                  suffix = c(".y", ""))  # <- duplicate kolomnamen krijgen van rechts voorrang
-        
-        # voornamen toevoegen
-        # stond ooit in keystore maar wordt nu laat toegevpegd, zodat we de API niet hoeven te updaten
-        
-        # if(nrow(vn_out()) > 0){
-        #   out <- left_join(out, 
-        #                    select(vn_out(),hash, prsvoornamen_dep = value), by = c("prsvoornamen" = "hash"))
-        #   out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-        #   out$prsvoornamen <- out$prsvoornamen_dep
-        #   out$prsvoornamen_dep <- NULL  
-        # }
-        
-        
-        # ou1
-        if(nrow(ou1vn()) > 0){
-          out <- left_join(out, 
-                           select(ou1vn(),hash, prsvoornamen_dep = value), by = c("ou1voornamen" = "hash"))
-          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-          out$ou1voornamen <- out$prsvoornamen_dep
-          out$prsvoornamen_dep <- NULL
-        }
-        
-        # ou2
-        if(nrow(ou2vn()) > 0){
-          out <- left_join(out, 
-                           select(ou2vn(),hash, prsvoornamen_dep = value), by = c("ou2voornamen" = "hash"))
-          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-          out$ou2voornamen <- out$prsvoornamen_dep
-          out$prsvoornamen_dep <- NULL
-        }
-        
-        # achternamen
-        
-        # ou1
-        if(nrow(ou1an()) > 0){
-          out <- left_join(out, 
-                           select(ou1an(),hash, prsvoornamen_dep = value), by = c("ou1geslachtsnaam" = "hash"))
-          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-          out$ou1geslachtsnaam <- out$prsvoornamen_dep
-          out$prsvoornamen_dep <- NULL
-        }
-        
-        # ou2
-        if(nrow(ou2an()) > 0){
-          out <- left_join(out, 
-                           select(ou2an(),hash, prsvoornamen_dep = value), by = c("ou2geslachtsnaam" = "hash"))
-          out$prsvoornamen_dep <- trimws(gsub('([[:upper:]])', ' \\1', out$prsvoornamen_dep))
-          out$ou2geslachtsnaam <- out$prsvoornamen_dep
-          out$prsvoornamen_dep <- NULL
-        }
-        
-        out %>%
+        fam_d() %>%
           mutate(
             adres_display = paste(straatnaam,
                                   huisnummer,
                                   huisletter,
                                   huisnummertoevoeging,
-                                  postcode),
+                                  postcode,
+                                  woonplaatsnaam),
             vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
-            overleden = as.Date(overleden, "%y%m%d"),
-            geboortedatum = as.Date(geboortedatum, "%y%m%d"),
-            begindatum = as.Date(begindatum, "%y%m%d"),
-            einddatum = as.Date(einddatum, "%y%m%d"),
-            
+
             ouder1_naam = paste(ou1voornamen, ou1geslachtsnaam),
             ouder2_naam = paste(ou2voornamen, ou2geslachtsnaam),
             
             naam_tooltip = format_naam_tooltip(naam, overleden),
+            
             adres_tooltip = format_adres_tooltip(
               vwsdatuminschrijving,
               vwsgemeentevaninschrijvingomschrijving,
               straatnaam,
               huisnummer,
               huisletter,
-              postcode
+              huisnummertoevoeging,
+              postcode,
+              woonplaatsnaam
             )
+          ) %>%
+          mutate(adres_tooltip = na_if(adres_tooltip, "NA NA NA NA"),
+                 bsn = replace_na(bsn, ""),
+                 naam = replace_na(naam, ""),
+                 voornamen = replace_na(voornamen, ""),
+                 geslacht = replace_na(geslacht, "Onbekend"),
+                 naam_tooltip = replace_na(naam_tooltip, ""),
+                 adres_display = replace_na(adres_display, ""),
+                 adres_tooltip = replace_na(adres_tooltip, "")
           )
         
       })

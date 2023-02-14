@@ -18,7 +18,9 @@ format_adres_tooltip <- function(vwsdatuminschrijving,
                          straatnaam,
                          huisnummer,
                          huisletter,
-                         postcode){
+                         huisnummertoevoeging,
+                         postcode,
+                         woonplaats){
   
   ifelse(is.na(vwsdatuminschrijving), 
          paste(straatnaam, huisnummer, huisletter, postcode), 
@@ -26,6 +28,6 @@ format_adres_tooltip <- function(vwsdatuminschrijving,
                     " {format(vwsdatuminschrijving, '%d-%m-%Y')}",
                     " <i class='fa fa-home' data-toggle='tooltip' data-placement='right' ",
                     "title='Laatst bekende adres binnen Ede: ",
-                    "{paste(straatnaam, huisnummer, huisletter, postcode)}'></i>"))
+                    "{paste(straatnaam, huisnummer, huisletter,huisnummertoevoeging, postcode, woonplaats)}'></i>"))
   
 }  

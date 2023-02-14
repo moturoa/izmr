@@ -13,7 +13,9 @@ format_adres_tooltip(
   straatnaam,
   huisnummer,
   huisletter,
-  postcode
+  huisnummertoevoeging,
+  postcode,
+  woonplaats
 )
 }
 \arguments{

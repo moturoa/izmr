@@ -406,70 +406,26 @@ pseudoData <- R6::R6Class(
     #' @return A reactive dataframe
     get_all_bronnen = function(pseudo_bsn) {
       
-      flog.info("get_all_bronnen")
-      
-      # Reactive met de-pseudo gegevens.
-      brp <- self$get_verhuizingen_depseudo(pseudo_bsn) 
-      
-      
       reactive({
         
         req(pseudo_bsn())
+
+        lis <- list(
+          suite = self$get_suite(pseudo_bsn()),
+          menscentraal = self$get_menscentraal(pseudo_bsn()),
+          carel = self$get_carel(pseudo_bsn()),
+          allegro = self$get_allegro(pseudo_bsn()),
+          openwave = self$get_openwave(pseudo_bsn()),
+          brp = self$get_verhuizingen(pseudo_bsn())
+        )
         
-        # Pseudo bronnen
-        suite <- self$get_suite(pseudo_bsn()) 
-        menscentraal <- self$get_menscentraal(pseudo_bsn()) 
-        carel <- self$get_carel(pseudo_bsn()) 
-        allegro <- self$get_allegro(pseudo_bsn()) 
-        openwave <- self$get_openwave(pseudo_bsn()) 
-      
-        bind_rows(list(
-          suite,
-          menscentraal, 
-          carel,
-          allegro,
-          openwave,
-          brp()
-        )) %>% 
-         mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), 
-                einddatum_formatted = strftime(einddatum, "%d-%m-%Y")) %>%
-          arrange(desc(begindatum))
- 
+        lis$n_rows <- sum(sapply(lis, nrow))
+        lis
+        
       })
       
     },
     
-    #' @description Retrieve only depseudo bronnen (no BRP) for multiple persons
-    #' @param pseudo_bsn Vector of pseudo-ids, *not* reactive
-    get_pseudo_bronnen = function(pseudo_bsn) {
-
-      person_function <- function(id){
-        
-        # Pseudo bronnen
-        suite <- self$get_suite(id) 
-        menscentraal <- self$get_menscentraal(id) 
-        carel <- self$get_carel(id) 
-        allegro <- self$get_allegro(id) 
-        openwave <- self$get_openwave(id) 
-        
-        bind_rows(list(
-          suite,
-          menscentraal, 
-          carel,
-          allegro,
-          openwave
-        )) %>% 
-          mutate(begindatum_formatted = strftime(begindatum, "%d-%m-%Y"), 
-                 einddatum_formatted = strftime(einddatum, "%d-%m-%Y"))
-        
-      }
-
-      lapply(pseudo_bsn, person_function) %>%
-        setNames(pseudo_bsn)
-    
-      
-    },
-     
     
     get_suite = function(pseudo_bsn){
       
@@ -540,36 +496,22 @@ pseudoData <- R6::R6Class(
                                                                         
     },
     
-    
-    
-    
     get_openwave = function(pseudo_id, what='bsn_nummer'){
        
-      q_wave <- glue("select 'Open Wave' as bron, module, besluit, zaaksoort, omschrijving, ",
-                     "aanvraagdatum as begindatum, besluitdatum as einddatum, ",
-                     "bedrijfsnaaam as Bedrijfsnaam, handelsregister from {self$schema_sql}openwave ",
-                     " where {what} = '{pseudo_id}';")
-      
-      self$query(q_wave) %>% mutate(bron = as.character(bron),
-                                    omschrijving = as.character(omschrijving),
-                                    begindatum = ymd_hms(begindatum), 
-                                    einddatum = ymd_hms(einddatum)) %>%
-                                      arrange(desc(begindatum)) 
+      self$read_table("openwave", lazy = TRUE) %>%
+        filter(!!sym(what) == !!pseudo_id) %>%
+        collect %>%
+        mutate(bron = "OpenWave",
+               aanvraagdatum = as.Date(ymd_hms(aanvraagdatum)),
+               besluitdatum = as.Date(ymd_hms(besluitdatum)))
     },
     
     get_carel = function(pseudo_id){
        
-      q_carel <- glue("select 'Carel' as bron, 'Melding school: ' || naam_school as omschrijving, ",
-                      " behandelaar, melding, start_melding as begindatum, ",
-                      " einde_melding as einddatum, naam_school from {self$schema_sql}carel where bsn ='{pseudo_id}';")
-      
-      self$query(q_carel) %>% 
-        mutate(bron = as.character(bron),
-               omschrijving = as.character(omschrijving),
-               begindatum = dmy(begindatum), 
-               einddatum = dmy(einddatum)) %>%
-        arrange(desc(begindatum))
-      
+      self$read_table("carel", lazy = TRUE) %>%
+        filter(bsn %in% !!pseudo_id) %>%
+        collect %>%
+        mutate(bron = "Carel")
     },
     
     
@@ -577,57 +519,24 @@ pseudoData <- R6::R6Class(
       
       self$read_table("allegro", lazy = TRUE) %>%
         filter(bsn %in% !!pseudo_id) %>%
-        select(
-          omschrijving = aanvraag_schulhulp,
-          naam_consulent,
-          aanvraag_schuldhulp = aanvraag_schulhulp,
-          traject_schuld_hulp,
-          begindatum = start_datum,
-          einddatum = eind_datum,
+        rename(
           pseudo_bsn = bsn
         ) %>%
         collect %>%
-        mutate(bron = "Allegro",
-               einddatum = as.Date(einddatum, format = "%d-%m-%Y"),
-               begindatum = as.Date(begindatum, format = "%d-%m-%Y")
-               ) %>%
-        relocate(bron)
+        mutate(bron = "Allegro")
       
     },
     
     
     get_menscentraal = function(pseudo_id){
       
-      out <- self$read_table("menscentraal", lazy = TRUE) %>%
+      self$read_table("menscentraal", lazy = TRUE) %>%
         filter(klant_bsn %in% !!pseudo_id) %>%
-        select(
-          omschrijving = groepnr,
-          zaaktype,
-          begindatum,
-          einddatum,
-          status,
+        rename(
           pseudo_bsn = klant_bsn
         ) %>%
+        mutate(bron = "Menscentraal") %>%
         collect 
-      
-      if(nrow(out) > 0){
-        out <- out %>% 
-          mutate(bron = "Menscentraal",
-                 begindatum = as.Date(begindatum),
-                 einddatum = as.Date(einddatum)
-          ) %>%
-          relocate(bron) %>%
-          arrange(desc(begindatum))
-      } else {
-        out <- out %>%
-          mutate(bron = "Menscentraal",
-                 begindatum = as.Date(NA),
-                 einddatum = as.Date(NA)
-          ) %>%
-          relocate(bron)
-      }
-      
-      out
       
     },
     
@@ -636,76 +545,55 @@ pseudoData <- R6::R6Class(
     #------ Adres -----
     get_verhuizingen = function(pseudo_id) {
 
-        q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, '' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente, vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, 'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum from {self$schema_sql}bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';") 
-        brp_verh_hst <- dbGetQuery(self$con, q_brp_verh_hst)  
-        
-        # alle kolommen naar char - dit voorkomt een (wat zeldzame) bug:
-        brp_verh_hst <- dplyr::mutate_all(brp_verh_hst, as.character)
-        
-        # bzsprsq00 voor huidige adres binnen Ede (staat niet altijd in hst)
-        q_brp_pers <- glue("select vwsdatuminschrijving,vwsgemeentevaninschrijvingomschrijving, prsgeboortedatum, ovldatumoverlijden, vblgemeentevaninschrijvingomschrijving as gemeente, vblpostcode, vblstraatnaam, vblhuisnummer, vblhuisletter, vblhuisnummertoevoeging, 'BRP' as bron, vbldatumaanvangadreshouding as begindatum from {self$schema_sql}bzsprsq00 where prsburgerservicenummer = '{pseudo_id}';") 
-        brp_persoon <- dbGetQuery(self$con, q_brp_pers)   %>% mutate_if(is.character, list(~na_if(., "")))
-        
-        # if prs adres is not in hst; add this as verhuizing
-        if( brp_persoon$begindatum %notin% brp_verh_hst$begindatum) {
-          brp_verh <- brp_persoon %>% filter(begindatum %notin% brp_verh_hst$begindatum)   %>% mutate(omschrijving =  'is Verhuisd', bron = 'Verhuizing')
-           
-          
-          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_verh)
-        }  
-        if(!is.na(brp_persoon$ovldatumoverlijden)) { 
-          brp_ovl <- data.frame(omschrijving =  'Overleden', bron = 'Overleden', 
-                                begindatum = brp_persoon$ovldatumoverlijden) 
-          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_ovl)
-        }
-        if(!is.na(brp_persoon$vwsgemeentevaninschrijvingomschrijving) | !is.na(brp_persoon$vwsdatuminschrijving)) {
-          brp_uitgeschreven <- data.frame(omschrijving =  paste('Verhuisd naar ', brp_persoon$vwsgemeentevaninschrijvingomschrijving) , bron = 'Uitgeschreven', begindatum = brp_persoon$vwsdatuminschrijving) 
-          brp_verh_hst <-dplyr::bind_rows(brp_verh_hst,brp_uitgeschreven)
-        }
-        if(!is.na(brp_persoon$prsgeboortedatum)) {
-          brp_geboren <- data.frame(omschrijving =  'Geboren', bron = 'Geboren', begindatum = brp_persoon$prsgeboortedatum) 
-          brp_verh_hst <- dplyr::bind_rows(brp_verh_hst,brp_geboren)
-        }
-        
-        
-        brp_verh_hst <- brp_verh_hst %>% 
-          mutate(begindatum = ymd(begindatum)) %>% 
-          arrange(desc(begindatum)) 
-        #print(brp_verh_hst)
-        brp_verh_hst
+      adres_historie <- self$read_table("bzsc58q00", lazy = TRUE) %>%
+        filter(prsburgerservicenummer == !!pseudo_id) %>%
+        select(
+          vblstraatnaam = vblhststraatnaam,
+          vblhuisnummer = vblhsthuisnummer,
+          vblhuisletter = vblhsthuisletter,
+          vblhuisnummertoevoeging = vblhsthuisnummertoevoeging,
+          vblpostcode = vblhstpostcode,
+          vblwoonplaatsnaam = vblhstwoonplaatsnaam,
+          vbldatuminschrijving = vblhstdatuminschrijving,
+          vbldatumaanvangadreshouding = vblhstdatumaanvangadreshouding,
+          vblgemeentevaninschrijvingomschrijving = vblhstgemeentevaninschrijvingomschrijving) %>%
+        collect
+      
+      
+      brp_current <- self$read_table("bzsprsq00", lazy = TRUE) %>%
+        filter(prsburgerservicenummer == !!pseudo_id) %>%
+        select(
+          vblstraatnaam = vblstraatnaam,
+          vblhuisnummer = vblhuisnummer,
+          vblhuisletter = vblhuisletter,
+          vblhuisnummertoevoeging = vblhuisnummertoevoeging,
+          vblpostcode = vblpostcode,
+          vblwoonplaatsnaam = vblwoonplaatsnaam,
+          vbldatuminschrijving = vbldatuminschrijving,
+          vbldatumaanvangadreshouding = vbldatumaanvangadreshouding,
+          vblgemeentevaninschrijvingomschrijving = vblgemeentevaninschrijvingomschrijving) %>%
+        collect
+      
+      suppressWarnings({
+        tab <- bind_rows(
+          adres_historie,
+          brp_current
+        ) %>%
+          mutate(vbldatumaanvangadreshouding = ymd(vbldatumaanvangadreshouding),
+                 vbldatuminschrijving = ymd(vbldatuminschrijving)) %>%
+          arrange(desc(vbldatumaanvangadreshouding))  
+      })
+      
+      tab
      
     },
     
-    get_brp_verh_hst = function(pseudo_id){
-      
-      q_brp_verh_hst <- glue("select '' as vblhuisnummer, '' as vblhuisletter, '' as vblstraatnaam, ",
-                             "'' as vblhuisnummertoevoeging, vblhstgemeentevaninschrijvingomschrijving as gemeente,",
-                             " vblhstadresopgemaakt, vblhstpostcode as vblpostcode, 'Verhuizing' as bron, ",
-                             "'Verhuisd' as omschrijving, vblhstdatumaanvangadreshouding as begindatum ",
-                             " from {self$schema_sql}bzsc58q00 where prsburgerservicenummer = '{pseudo_id}';")
-      
-      self$query(q_brp_verh_hst)
-      
-    },
-    
-    
-    
+
     
     #------ Depseudonimiseren -----
   
-    #' Only perform the lookup method
-    #' Returns a reactive
-    rest_lookup = function(pseudo_ids){
-  
-      flog.info("rest_lookup")
-      
-      callModule(restCallModule, 
-                          uuid::UUIDgenerate(), 
-                          pseudo_ids = pseudo_ids, what = "lookup")
-  
-    },
-
-
+    #' @description Depseudonimiseer een hele tabel
+    #' @details Gepseudonimiseerde kolommen worden automatisch bepaald.
     table_depseudo2 = function(table_data = reactive(NULL), columns = NULL){
       
       pseudo_columns <- reactive({
@@ -759,7 +647,11 @@ pseudoData <- R6::R6Class(
         dat[columns] <- lapply(dat[columns], function(col){
           
           ii <- match(col, vals$pseudo_value)
-          vals$value[ii]
+          if(!all(is.na(ii))){
+            vals$value[ii]  
+          } else {  # als geen matches: vervang niets. In geval dat de kolom wel 9char is maar niet gepseudonimiseerd.
+            col
+          }
           
         })
         
@@ -768,55 +660,6 @@ pseudoData <- R6::R6Class(
       
       
       out
-      
-    },
-    
-    
-    #' Depseudo a table, merge with original data, format adres
-    table_depseudo = function(data = reactive(NULL), pseudo_bsn_column = "pseudo_bsn"){
-      
-      
-      flog.info("table_depseudo")
-      
-      pseudo_ids <- reactive({
-        
-        if(is.null(data())){
-          return(NULL)
-        } else {
-          data() %>%
-            pull(!!pseudo_bsn_column)  
-        }
-        
-      })
-      
-      f_out <- callModule(restCallModule, 
-                          uuid::UUIDgenerate(), 
-                          pseudo_ids = pseudo_ids, what = "lookup",
-                          parse_result = TRUE)
-      
-      reactive({
-        
-        if(is.null(data())){
-          NULL
-        } else {
-          
-          j <- setNames("pseudo_bsn", pseudo_bsn_column)
-          
-          left_join(
-            data(),
-            f_out(),
-            by = j) %>% 
-            mutate(adres_display = paste(straatnaam,
-                                         huisnummer,
-                                         huisletter,
-                                         #huisnummertoevoeging,
-                                         postcode)
-            )
-          
-        }
-
-        
-      })
       
     },
     
@@ -887,105 +730,9 @@ pseudoData <- R6::R6Class(
         
       })
     
-    },
-  
-    # Use /dev endpoint to search an address.
-    get_personen_adres_depseudo = function(adres = reactive(NULL)){
-      
-      callModule(restAddressCallModule, 
-                 uuid::UUIDgenerate(), adres = adres)
-      
-    },
-  
-  
-    get_verhuizingen_depseudo = function(id_in = reactive(NULL)){
-      
-      verh <- reactive({
-        req(id_in())
-        self$get_verhuizingen(id_in())
-      })
-      
-      # select the values to depseudo
-      depseu <- reactive({
-        x <- c(verh() %>% pull(vblpostcode),   
-               verh() %>% pull(vblhuisnummer), 
-               verh() %>% pull(vblhstadresopgemaakt),
-               verh() %>% pull(vblhuisnummertoevoeging),
-               verh() %>% pull(vblstraatnaam))
-        x[!is.na(x)] 
-      })
-      
-      # calling REST service
-      f_out <- callModule(restCallModule, 
-                          uuid::UUIDgenerate(), 
-                          pseudo_ids = depseu, what = "depseudo")
-      
-      # merge depseudo with pseudo!
-      reactive({ 
-        req(verh())
-        #req(nrow(f_out()) > 0)
-        replaceAll(verh(), f_out()) 
-      }) 
-      
-    },
-  
-  
-    get_adres_depseudo = function(adres){
-      
-      
-      adres_data <- reactive({
-        
-        req(adres())
-        database_object$get_person_brp(what = "adres", adres = adres())
-        
-      })
-      
-      adres_id <- reactive({
-        adres_data() %>% pull(pseudo_bsn)
-      })
-      
-      rest_out <- callModule(restCallModule, 
-                           uuid::UUIDgenerate(), 
-                           pseudo_ids = adres_id, what = "lookup")
-      
-      
-      reactive({
-        
-        req(adres_data())
-        
-        # dwz: depseudonimiseer is klaar.
-        req(nrow(rest_out()) > 0)
-        
-        left_join(adres_data(), rest_out(), 
-                  by = "pseudo_bsn", 
-                  suffix = c(".y", ""))
-        
-      })
-      
-    },
-  
-    #------ Wijzigingen -----
-    
-    # Wordt niet gebruikt in frontend 
-    meldingConstructor = function(days_ago=42){
-      
-      # PAS OP: niet alle datasets zijn meer beschikbaar
-      # Getting BRP mutaties                                                                                                               
-      # q_brp_huw <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is getrouwd' as omschrijving, huwdatumsluitinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumsluitinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
-      # q_brp_gesch <-  dbGetQuery(self$con, glue("select 'huwelijk' as bron, 'is gescheiden' as omschrijving,  huwdatumontbindinghuwelijkpartnerschap as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc55q00 where  DATE(NULLIF(huwhstdatumontbindinghuwelijkpartnerschap, '')) > DATETIME('now','-{days_ago} day');"))
-      q_brp_verh <-  dbGetQuery(self$con, glue("select 'verhuizing' as bron,'is verhuisd' as omschrijving,  vblhstdatuminschrijving as begindatum,  prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc58q00 where DATE(NULLIF(vblhstdatuminschrijving, '')) > DATETIME('now','-{days_ago} day');"))
-      q_brp_kind <-  dbGetQuery(self$con, glue("select 'kind' as bron, 'heeft een kind gekregen' as omschrijving,  kndgeboortedatum as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzskinq00 where DATE(NULLIF(kndgeboortedatum, '')) > DATETIME('now','-{days_ago} day');"))
-      q_brp_cura <-  dbGetQuery(self$con, glue("select 'curatele' as bron, 'is onder curatele gesteld' as omschrijving, gzvhstdatumvanopneming as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc61q00 where  DATE(NULLIF(gzvhstdatumvanopneming, '')) > DATETIME('now','-{days_ago} day');"))
-      q_brp_overl <-  dbGetQuery(self$con, glue("select 'overleden' as bron, 'is overleden' as omschrijving, ovlhstdatumoverlijden as begindatum, prsburgerservicenummer as pseudo_bsn from {self$schema_sql}bzsc56q00 where DATE(NULLIF(ovlhstdatumoverlijden, '')) > DATETIME('now','-{days_ago} day');"))
-      
-      
-      returnableList <- list( q_brp_verh, q_brp_kind, q_brp_overl,q_brp_cura) 
-      #q_brp_huw,q_brp_gesch,
-      as.data.frame(data.table::rbindlist(returnableList, idcol = TRUE, fill=TRUE)) %>% arrange(desc(begindatum))
-      
     }
-    
-    
+  
+
     ), 
     
     private = list(

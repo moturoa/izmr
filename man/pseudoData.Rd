@@ -8,70 +8,74 @@ R6 class for connection to anonymized database.
 
 R6 class for connection to anonymized database.
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{con}}{Database connection object}
-
-\item{\code{pool}}{Logical, whether the connection is pool(ed) or not.}
-
-\item{\code{schema}}{Database schema in use.}
-}
-\if{html}{\out{</div>}}
+\section{Super class}{
+\code{shintodb::NA}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{pseudoData$new()}}
-\item \href{#method-close}{\code{pseudoData$close()}}
-\item \href{#method-query}{\code{pseudoData$query()}}
-\item \href{#method-read_table}{\code{pseudoData$read_table()}}
-\item \href{#method-replace_na_char}{\code{pseudoData$replace_na_char()}}
-\item \href{#method-get_person_brp}{\code{pseudoData$get_person_brp()}}
-\item \href{#method-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
-\item \href{#method-set_relation}{\code{pseudoData$set_relation()}}
-\item \href{#method-set_parent_relation}{\code{pseudoData$set_parent_relation()}}
-\item \href{#method-set_kind_relation}{\code{pseudoData$set_kind_relation()}}
-\item \href{#method-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
-\item \href{#method-get_kinderen}{\code{pseudoData$get_kinderen()}}
-\item \href{#method-get_family}{\code{pseudoData$get_family()}}
-\item \href{#method-get_sinds_char_column}{\code{pseudoData$get_sinds_char_column()}}
-\item \href{#method-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
-\item \href{#method-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
-\item \href{#method-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
-\item \href{#method-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
-\item \href{#method-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
-\item \href{#method-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
-\item \href{#method-get_pseudo_bronnen}{\code{pseudoData$get_pseudo_bronnen()}}
-\item \href{#method-get_suite}{\code{pseudoData$get_suite()}}
-\item \href{#method-get_openwave}{\code{pseudoData$get_openwave()}}
-\item \href{#method-get_carel}{\code{pseudoData$get_carel()}}
-\item \href{#method-get_allegro}{\code{pseudoData$get_allegro()}}
-\item \href{#method-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
-\item \href{#method-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
-\item \href{#method-get_brp_verh_hst}{\code{pseudoData$get_brp_verh_hst()}}
-\item \href{#method-rest_lookup}{\code{pseudoData$rest_lookup()}}
-\item \href{#method-table_depseudo}{\code{pseudoData$table_depseudo()}}
-\item \href{#method-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
-\item \href{#method-get_personen_adres_depseudo}{\code{pseudoData$get_personen_adres_depseudo()}}
-\item \href{#method-get_verhuizingen_depseudo}{\code{pseudoData$get_verhuizingen_depseudo()}}
-\item \href{#method-get_adres_depseudo}{\code{pseudoData$get_adres_depseudo()}}
-\item \href{#method-meldingConstructor}{\code{pseudoData$meldingConstructor()}}
-\item \href{#method-clone}{\code{pseudoData$clone()}}
+\item \href{#method-NA-new}{\code{pseudoData$new()}}
+\item \href{#method-NA-replace_na_char}{\code{pseudoData$replace_na_char()}}
+\item \href{#method-NA-get_person_brp}{\code{pseudoData$get_person_brp()}}
+\item \href{#method-NA-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
+\item \href{#method-NA-set_relation}{\code{pseudoData$set_relation()}}
+\item \href{#method-NA-set_parent_relation}{\code{pseudoData$set_parent_relation()}}
+\item \href{#method-NA-set_kind_relation}{\code{pseudoData$set_kind_relation()}}
+\item \href{#method-NA-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
+\item \href{#method-NA-get_kinderen}{\code{pseudoData$get_kinderen()}}
+\item \href{#method-NA-get_family}{\code{pseudoData$get_family()}}
+\item \href{#method-NA-get_sinds_char_column}{\code{pseudoData$get_sinds_char_column()}}
+\item \href{#method-NA-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
+\item \href{#method-NA-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
+\item \href{#method-NA-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
+\item \href{#method-NA-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
+\item \href{#method-NA-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
+\item \href{#method-NA-label_burgerlijke_staat}{\code{pseudoData$label_burgerlijke_staat()}}
+\item \href{#method-NA-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
+\item \href{#method-NA-get_suite}{\code{pseudoData$get_suite()}}
+\item \href{#method-NA-get_openwave}{\code{pseudoData$get_openwave()}}
+\item \href{#method-NA-get_carel}{\code{pseudoData$get_carel()}}
+\item \href{#method-NA-get_allegro}{\code{pseudoData$get_allegro()}}
+\item \href{#method-NA-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
+\item \href{#method-NA-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
+\item \href{#method-NA-table_depseudo2}{\code{pseudoData$table_depseudo2()}}
+\item \href{#method-NA-find_pseudo_columns}{\code{pseudoData$find_pseudo_columns()}}
+\item \href{#method-NA-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
+\item \href{#method-unknown-clone}{\code{pseudoData$clone()}}
 }
 }
+\if{html}{\out{
+<details><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="append_data"><a href='../../shintodb/html/NA.html#method-NA-append_data'><code>shintodb::NA$append_data()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="close"><a href='../../shintodb/html/NA.html#method-NA-close'><code>shintodb::NA$close()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="connect_to_database"><a href='../../shintodb/html/NA.html#method-NA-connect_to_database'><code>shintodb::NA$connect_to_database()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="delete_rows_where"><a href='../../shintodb/html/NA.html#method-NA-delete_rows_where'><code>shintodb::NA$delete_rows_where()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="execute_query"><a href='../../shintodb/html/NA.html#method-NA-execute_query'><code>shintodb::NA$execute_query()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="get_query"><a href='../../shintodb/html/NA.html#method-NA-get_query'><code>shintodb::NA$get_query()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="has_value"><a href='../../shintodb/html/NA.html#method-NA-has_value'><code>shintodb::NA$has_value()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="have_column"><a href='../../shintodb/html/NA.html#method-NA-have_column'><code>shintodb::NA$have_column()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="list_tables"><a href='../../shintodb/html/NA.html#method-NA-list_tables'><code>shintodb::NA$list_tables()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="make_column"><a href='../../shintodb/html/NA.html#method-NA-make_column'><code>shintodb::NA$make_column()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="postgres_now"><a href='../../shintodb/html/NA.html#method-NA-postgres_now'><code>shintodb::NA$postgres_now()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="query"><a href='../../shintodb/html/NA.html#method-NA-query'><code>shintodb::NA$query()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="read_table"><a href='../../shintodb/html/NA.html#method-NA-read_table'><code>shintodb::NA$read_table()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="replace_value_where"><a href='../../shintodb/html/NA.html#method-NA-replace_value_where'><code>shintodb::NA$replace_value_where()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="replace_value_where2"><a href='../../shintodb/html/NA.html#method-NA-replace_value_where2'><code>shintodb::NA$replace_value_where2()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="table_columns"><a href='../../shintodb/html/NA.html#method-NA-table_columns'><code>shintodb::NA$table_columns()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="table_info"><a href='../../shintodb/html/NA.html#method-NA-table_info'><code>shintodb::NA$table_info()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="update_where"><a href='../../shintodb/html/NA.html#method-NA-update_where'><code>shintodb::NA$update_where()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="write_table_overwrite"><a href='../../shintodb/html/NA.html#method-NA-write_table_overwrite'><code>shintodb::NA$write_table_overwrite()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-NA-new"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new pseudoData (IZM) object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$new(
-  config_file = getOption("shintobag_conf", "conf/config.yml"),
-  schema = "",
-  filename = NULL,
-  pool = FALSE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$new(config_file = NULL, schema = "", filename = NULL, pool = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -92,46 +96,8 @@ A new pseudoData object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-close"></a>}}
-\if{latex}{\out{\hypertarget{method-close}{}}}
-\subsection{Method \code{close()}}{
-Close the database connection
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$close()}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-query"></a>}}
-\if{latex}{\out{\hypertarget{method-query}{}}}
-\subsection{Method \code{query()}}{
-Perform dbGetQuery on the DB connection
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$query(txt, glue = TRUE)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{txt}}{The SQL query}
-
-\item{\code{glue}}{Logical, if TRUE glues the txt param.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-read_table"></a>}}
-\if{latex}{\out{\hypertarget{method-read_table}{}}}
-\subsection{Method \code{read_table()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$read_table(table, lazy = FALSE)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-replace_na_char"></a>}}
-\if{latex}{\out{\hypertarget{method-replace_na_char}{}}}
+\if{html}{\out{<a id="method-NA-replace_na_char"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-replace_na_char}{}}}
 \subsection{Method \code{replace_na_char()}}{
 Replace all NAs in a dataframe with ""
 \subsection{Usage}{
@@ -147,8 +113,8 @@ Replace all NAs in a dataframe with ""
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_person_brp"></a>}}
-\if{latex}{\out{\hypertarget{method-get_person_brp}{}}}
+\if{html}{\out{<a id="method-NA-get_person_brp"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_person_brp}{}}}
 \subsection{Method \code{get_person_brp()}}{
 Read personal data based on pseudo-id(s).
 \subsection{Usage}{
@@ -179,8 +145,8 @@ A dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-anummer_from_bsn"></a>}}
-\if{latex}{\out{\hypertarget{method-anummer_from_bsn}{}}}
+\if{html}{\out{<a id="method-NA-anummer_from_bsn"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-anummer_from_bsn}{}}}
 \subsection{Method \code{anummer_from_bsn()}}{
 Find (pseudo) A-nummer from a (pseudo) BSN
 \subsection{Usage}{
@@ -199,8 +165,8 @@ A vector
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_relation"></a>}}
-\if{latex}{\out{\hypertarget{method-set_relation}{}}}
+\if{html}{\out{<a id="method-NA-set_relation"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-set_relation}{}}}
 \subsection{Method \code{set_relation()}}{
 Set relation column in a dataframe
 \subsection{Usage}{
@@ -221,8 +187,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_parent_relation"></a>}}
-\if{latex}{\out{\hypertarget{method-set_parent_relation}{}}}
+\if{html}{\out{<a id="method-NA-set_parent_relation"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-set_parent_relation}{}}}
 \subsection{Method \code{set_parent_relation()}}{
 Write parent relation to dataframe
 \subsection{Usage}{
@@ -245,8 +211,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_kind_relation"></a>}}
-\if{latex}{\out{\hypertarget{method-set_kind_relation}{}}}
+\if{html}{\out{<a id="method-NA-set_kind_relation"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-set_kind_relation}{}}}
 \subsection{Method \code{set_kind_relation()}}{
 Write child relation to dataframe
 \subsection{Usage}{
@@ -269,8 +235,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_huwelijk"></a>}}
-\if{latex}{\out{\hypertarget{method-get_huwelijk}{}}}
+\if{html}{\out{<a id="method-NA-get_huwelijk"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_huwelijk}{}}}
 \subsection{Method \code{get_huwelijk()}}{
 Read huwelijk data
 \subsection{Usage}{
@@ -293,8 +259,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_kinderen"></a>}}
-\if{latex}{\out{\hypertarget{method-get_kinderen}{}}}
+\if{html}{\out{<a id="method-NA-get_kinderen"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_kinderen}{}}}
 \subsection{Method \code{get_kinderen()}}{
 Read children data
 \subsection{Usage}{
@@ -317,8 +283,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_family"></a>}}
-\if{latex}{\out{\hypertarget{method-get_family}{}}}
+\if{html}{\out{<a id="method-NA-get_family"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_family}{}}}
 \subsection{Method \code{get_family()}}{
 Read (pseudo) family data for provided pseudo-ids.
 \subsection{Usage}{
@@ -341,8 +307,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_sinds_char_column"></a>}}
-\if{latex}{\out{\hypertarget{method-get_sinds_char_column}{}}}
+\if{html}{\out{<a id="method-NA-get_sinds_char_column"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_sinds_char_column}{}}}
 \subsection{Method \code{get_sinds_char_column()}}{
 Filter a table based on 'after this date'
 \subsection{Usage}{
@@ -361,7 +327,7 @@ Filter a table based on 'after this date'
 \if{html}{\out{</div>}}
 }
 \subsection{Details}{
-SQLite does not have a DATE class, so we need this special method.
+Does not work with SQLite!
 }
 
 \subsection{Returns}{
@@ -369,8 +335,8 @@ Dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_adreswijzigingen_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-get_adreswijzigingen_sinds}{}}}
+\if{html}{\out{<a id="method-NA-get_adreswijzigingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_adreswijzigingen_sinds}{}}}
 \subsection{Method \code{get_adreswijzigingen_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adreswijzigingen_sinds(startdatum)}\if{html}{\out{</div>}}
@@ -378,8 +344,8 @@ Dataframe
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_geboortes_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-get_geboortes_sinds}{}}}
+\if{html}{\out{<a id="method-NA-get_geboortes_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_geboortes_sinds}{}}}
 \subsection{Method \code{get_geboortes_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_geboortes_sinds(startdatum)}\if{html}{\out{</div>}}
@@ -387,8 +353,8 @@ Dataframe
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_huwelijken_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-get_huwelijken_sinds}{}}}
+\if{html}{\out{<a id="method-NA-get_huwelijken_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_huwelijken_sinds}{}}}
 \subsection{Method \code{get_huwelijken_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_huwelijken_sinds(startdatum)}\if{html}{\out{</div>}}
@@ -396,8 +362,8 @@ Dataframe
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_scheidingen_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-get_scheidingen_sinds}{}}}
+\if{html}{\out{<a id="method-NA-get_scheidingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_scheidingen_sinds}{}}}
 \subsection{Method \code{get_scheidingen_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_scheidingen_sinds(startdatum)}\if{html}{\out{</div>}}
@@ -405,8 +371,8 @@ Dataframe
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_overlijdens_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-get_overlijdens_sinds}{}}}
+\if{html}{\out{<a id="method-NA-get_overlijdens_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_overlijdens_sinds}{}}}
 \subsection{Method \code{get_overlijdens_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens_sinds(startdatum)}\if{html}{\out{</div>}}
@@ -414,8 +380,17 @@ Dataframe
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_all_bronnen"></a>}}
-\if{latex}{\out{\hypertarget{method-get_all_bronnen}{}}}
+\if{html}{\out{<a id="method-NA-label_burgerlijke_staat"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-label_burgerlijke_staat}{}}}
+\subsection{Method \code{label_burgerlijke_staat()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$label_burgerlijke_staat(code)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_all_bronnen"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_all_bronnen}{}}}
 \subsection{Method \code{get_all_bronnen()}}{
 Retrieve all 'bronnen' for a person based on pseudo-id
 \subsection{Usage}{
@@ -434,28 +409,8 @@ A reactive dataframe
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_pseudo_bronnen"></a>}}
-\if{latex}{\out{\hypertarget{method-get_pseudo_bronnen}{}}}
-\subsection{Method \code{get_pseudo_bronnen()}}{
-Retrieve only depseudo bronnen (no BRP) for multiple persons
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_pseudo_bronnen(pseudo_bsn)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{pseudo_bsn}}{Vector of pseudo-ids, *not* reactive
-Only perform the lookup method
-Returns a reactive
-Depseudo a table, merge with original data, format adres}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_suite"></a>}}
-\if{latex}{\out{\hypertarget{method-get_suite}{}}}
+\if{html}{\out{<a id="method-NA-get_suite"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_suite}{}}}
 \subsection{Method \code{get_suite()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_suite(pseudo_bsn)}\if{html}{\out{</div>}}
@@ -463,8 +418,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_openwave"></a>}}
-\if{latex}{\out{\hypertarget{method-get_openwave}{}}}
+\if{html}{\out{<a id="method-NA-get_openwave"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_openwave}{}}}
 \subsection{Method \code{get_openwave()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_openwave(pseudo_id, what = "bsn_nummer")}\if{html}{\out{</div>}}
@@ -472,8 +427,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_carel"></a>}}
-\if{latex}{\out{\hypertarget{method-get_carel}{}}}
+\if{html}{\out{<a id="method-NA-get_carel"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_carel}{}}}
 \subsection{Method \code{get_carel()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_carel(pseudo_id)}\if{html}{\out{</div>}}
@@ -481,8 +436,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_allegro"></a>}}
-\if{latex}{\out{\hypertarget{method-get_allegro}{}}}
+\if{html}{\out{<a id="method-NA-get_allegro"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_allegro}{}}}
 \subsection{Method \code{get_allegro()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_allegro(pseudo_id)}\if{html}{\out{</div>}}
@@ -490,8 +445,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_menscentraal"></a>}}
-\if{latex}{\out{\hypertarget{method-get_menscentraal}{}}}
+\if{html}{\out{<a id="method-NA-get_menscentraal"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_menscentraal}{}}}
 \subsection{Method \code{get_menscentraal()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal(pseudo_id)}\if{html}{\out{</div>}}
@@ -499,8 +454,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_verhuizingen"></a>}}
-\if{latex}{\out{\hypertarget{method-get_verhuizingen}{}}}
+\if{html}{\out{<a id="method-NA-get_verhuizingen"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_verhuizingen}{}}}
 \subsection{Method \code{get_verhuizingen()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_verhuizingen(pseudo_id)}\if{html}{\out{</div>}}
@@ -508,38 +463,31 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_brp_verh_hst"></a>}}
-\if{latex}{\out{\hypertarget{method-get_brp_verh_hst}{}}}
-\subsection{Method \code{get_brp_verh_hst()}}{
+\if{html}{\out{<a id="method-NA-table_depseudo2"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-table_depseudo2}{}}}
+\subsection{Method \code{table_depseudo2()}}{
+Depseudonimiseer een hele tabel
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_brp_verh_hst(pseudo_id)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$table_depseudo2(table_data = reactive(NULL), columns = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Details}{
+Gepseudonimiseerde kolommen worden automatisch bepaald.
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-rest_lookup"></a>}}
-\if{latex}{\out{\hypertarget{method-rest_lookup}{}}}
-\subsection{Method \code{rest_lookup()}}{
+\if{html}{\out{<a id="method-NA-find_pseudo_columns"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-find_pseudo_columns}{}}}
+\subsection{Method \code{find_pseudo_columns()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$rest_lookup(pseudo_ids)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$find_pseudo_columns(data, length_pseudo = 9)}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-table_depseudo"></a>}}
-\if{latex}{\out{\hypertarget{method-table_depseudo}{}}}
-\subsection{Method \code{table_depseudo()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$table_depseudo(
-  data = reactive(NULL),
-  pseudo_bsn_column = "pseudo_bsn"
-)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_family_depseudo"></a>}}
-\if{latex}{\out{\hypertarget{method-get_family_depseudo}{}}}
+\if{html}{\out{<a id="method-NA-get_family_depseudo"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_family_depseudo}{}}}
 \subsection{Method \code{get_family_depseudo()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family_depseudo(id_in = reactive(NULL))}\if{html}{\out{</div>}}
@@ -547,44 +495,8 @@ Depseudo a table, merge with original data, format adres}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_personen_adres_depseudo"></a>}}
-\if{latex}{\out{\hypertarget{method-get_personen_adres_depseudo}{}}}
-\subsection{Method \code{get_personen_adres_depseudo()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_personen_adres_depseudo(adres = reactive(NULL))}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_verhuizingen_depseudo"></a>}}
-\if{latex}{\out{\hypertarget{method-get_verhuizingen_depseudo}{}}}
-\subsection{Method \code{get_verhuizingen_depseudo()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_verhuizingen_depseudo(id_in = reactive(NULL))}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_adres_depseudo"></a>}}
-\if{latex}{\out{\hypertarget{method-get_adres_depseudo}{}}}
-\subsection{Method \code{get_adres_depseudo()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adres_depseudo(adres)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-meldingConstructor"></a>}}
-\if{latex}{\out{\hypertarget{method-meldingConstructor}{}}}
-\subsection{Method \code{meldingConstructor()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$meldingConstructor(days_ago = 42)}\if{html}{\out{</div>}}
-}
-
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-unknown-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-unknown-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

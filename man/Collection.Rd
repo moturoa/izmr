@@ -10,21 +10,21 @@ history, etc.
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Collection$new()}}
-\item \href{#method-add}{\code{Collection$add()}}
-\item \href{#method-delete}{\code{Collection$delete()}}
-\item \href{#method-checkbox_adjust}{\code{Collection$checkbox_adjust()}}
-\item \href{#method-add_or_delete}{\code{Collection$add_or_delete()}}
-\item \href{#method-clear}{\code{Collection$clear()}}
-\item \href{#method-is_member}{\code{Collection$is_member()}}
-\item \href{#method-members_df}{\code{Collection$members_df()}}
-\item \href{#method-n}{\code{Collection$n()}}
-\item \href{#method-clone}{\code{Collection$clone()}}
+\item \href{#method-Collection-new}{\code{Collection$new()}}
+\item \href{#method-Collection-add}{\code{Collection$add()}}
+\item \href{#method-Collection-delete}{\code{Collection$delete()}}
+\item \href{#method-Collection-checkbox_adjust}{\code{Collection$checkbox_adjust()}}
+\item \href{#method-Collection-add_or_delete}{\code{Collection$add_or_delete()}}
+\item \href{#method-Collection-clear}{\code{Collection$clear()}}
+\item \href{#method-Collection-is_member}{\code{Collection$is_member()}}
+\item \href{#method-Collection-members_df}{\code{Collection$members_df()}}
+\item \href{#method-Collection-n}{\code{Collection$n()}}
+\item \href{#method-Collection-clone}{\code{Collection$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Collection-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$new(key_name)}\if{html}{\out{</div>}}
@@ -32,8 +32,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add"></a>}}
-\if{latex}{\out{\hypertarget{method-add}{}}}
+\if{html}{\out{<a id="method-Collection-add"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-add}{}}}
 \subsection{Method \code{add()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$add(id, duplicate = FALSE)}\if{html}{\out{</div>}}
@@ -41,8 +41,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-delete"></a>}}
-\if{latex}{\out{\hypertarget{method-delete}{}}}
+\if{html}{\out{<a id="method-Collection-delete"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-delete}{}}}
 \subsection{Method \code{delete()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$delete(id)}\if{html}{\out{</div>}}
@@ -50,8 +50,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkbox_adjust"></a>}}
-\if{latex}{\out{\hypertarget{method-checkbox_adjust}{}}}
+\if{html}{\out{<a id="method-Collection-checkbox_adjust"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-checkbox_adjust}{}}}
 \subsection{Method \code{checkbox_adjust()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$checkbox_adjust(id, chk, toast = FALSE)}\if{html}{\out{</div>}}
@@ -59,8 +59,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-add_or_delete"></a>}}
-\if{latex}{\out{\hypertarget{method-add_or_delete}{}}}
+\if{html}{\out{<a id="method-Collection-add_or_delete"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-add_or_delete}{}}}
 \subsection{Method \code{add_or_delete()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$add_or_delete(id)}\if{html}{\out{</div>}}
@@ -68,8 +68,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clear"></a>}}
-\if{latex}{\out{\hypertarget{method-clear}{}}}
+\if{html}{\out{<a id="method-Collection-clear"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-clear}{}}}
 \subsection{Method \code{clear()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$clear()}\if{html}{\out{</div>}}
@@ -77,8 +77,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-is_member"></a>}}
-\if{latex}{\out{\hypertarget{method-is_member}{}}}
+\if{html}{\out{<a id="method-Collection-is_member"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-is_member}{}}}
 \subsection{Method \code{is_member()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$is_member(id)}\if{html}{\out{</div>}}
@@ -86,8 +86,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-members_df"></a>}}
-\if{latex}{\out{\hypertarget{method-members_df}{}}}
+\if{html}{\out{<a id="method-Collection-members_df"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-members_df}{}}}
 \subsection{Method \code{members_df()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$members_df()}\if{html}{\out{</div>}}
@@ -95,8 +95,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-n"></a>}}
-\if{latex}{\out{\hypertarget{method-n}{}}}
+\if{html}{\out{<a id="method-Collection-n"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-n}{}}}
 \subsection{Method \code{n()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Collection$n()}\if{html}{\out{</div>}}
@@ -104,8 +104,8 @@ history, etc.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Collection-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Collection-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

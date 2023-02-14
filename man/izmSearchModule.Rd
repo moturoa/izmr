@@ -8,7 +8,8 @@
 izmSearchUI(
   id,
   reset_button_class = "btn-secondary",
-  reset_button_icon = "refresh"
+  reset_button_icon = "refresh",
+  design = c("shinydashboard", "softui")
 )
 
 izmSearchModule(input, output, session)

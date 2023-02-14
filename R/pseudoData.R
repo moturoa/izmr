@@ -117,6 +117,11 @@ pseudoData <- R6::R6Class(
         
       } else if(what == "adres"){
         
+        adres$vblpostcode[is.na(adres$vblpostcode)] <- ""
+        adres$vblhuisnummer[is.na(adres$vblhuisnummer)] <- ""
+        adres$vblhuisletter[is.na(adres$vblhuisletter)] <- ""
+        adres$vblhuisnummertoevoeging[is.na(adres$vblhuisnummertoevoeging)] <- ""
+        
         if(all(adres$vblpostcode == "")){
           return(NULL)
         }
@@ -741,6 +746,14 @@ pseudoData <- R6::R6Class(
         if("pseudo_bsn" %in% columns){
           dat$bsn <- dat$pseudo_bsn
           columns[columns == "pseudo_bsn"] <- "bsn"
+        }
+        
+        # store address columns separately unencrypted
+        if(all(c("postcode","huisnummer","huisletter","huisnummertoevoeging") %in% names(dat))){
+          dat$pseudo_postcode <- dat$postcode
+          dat$pseudo_huisnummer <- dat$huisnummer
+          dat$pseudo_huisletter <- dat$huisletter
+          dat$pseudo_huisnummertoevoeging <- dat$huisnummertoevoeging
         }
         
         dat[columns] <- lapply(dat[columns], function(col){

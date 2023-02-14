@@ -147,7 +147,7 @@ pseudoData <- R6::R6Class(
                            anr = prsanummer,
                            anrouder1 = ou1anummer,
                            anrouder2 = ou2anummer,
-                           
+                           geboorteland = prsgeboortelandomschrijving, 
                            straatnaam = vblstraatnaam,
                            huisnummer = vblhuisnummer,
                            huisletter = vblhuisletter,
@@ -866,6 +866,7 @@ pseudoData <- R6::R6Class(
                  naam = replace_na(naam, ""),
                  voornamen = replace_na(voornamen, ""),
                  geslacht = replace_na(geslacht, "Onbekend"),
+                 geboorteland = replace_na(geboorteland, "Onbekend"),
                  naam_tooltip = replace_na(naam_tooltip, ""),
                  adres_display = replace_na(adres_display, ""),
                  adres_tooltip = replace_na(adres_tooltip, "")

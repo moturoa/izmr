@@ -612,7 +612,6 @@ pseudoData <- R6::R6Class(
         if(is.null(dat))return(NULL)
         
         columns <- pseudo_columns()
-        
         u <- unique(unlist(dat[,columns]))
         u[!is.na(u) & u != ""]
       })
@@ -625,8 +624,13 @@ pseudoData <- R6::R6Class(
       
       out <- reactive({
         req(f_out())
-        req(nrow(f_out())>0)
         dat <- table_data()
+        
+        if(nrow(f_out()) == 0){
+          message("0 rows")
+        }
+        req(nrow(f_out()) > 0)
+        
         columns <- pseudo_columns()
         vals <- f_out()
         
@@ -693,12 +697,15 @@ pseudoData <- R6::R6Class(
         
         fam_d() %>%
           mutate(
-            adres_display = paste(straatnaam,
+            adres_display = paste0(straatnaam,
+                                   " ",
                                   huisnummer,
-                                  huisletter,
-                                  huisnummertoevoeging,
+                                  ifelse(is.na(huisletter),"",huisletter),
+                                  " ",
+                                  ifelse(is.na(huisnummertoevoeging) | huisnummertoevoeging == "","", paste0(" ", huisnummertoevoeging, " ")),
                                   postcode,
                                   woonplaatsnaam),
+            
             vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
 
             ouder1_naam = paste(ou1voornamen, ou1geslachtsnaam),
@@ -718,6 +725,8 @@ pseudoData <- R6::R6Class(
             )
           ) %>%
           mutate(adres_tooltip = na_if(adres_tooltip, "NA NA NA NA"),
+                 adres_tooltip = na_if(adres_tooltip, "NA NA NA"),
+                 adres_tooltip = na_if(adres_tooltip, "NA NANA NA"),
                  bsn = replace_na(bsn, ""),
                  naam = replace_na(naam, ""),
                  voornamen = replace_na(voornamen, ""),

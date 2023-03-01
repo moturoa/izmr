@@ -24,12 +24,6 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_huwelijk}{\code{pseudoData$get_huwelijk()}}
 \item \href{#method-NA-get_kinderen}{\code{pseudoData$get_kinderen()}}
 \item \href{#method-NA-get_family}{\code{pseudoData$get_family()}}
-\item \href{#method-NA-get_sinds_char_column}{\code{pseudoData$get_sinds_char_column()}}
-\item \href{#method-NA-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
-\item \href{#method-NA-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
-\item \href{#method-NA-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
-\item \href{#method-NA-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
-\item \href{#method-NA-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
 \item \href{#method-NA-label_burgerlijke_staat}{\code{pseudoData$label_burgerlijke_staat()}}
 \item \href{#method-NA-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
 \item \href{#method-NA-get_suite}{\code{pseudoData$get_suite()}}
@@ -304,80 +298,72 @@ Read BRP data for provided pseudo-id,
 
 \subsection{Returns}{
 Dataframe
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_sinds_char_column"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_sinds_char_column}{}}}
-\subsection{Method \code{get_sinds_char_column()}}{
-Filter a table based on 'after this date'
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_sinds_char_column(startdatum, table, column)}\if{html}{\out{</div>}}
-}
+#' @description Filter a table based on 'after this date'
+#' @details Does not work with SQLite!
+#' @param startdatum Date after (and including), must be Date class.
+#' @param table Name of table to filter
+#' @param column Name of column with date
+#' @return Dataframe
+get_sinds_char_column = function(startdatum, table, column){
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{startdatum}}{Date after (and including), must be Date class.}
+  dt <- format(startdatum, "%Y-%m-%d")
+  
+  dbGetQuery(self$con, 
+             glue(
+               "select * from {self$schema_sql}{table} where {column} <> '' ",
+               "AND {column} <> '0' ",
+               "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
+             )
+  )
+  
+  
+},
 
-\item{\code{table}}{Name of table to filter}
 
-\item{\code{column}}{Name of column with date}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Details}{
-Does not work with SQLite!
-}
+get_adreswijzigingen_sinds = function(startdatum){
+  
+  self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
+  
+},
 
-\subsection{Returns}{
-Dataframe
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_adreswijzigingen_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_adreswijzigingen_sinds}{}}}
-\subsection{Method \code{get_adreswijzigingen_sinds()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adreswijzigingen_sinds(startdatum)}\if{html}{\out{</div>}}
-}
+get_geboortes_sinds = function(startdatum){
+  
+  self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_geboortes_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_geboortes_sinds}{}}}
-\subsection{Method \code{get_geboortes_sinds()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_geboortes_sinds(startdatum)}\if{html}{\out{</div>}}
-}
+},
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_huwelijken_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_huwelijken_sinds}{}}}
-\subsection{Method \code{get_huwelijken_sinds()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_huwelijken_sinds(startdatum)}\if{html}{\out{</div>}}
-}
+get_huwelijken_sinds = function(startdatum){
+  
+  self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
+  
+},
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_scheidingen_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_scheidingen_sinds}{}}}
-\subsection{Method \code{get_scheidingen_sinds()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_scheidingen_sinds(startdatum)}\if{html}{\out{</div>}}
-}
+get_scheidingen_sinds = function(startdatum){
+  
+  self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
+  
+},
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-NA-get_overlijdens_sinds"></a>}}
-\if{latex}{\out{\hypertarget{method-NA-get_overlijdens_sinds}{}}}
-\subsection{Method \code{get_overlijdens_sinds()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens_sinds(startdatum)}\if{html}{\out{</div>}}
-}
+get_overlijdens_sinds = function(startdatum){
+  
+  #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
+  # heeft 00:00:00 erachter. Eigen methode dus...
+  
+  #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
 
+  table <- "bzsprsq00"
+  column <- "ovldatumoverlijden"
+  dt <- format(startdatum, "%Y-%m-%d")
+  
+  dbGetQuery(self$con, 
+             glue(
+               "select * from {self$schema_sql}{table} where {column} <> '' ",
+               "AND {column} <> '0' ",
+               "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
+             )
+  )
+},
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NA-label_burgerlijke_staat"></a>}}

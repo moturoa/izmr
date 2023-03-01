@@ -248,8 +248,13 @@ pseudoData <- R6::R6Class(
                # einddatum = strftime(ymd(einddatum), '%d-%m-%Y'))
       
       # duplicate rows
-      out %>% distinct(pseudo_bsn, .keep_all = TRUE)
+      out <- out %>% distinct(pseudo_bsn, .keep_all = TRUE)
       
+      # join person data
+      p_brp <- self$get_person_brp(out$pseudo_bsn)  %>%
+        select(-anr)
+      
+      left_join(out, p_brp, by = "pseudo_bsn")
       
     },
     
@@ -322,71 +327,71 @@ pseudoData <- R6::R6Class(
         
     },
     
-    #' @description Filter a table based on 'after this date'
-    #' @details Does not work with SQLite!
-    #' @param startdatum Date after (and including), must be Date class.
-    #' @param table Name of table to filter
-    #' @param column Name of column with date
-    #' @return Dataframe
-    get_sinds_char_column = function(startdatum, table, column){
-  
-      dt <- format(startdatum, "%Y-%m-%d")
-      
-      dbGetQuery(self$con, 
-                 glue(
-                   "select * from {self$schema_sql}{table} where {column} <> '' ",
-                   "AND {column} <> '0' ",
-                   "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
-                 )
-      )
-      
-      
-    },
-    
-    
-    get_adreswijzigingen_sinds = function(startdatum){
-      
-      self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
-      
-    },
-    
-    get_geboortes_sinds = function(startdatum){
-      
-      self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
-
-    },
-    
-    get_huwelijken_sinds = function(startdatum){
-      
-      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
-      
-    },
-    
-    get_scheidingen_sinds = function(startdatum){
-      
-      self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
-      
-    },
-    
-    get_overlijdens_sinds = function(startdatum){
-      
-      #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
-      # heeft 00:00:00 erachter. Eigen methode dus...
-      
-      #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
-
-      table <- "bzsprsq00"
-      column <- "ovldatumoverlijden"
-      dt <- format(startdatum, "%Y-%m-%d")
-      
-      dbGetQuery(self$con, 
-                 glue(
-                   "select * from {self$schema_sql}{table} where {column} <> '' ",
-                   "AND {column} <> '0' ",
-                   "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
-                 )
-      )
-    },
+    #' #' @description Filter a table based on 'after this date'
+    #' #' @details Does not work with SQLite!
+    #' #' @param startdatum Date after (and including), must be Date class.
+    #' #' @param table Name of table to filter
+    #' #' @param column Name of column with date
+    #' #' @return Dataframe
+    #' get_sinds_char_column = function(startdatum, table, column){
+    #' 
+    #'   dt <- format(startdatum, "%Y-%m-%d")
+    #'   
+    #'   dbGetQuery(self$con, 
+    #'              glue(
+    #'                "select * from {self$schema_sql}{table} where {column} <> '' ",
+    #'                "AND {column} <> '0' ",
+    #'                "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
+    #'              )
+    #'   )
+    #'   
+    #'   
+    #' },
+    #' 
+    #' 
+    #' get_adreswijzigingen_sinds = function(startdatum){
+    #'   
+    #'   self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
+    #'   
+    #' },
+    #' 
+    #' get_geboortes_sinds = function(startdatum){
+    #'   
+    #'   self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
+    #' 
+    #' },
+    #' 
+    #' get_huwelijken_sinds = function(startdatum){
+    #'   
+    #'   self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
+    #'   
+    #' },
+    #' 
+    #' get_scheidingen_sinds = function(startdatum){
+    #'   
+    #'   self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
+    #'   
+    #' },
+    #' 
+    #' get_overlijdens_sinds = function(startdatum){
+    #'   
+    #'   #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
+    #'   # heeft 00:00:00 erachter. Eigen methode dus...
+    #'   
+    #'   #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
+    #' 
+    #'   table <- "bzsprsq00"
+    #'   column <- "ovldatumoverlijden"
+    #'   dt <- format(startdatum, "%Y-%m-%d")
+    #'   
+    #'   dbGetQuery(self$con, 
+    #'              glue(
+    #'                "select * from {self$schema_sql}{table} where {column} <> '' ",
+    #'                "AND {column} <> '0' ",
+    #'                "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
+    #'              )
+    #'   )
+    #' },
     
 
     label_burgerlijke_staat = function(code){
@@ -697,14 +702,15 @@ pseudoData <- R6::R6Class(
         
         fam_d() %>%
           mutate(
-            adres_display = paste0(straatnaam,
+            adres_display = ifelse(is.na(straatnaam), "", 
+                                  paste0(straatnaam,
                                    " ",
                                   huisnummer,
                                   ifelse(is.na(huisletter),"",huisletter),
                                   " ",
                                   ifelse(is.na(huisnummertoevoeging) | huisnummertoevoeging == "","", paste0(" ", huisnummertoevoeging, " ")),
-                                  postcode,
-                                  woonplaatsnaam),
+                                  postcode, " ",
+                                  woonplaatsnaam)),
             
             vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
 
@@ -760,46 +766,3 @@ pseudoData <- R6::R6Class(
   
 )
 
-
-
-# depseudonimiseer adres gegevens, postcode voor bronnen
-replaceAll <- function(df, encoded){
-  
-  df_orig <- df
-  
-  if(nrow(encoded) == 0){
-    return(df_orig)
-  }
-  
-  out <- tryCatch(
-    { 
-      # create named list
-      lookup <- setNames(as.character(encoded$value), encoded$pseudo_value)
-      
-      # replace specific values from named list
-      df <- transform(df, vblhstadresopgemaakt=ifelse(vblhstadresopgemaakt %in% names(lookup), str_replace(str_replace_all(lookup[vblhstadresopgemaakt], "(?!^)(?=[A-Z])", " "), "(?=\\d)", " "), vblhstadresopgemaakt),
-                      vblpostcode=ifelse(vblpostcode %in% names(lookup), lookup[vblpostcode], vblpostcode), 
-                      vblhuisnummer=ifelse(vblhuisnummer %in% names(lookup), lookup[vblhuisnummer], vblhuisnummer),
-                      vblhuisletter=ifelse(vblhuisletter %in% names(lookup), lookup[vblhuisletter], vblhuisletter),
-                      vblhuisnummertoevoeging=ifelse(vblhuisnummertoevoeging %in% names(lookup), lookup[vblhuisnummertoevoeging], vblhuisnummertoevoeging), 
-                      vblstraatnaam=ifelse(vblstraatnaam %in% names(lookup), lookup[vblstraatnaam], vblstraatnaam), stringsAsFactors=FALSE)
-      
-      # create or update omschrijving
-      df[is.na(df)] <- ""
-      df <- transform(df, omschrijving=ifelse(  vblhstadresopgemaakt != '', glue('Verhuisd naar {vblhstadresopgemaakt}, {vblpostcode} {gemeente}'),omschrijving ))
-      df <- transform(df, omschrijving=ifelse( vblstraatnaam != '' , glue('Verhuisd naar {vblstraatnaam} {vblhuisnummer} {vblhuisletter} {vblhuisnummertoevoeging}, {vblpostcode} {gemeente}'),omschrijving ))
-      return(df)
-    },
-    error=function(cond) {   
-      cat(file=stderr(), glue('error in replaceAll: {paste(cond, sep = ",")}'), sep= '\n')  
-      return(df_orig)
-    },
-    warning=function(cond) {    
-      cat(file=stderr(), glue('warning in replaceAll: {paste(cond, sep = ",")}'), sep= '\n')  
-      return(df_orig)
-    })
-  return(out)
-
-}
-    
-    

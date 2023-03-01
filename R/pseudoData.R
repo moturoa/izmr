@@ -234,9 +234,6 @@ pseudoData <- R6::R6Class(
       
       out <- self$query(q_txt)
       
-      # replace NA with ""
-      #out <- self$replace_na_char(out)
-      
       # relation, datums
       out <- out %>% 
         mutate(relation = ifelse(is.na(einddatum) |  einddatum == '', 'partner','ex partner'),
@@ -631,9 +628,6 @@ pseudoData <- R6::R6Class(
         req(f_out())
         dat <- table_data()
         
-        if(nrow(f_out()) == 0){
-          message("0 rows")
-        }
         req(nrow(f_out()) > 0)
         
         columns <- pseudo_columns()

@@ -4,6 +4,7 @@ Title: De Integrale ZoekMachine als R package
 Version: 0.9-3
 Author: Remko Duursma
 Depends: shiny,jsonlite,glue,dplyr,dbplyr,futile.logger,DBI,pool,safer
+Imports: shintodb
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Zoeken, data ophalen, depseudonimiseren. Wrappers voor REST calls, etc.
 License: CC0

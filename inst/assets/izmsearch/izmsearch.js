@@ -9,15 +9,21 @@ function resetform() {
         a[i].value = "";
      } 
       
-     $('#searchresults').DataTable().clear().destroy();
-     
-     $('#searchresults_ui_wrapper').empty();
-     $('#searchresults_ui_wrapper').append("<table id=\"searchresults\" class=\"display\"></table>");
-     
-     Shiny.setInputValue("izm_reset_form_clicked", Math.random());
-
+    var el = $('#searchresults')
+    
+    if(el.children().length > 0){
+      
+       $('#searchresults').DataTable().clear().destroy();
+       
+       $('#searchresults_ui_wrapper').empty();
+       $('#searchresults_ui_wrapper').append("<table id=\"searchresults\" class=\"display\"></table>");
+       
+       Shiny.setInputValue("izm_reset_form_clicked", Math.random()); 
+      
+    }
+      
 }
-        
+  
 
         
         

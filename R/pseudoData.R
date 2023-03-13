@@ -72,6 +72,7 @@ pseudoData <- R6::R6Class(
 
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
+                   "vblgemeentevaninschrijvingomschrijving",
                    "vwsdatuminschrijving", 
                    "prsgeslachtsaanduidingcode",  # as geslacht, 
                    "prsgeslachtsaanduidingomschrijving",  # as geslacht, 

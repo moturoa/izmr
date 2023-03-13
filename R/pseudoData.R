@@ -214,6 +214,7 @@ pseudoData <- R6::R6Class(
     set_kind_relation = function(data){
       relation <- ifelse(data$geslacht == 'M', 'zoon', 'dochter')
       relation[is.na(relation)] <- "kind (geslacht onbekend)"
+      relation[data$geslacht == "O"] <- "kind (geslacht onbekend)"
       self$set_relation(data, relation)
     },
     
@@ -678,7 +679,8 @@ pseudoData <- R6::R6Class(
       
       tab <- data.frame(
         pseudo_bsn = pseudo_bsn,
-        userid = userid
+        userid = userid,
+        timestamp = format(Sys.time())
       )
       
       self$append_data("search_history", tab)

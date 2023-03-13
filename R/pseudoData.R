@@ -203,8 +203,7 @@ pseudoData <- R6::R6Class(
     #' @return Dataframe
     set_parent_relation = function(data){
       
-      relation <- ifelse(data$geslacht == "M", "vader", "moeder")
-      
+      relation <- ifelse(data$prsgeslachtsaanduidingcode == "M", "vader", "moeder")
       self$set_relation(data, relation)
     },
     
@@ -305,11 +304,8 @@ pseudoData <- R6::R6Class(
         poi <- self$get_person_brp(pseudo_id, what = what) %>%
           self$set_relation("persoon_poi")
       
-        parent1 <- self$get_person_brp(poi$anrouder1, what = "anr") %>%
+        parents <- self$get_person_brp(c(poi$anrouder1,poi$anrouder2), what = "anr") %>%
           self$set_parent_relation()
-        parent2 <- self$get_person_brp(poi$anrouder2, what = "anr") %>%
-          self$set_parent_relation()
-        
         
         huwelijk <- self$get_huwelijk(poi$pseudo_bsn) 
         
@@ -318,8 +314,7 @@ pseudoData <- R6::R6Class(
         return(bind_rows(
             list(
               poi,
-              parent1, 
-              parent2,
+              parents, 
               huwelijk,
               kinderen
             )

@@ -160,6 +160,9 @@ pseudoData <- R6::R6Class(
                            postcode = vblpostcode,
                            woonplaatsnaam = vblwoonplaatsnaam
                            ) %>%
+        # Fill semi-missing geboortedatum
+        mutate(geboortedatum = gsub("0000$", "0701", geboortedatum),  # maand/dag onbekend = 1 Juli
+               geboortedatum = gsub("00$", "15", geboortedatum)) %>%  # dag onbekend = 15
         mutate(geboortedatum = as.Date(geboortedatum, "%Y%m%d"),
                overleden = as.Date(lubridate::ymd_hms(overleden)),
                ou1geslachtsnaam = na_if(ou1geslachtsnaam, "."),
@@ -323,72 +326,6 @@ pseudoData <- R6::R6Class(
         )
         
     },
-    
-    #' #' @description Filter a table based on 'after this date'
-    #' #' @details Does not work with SQLite!
-    #' #' @param startdatum Date after (and including), must be Date class.
-    #' #' @param table Name of table to filter
-    #' #' @param column Name of column with date
-    #' #' @return Dataframe
-    #' get_sinds_char_column = function(startdatum, table, column){
-    #' 
-    #'   dt <- format(startdatum, "%Y-%m-%d")
-    #'   
-    #'   dbGetQuery(self$con, 
-    #'              glue(
-    #'                "select * from {self$schema_sql}{table} where {column} <> '' ",
-    #'                "AND {column} <> '0' ",
-    #'                "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
-    #'              )
-    #'   )
-    #'   
-    #'   
-    #' },
-    #' 
-    #' 
-    #' get_adreswijzigingen_sinds = function(startdatum){
-    #'   
-    #'   self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
-    #'   
-    #' },
-    #' 
-    #' get_geboortes_sinds = function(startdatum){
-    #'   
-    #'   self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
-    #' 
-    #' },
-    #' 
-    #' get_huwelijken_sinds = function(startdatum){
-    #'   
-    #'   self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
-    #'   
-    #' },
-    #' 
-    #' get_scheidingen_sinds = function(startdatum){
-    #'   
-    #'   self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
-    #'   
-    #' },
-    #' 
-    #' get_overlijdens_sinds = function(startdatum){
-    #'   
-    #'   #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
-    #'   # heeft 00:00:00 erachter. Eigen methode dus...
-    #'   
-    #'   #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
-    #' 
-    #'   table <- "bzsprsq00"
-    #'   column <- "ovldatumoverlijden"
-    #'   dt <- format(startdatum, "%Y-%m-%d")
-    #'   
-    #'   dbGetQuery(self$con, 
-    #'              glue(
-    #'                "select * from {self$schema_sql}{table} where {column} <> '' ",
-    #'                "AND {column} <> '0' ",
-    #'                "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
-    #'              )
-    #'   )
-    #' },
     
 
     label_burgerlijke_staat = function(code){
@@ -739,7 +676,38 @@ pseudoData <- R6::R6Class(
         
       })
     
+    },
+    
+    save_user_search_history = function(pseudo_bsn, userid){
+      
+      tab <- data.frame(
+        pseudo_bsn = pseudo_bsn,
+        userid = userid
+      )
+      
+      self$append_data("search_history", tab)
+      
+    },
+    
+    get_user_search_history_today = function(userid){
+      
+      self$read_table("search_history", lazy = TRUE) %>%
+        filter(userid == !!userid) %>%
+        collect
+      
+    },
+    
+    
+    #' @description Most recent entry in `pseudolog` for each file
+    get_pseudolog_files = function(){
+      
+      self$read_table("pseudolog", lazy = TRUE) %>% 
+        group_by(file) %>% 
+        filter(date == max(date, na.rm=TRUE)) %>% 
+        collect
+      
     }
+    
   
 
     ), 

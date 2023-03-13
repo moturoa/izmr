@@ -375,10 +375,14 @@ pseudoData <- R6::R6Class(
       q_suite <- glue("select 'Suite' as bron, * from {self$schema_sql}suite where bsn in {bsns};")
       suite <- self$query(q_suite)
       
+      # Alles behalve BSN en bron kolom is leeg (regelmatig het geval)
+      if(sum(sapply(suite, function(val)all(val == ""))) == ncol(suite)-2){
+        return(NULL)
+      }
+      
       if(nrow(suite) > 0){
         suite <- self$replace_na_char(suite)
       }
-      
       
       suite <- mutate(suite, 
                       begindatum = coalesce(

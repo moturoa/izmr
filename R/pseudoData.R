@@ -242,11 +242,15 @@ pseudoData <- R6::R6Class(
       out <- out %>% 
         mutate(relation = ifelse(is.na(einddatum) |  einddatum == '', 'partner','ex partner'),
                relation = as.character(relation),
+               
+               begindatum = gsub("0000$", "0701", begindatum),  # maand/dag onbekend = 1 Juli
+               begindatum = gsub("00$", "15", begindatum),
+               
+               einddatum = gsub("0000$", "0701", einddatum),  # maand/dag onbekend = 1 Juli
+               einddatum = gsub("00$", "15", einddatum),
+  
                begindatum = as.Date(begindatum, "%Y%m%d"),
                einddatum = as.Date(einddatum, "%Y%m%d"))
-      
-               # begindatum = strftime(ymd(begindatum), '%d-%m-%Y'), 
-               # einddatum = strftime(ymd(einddatum), '%d-%m-%Y'))
       
       # duplicate rows
       out <- out %>% distinct(pseudo_bsn, .keep_all = TRUE)

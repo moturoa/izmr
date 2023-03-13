@@ -35,6 +35,9 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-table_depseudo2}{\code{pseudoData$table_depseudo2()}}
 \item \href{#method-NA-find_pseudo_columns}{\code{pseudoData$find_pseudo_columns()}}
 \item \href{#method-NA-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
+\item \href{#method-NA-save_user_search_history}{\code{pseudoData$save_user_search_history()}}
+\item \href{#method-NA-get_user_search_history_today}{\code{pseudoData$get_user_search_history_today()}}
+\item \href{#method-NA-get_pseudolog_files}{\code{pseudoData$get_pseudolog_files()}}
 \item \href{#method-unknown-clone}{\code{pseudoData$clone()}}
 }
 }
@@ -298,71 +301,6 @@ Read BRP data for provided pseudo-id,
 
 \subsection{Returns}{
 Dataframe
-#' @description Filter a table based on 'after this date'
-#' @details Does not work with SQLite!
-#' @param startdatum Date after (and including), must be Date class.
-#' @param table Name of table to filter
-#' @param column Name of column with date
-#' @return Dataframe
-get_sinds_char_column = function(startdatum, table, column){
-
-  dt <- format(startdatum, "%Y-%m-%d")
-  
-  dbGetQuery(self$con, 
-             glue(
-               "select * from {self$schema_sql}{table} where {column} <> '' ",
-               "AND {column} <> '0' ",
-               "AND TO_DATE({column}, 'YYYYMMDD') >= DATE('{dt}')"
-             )
-  )
-  
-  
-},
-
-
-get_adreswijzigingen_sinds = function(startdatum){
-  
-  self$get_sinds_char_column(startdatum, "bzsc58q00", "vblhstdatuminschrijving")
-  
-},
-
-get_geboortes_sinds = function(startdatum){
-  
-  self$get_sinds_char_column(startdatum, "bzsprsq00", "prsgeboortedatum")
-
-},
-
-get_huwelijken_sinds = function(startdatum){
-  
-  self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumsluitinghuwelijkpartnerschap")
-  
-},
-
-get_scheidingen_sinds = function(startdatum){
-  
-  self$get_sinds_char_column(startdatum, "bzshuwq00", "huwdatumontbindinghuwelijkpartnerschap")
-  
-},
-
-get_overlijdens_sinds = function(startdatum){
-  
-  #ovldatumoverlijden is in een andere Date format dan andere Date kolommen,
-  # heeft 00:00:00 erachter. Eigen methode dus...
-  
-  #self$get_sinds_char_column(startdatum, "bzsprsq00", "ovldatumoverlijden")
-
-  table <- "bzsprsq00"
-  column <- "ovldatumoverlijden"
-  dt <- format(startdatum, "%Y-%m-%d")
-  
-  dbGetQuery(self$con, 
-             glue(
-               "select * from {self$schema_sql}{table} where {column} <> '' ",
-               "AND {column} <> '0' ",
-               "AND TO_DATE(substring({column},1,12), 'YYYY-MM-DD') >= DATE('{dt}')"
-             )
-  )
-},
 }
 }
 \if{html}{\out{<hr>}}
@@ -477,6 +415,34 @@ Gepseudonimiseerde kolommen worden automatisch bepaald.
 \subsection{Method \code{get_family_depseudo()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_family_depseudo(id_in = reactive(NULL))}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-save_user_search_history"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-save_user_search_history}{}}}
+\subsection{Method \code{save_user_search_history()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$save_user_search_history(pseudo_bsn, userid)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_user_search_history_today"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_user_search_history_today}{}}}
+\subsection{Method \code{get_user_search_history_today()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_user_search_history_today(userid)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_pseudolog_files"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_pseudolog_files}{}}}
+\subsection{Method \code{get_pseudolog_files()}}{
+Most recent entry in `pseudolog` for each file
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_pseudolog_files()}\if{html}{\out{</div>}}
 }
 
 }

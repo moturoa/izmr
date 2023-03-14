@@ -102,7 +102,6 @@ pseudoData <- R6::R6Class(
                    
       sel_sql <- paste(columns, collapse= ", ")
       
-      
       if(what %in% c("bsn", "anr")){
         
         # gegevens van POI
@@ -111,10 +110,18 @@ pseudoData <- R6::R6Class(
                              anr = "prsanummer"
         )
         
-        id_search <- private$to_sql_string(pseudo_id)
         
-        out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
-                               " {search_col} IN {id_search};")) 
+        if(all(is.na(pseudo_id)) || length(pseudo_id[1]) == 0 || nchar(pseudo_id[1]) == 0){
+          # no ID provided, return an empty table
+          out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where false"))
+        } else {
+          id_search <- private$to_sql_string(pseudo_id)
+          
+          out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
+                                 " {search_col} IN {id_search};")) 
+        }
+        
+        
         
       } else if(what == "adres"){
         
@@ -338,24 +345,18 @@ pseudoData <- R6::R6Class(
     #' @param pseudo_bsn A single pseudo-id (BSN) (not vectorized!)
     #' @return A reactive dataframe
     get_all_bronnen = function(pseudo_bsn) {
-      
-      reactive({
-        
-        req(pseudo_bsn())
 
         lis <- list(
-          suite = self$get_suite(pseudo_bsn()),
-          menscentraal = self$get_menscentraal(pseudo_bsn()),
-          carel = self$get_carel(pseudo_bsn()),
-          allegro = self$get_allegro(pseudo_bsn()),
-          openwave = self$get_openwave(pseudo_bsn()),
-          brp = self$get_verhuizingen(pseudo_bsn())
+          suite = self$get_suite(pseudo_bsn),
+          menscentraal = self$get_menscentraal(pseudo_bsn),
+          carel = self$get_carel(pseudo_bsn),
+          allegro = self$get_allegro(pseudo_bsn),
+          openwave = self$get_openwave(pseudo_bsn),
+          brp = self$get_verhuizingen(pseudo_bsn)
         )
         
-        lis$n_rows <- sum(sapply(lis, nrow))
+        lis$n_rows <- sum(sapply(dropNulls(lis), nrow))
         lis
-        
-      })
       
     },
     
@@ -367,11 +368,6 @@ pseudoData <- R6::R6Class(
       bsns <- private$to_sql_string(pseudo_bsn)
       q_suite <- glue("select 'Suite' as bron, * from {self$schema_sql}suite where bsn in {bsns};")
       suite <- self$query(q_suite)
-      
-      # Alles behalve BSN en bron kolom is leeg (regelmatig het geval)
-      if(sum(sapply(suite, function(val)all(val == ""))) == ncol(suite)-2){
-        return(NULL)
-      }
       
       if(nrow(suite) > 0){
         suite <- self$replace_na_char(suite)

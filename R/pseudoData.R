@@ -691,7 +691,8 @@ pseudoData <- R6::R6Class(
     get_user_search_history_today = function(userid){
       
       self$read_table("search_history", lazy = TRUE) %>%
-        filter(userid == !!userid) %>%
+        filter(userid == !!userid,
+               as.Date(timestamp) == !!Sys.Date()) %>%
         collect
       
     },

@@ -268,29 +268,22 @@ pseudoData <- R6::R6Class(
     #' @details Read from bzskinq00 table, based on provided pseudo-ids.
     #' @param pseudo_id Vector of pseudo-ids (BSN)
     #' @return Dataframe
-    get_kinderen = function(pseudo_id, what = "bsn"){
+    get_kinderen = function(pseudo_id){
       
       flog.info("get_kinderen")
       
-      # mag hier alleen bsn zijn!
-      # match.arg dus niet nodig, alleen voor safety
-      what <- match.arg(what)
+      if(length(pseudo_id) > 1){
+        warning("$get_kinderen: pass 1 pseudo_id at a time")
+        pseudo_id <- pseudo_id[1]
+      }
       
-      anr <- self$anummer_from_bsn(pseudo_id)
-      q_txt <- glue("select prsanummer as anr, kndanummer, kndgeboortedatum from {self$schema_sql}bzskinq00 where prsanummer = '{anr}';")
-      kids_poi_anr <- self$query(q_txt)
+      q_txt <- glue("select kndburgerservicenummer from {self$schema_sql}bzskinq00 where prsburgerservicenummer = '{pseudo_id}';")
+      kids_poi <- self$query(q_txt)
       
-      if(nrow(kids_poi_anr) == 0)return(NULL)
+      if(nrow(kids_poi) == 0)return(NULL)
       
-      out <- self$get_person_brp(kids_poi_anr$kndanummer, what = "anr")
-      
-      out <- left_join(kids_poi_anr, out, by = c("kndanummer" = "anr")) %>%
-        mutate(geboortedatum = as.Date(kndgeboortedatum, "%Y%m%d"))
-      
-      
-      out <- self$set_kind_relation(out)
-        
-      out
+      self$get_person_brp(kids_poi$kndburgerservicenummer) %>%
+        self$set_kind_relation(.)
       
     },
     

@@ -261,7 +261,7 @@ Dataframe
 \subsection{Method \code{get_kinderen()}}{
 Read children data
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_kinderen(pseudo_id, what = "bsn")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_kinderen(pseudo_id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

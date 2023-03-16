@@ -110,11 +110,12 @@ pseudoData <- R6::R6Class(
                              anr = "prsanummer"
         )
         
-        
-        if(all(is.na(pseudo_id)) || length(pseudo_id[1]) == 0 || nchar(pseudo_id[1]) == 0){
+        if(all(is.na(pseudo_id)) || length(pseudo_id[1]) == 0){
           # no ID provided, return an empty table
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where false"))
         } else {
+          
+          pseudo_id <- pseudo_id[!is.na(pseudo_id)]
           id_search <- private$to_sql_string(pseudo_id)
           
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",

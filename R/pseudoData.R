@@ -515,7 +515,8 @@ pseudoData <- R6::R6Class(
         ) %>%
           mutate(vbldatumaanvangadreshouding = ymd(vbldatumaanvangadreshouding),
                  vbldatuminschrijving = ymd(vbldatuminschrijving)) %>%
-          arrange(desc(vbldatumaanvangadreshouding))  
+          arrange(desc(vbldatumaanvangadreshouding)) %>%
+          filter(vblstraatnaam != "")  # <- soms lege adressen
       })
       
       tab

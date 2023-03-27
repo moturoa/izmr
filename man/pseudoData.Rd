@@ -38,6 +38,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
 \item \href{#method-NA-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
 \item \href{#method-NA-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
+\item \href{#method-NA-rest_lookup}{\code{pseudoData$rest_lookup()}}
 \item \href{#method-NA-table_depseudo2}{\code{pseudoData$table_depseudo2()}}
 \item \href{#method-NA-find_pseudo_columns}{\code{pseudoData$find_pseudo_columns()}}
 \item \href{#method-NA-make_adres_display}{\code{pseudoData$make_adres_display()}}
@@ -445,6 +446,16 @@ A reactive dataframe
 \subsection{Method \code{get_overlijdens_sinds()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens_sinds(datum, bsn)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-rest_lookup"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-rest_lookup}{}}}
+\subsection{Method \code{rest_lookup()}}{
+Only perform the lookup method. Returns a reactive.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$rest_lookup(pseudo_ids)}\if{html}{\out{</div>}}
 }
 
 }

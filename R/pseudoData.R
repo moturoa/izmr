@@ -655,6 +655,15 @@ pseudoData <- R6::R6Class(
     
     #------ Depseudonimiseren -----
   
+    #' @description Only perform the lookup method. Returns a reactive.
+    rest_lookup = function(pseudo_ids){
+      
+      callModule(restCallModule, 
+                 uuid::UUIDgenerate(), 
+                 pseudo_ids = pseudo_ids, what = "lookup")
+      
+    },
+    
     #' @description Depseudonimiseer een hele tabel
     #' @details Gepseudonimiseerde kolommen worden automatisch bepaald.
     table_depseudo2 = function(table_data = reactive(NULL), columns = NULL){

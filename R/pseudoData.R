@@ -180,6 +180,19 @@ pseudoData <- R6::R6Class(
       out
     },
     
+    #' @description Get columns from bzsprsq00 for a vector of BSNs
+    get_person_kenmerk = function(pseudo_id, columns){
+      
+      cols <- unique(c("prsburgerservicenummer", columns))
+      
+      self$read_table("bzsprsq00", lazy = TRUE) %>%
+        filter(prsburgerservicenummer %in% !!pseudo_id) %>%
+        select(all_of(cols)) %>%
+        collect
+      
+    },
+    
+    
     #' @description  Find (pseudo) A-nummer from a (pseudo) BSN
     #' @param pseudo_id Vector of pseudo-ids.
     #' @return A vector
@@ -539,7 +552,9 @@ pseudoData <- R6::R6Class(
                postcode = vblhstpostcode,
                woonplaatsnaam = vblhstwoonplaatsnaam,
                datum_adres = vblhstdatumaanvangadreshouding) %>%
-        filter(datum_adres != "" & as.Date(datum_adres) >= datum,
+        filter(datum_adres != "" & 
+               datum_adres != "0" &
+               as.Date(datum_adres) >= datum,
                bsn %in% !!pseudo_id) %>%
         collect
       
@@ -553,7 +568,9 @@ pseudoData <- R6::R6Class(
                postcode = vblpostcode,
                woonplaatsnaam = vblwoonplaatsnaam,
                datum_adres = vbldatumaanvangadreshouding) %>%
-        filter(datum_adres != "" & as.Date(datum_adres) >= datum,
+        filter(datum_adres != "" & 
+                 datum_adres != "0" & 
+                 as.Date(datum_adres) >= datum,
                bsn %in% !!pseudo_id) %>%
         
         collect

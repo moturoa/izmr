@@ -17,6 +17,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-new}{\code{pseudoData$new()}}
 \item \href{#method-NA-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-NA-get_person_brp}{\code{pseudoData$get_person_brp()}}
+\item \href{#method-NA-get_person_kenmerk}{\code{pseudoData$get_person_kenmerk()}}
 \item \href{#method-NA-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
 \item \href{#method-NA-set_relation}{\code{pseudoData$set_relation()}}
 \item \href{#method-NA-set_parent_relation}{\code{pseudoData$set_parent_relation()}}
@@ -146,6 +147,16 @@ Reads pseudo data from bzsprsq00.
 \subsection{Returns}{
 A dataframe
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_person_kenmerk"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_person_kenmerk}{}}}
+\subsection{Method \code{get_person_kenmerk()}}{
+Get columns from bzsprsq00 for a vector of BSNs
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_person_kenmerk(pseudo_id, columns)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NA-anummer_from_bsn"></a>}}

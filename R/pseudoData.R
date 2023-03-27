@@ -185,6 +185,10 @@ pseudoData <- R6::R6Class(
     #' @return A vector
     anummer_from_bsn = function(pseudo_id){
       
+      if(is.null(pseudo_id)){
+        return(NULL)
+      }
+      
       pseudo_id <- pseudo_id[pseudo_id != "" & !is.na(pseudo_id)]
       
       bsn_string <- private$to_sql_string(pseudo_id)
@@ -524,6 +528,113 @@ pseudoData <- R6::R6Class(
     },
     
 
+    get_adreswijzigingen_sinds = function(datum, pseudo_id){
+      
+      tab1 <- self$read_table("bzsc58q00", lazy = TRUE) %>%
+        select(bsn = prsburgerservicenummer, 
+               straatnaam = vblhststraatnaam,
+               huisnummer = vblhsthuisnummer,
+               huisletter = vblhsthuisletter,
+               huisnummertoevoeging = vblhsthuisnummertoevoeging,
+               postcode = vblhstpostcode,
+               woonplaatsnaam = vblhstwoonplaatsnaam,
+               datum_adres = vblhstdatumaanvangadreshouding) %>%
+        filter(datum_adres != "" & as.Date(datum_adres) >= datum,
+               bsn %in% !!pseudo_id) %>%
+        collect
+      
+      tab2 <- self$read_table("bzsprsq00", lazy = TRUE) %>%
+        select(bsn = prsburgerservicenummer, 
+               naam = prsnaamopgemaakt,
+               straatnaam = vblstraatnaam,
+               huisnummer = vblhuisnummer,
+               huisletter = vblhuisletter,
+               huisnummertoevoeging = vblhuisnummertoevoeging,
+               postcode = vblpostcode,
+               woonplaatsnaam = vblwoonplaatsnaam,
+               datum_adres = vbldatumaanvangadreshouding) %>%
+        filter(datum_adres != "" & as.Date(datum_adres) >= datum,
+               bsn %in% !!pseudo_id) %>%
+        
+        collect
+      
+      tab1$naam <- tab2$naam[match(tab1$bsn, tab2$bsn)]
+      
+      rbind(tab2, tab1) %>% 
+        arrange(desc(datum_adres)) %>%
+        mutate(adres_display = self$make_adres_display(straatnaam, huisnummer, 
+                                                       huisletter, huisnummertoevoeging, 
+                                                       postcode, woonplaatsnaam),
+               datum_adres = as.Date(datum_adres, format = "%Y%m%d"))
+      
+      
+    },
+    
+    
+    get_geboortes_sinds = function(datum, ouder_anr){
+      
+      self$read_table("bzsprsq00", lazy = TRUE) %>%
+        select(bsn = prsburgerservicenummer, 
+               naam = prsnaamopgemaakt,
+               prsgeboortedatum,
+               ou1anummer,
+               ou2anummer) %>%
+        filter(prsgeboortedatum != "0" & 
+               !prsgeboortedatum %like% "%00" & 
+               prsgeboortedatum != "" & 
+               as.Date(prsgeboortedatum) >= datum,
+               ou1anummer %in% !!ouder_anr | ou2anummer %in% !!ouder_anr) %>%
+        collect %>%
+        mutate(prsgeboortedatum = as.Date(prsgeboortedatum, format = "%Y%m%d")) %>%
+        arrange(desc(prsgeboortedatum))
+      
+    },
+    
+    
+    get_huwelijken_sinds = function(datum, bsn){
+      
+      self$read_table("bzshuwq00", lazy = TRUE) %>%
+        filter(prsburgerservicenummer %in% !!bsn) %>%
+        collect %>%
+        mutate(huwdatumsluitinghuwelijkpartnerschap = as.Date(ymd(huwdatumsluitinghuwelijkpartnerschap)),
+               huwdatumontbindinghuwelijkpartnerschap =  as.Date(ymd(huwdatumontbindinghuwelijkpartnerschap)))
+      
+    },
+    
+    
+    get_scheidingen_sinds = function(datum, bsn){
+      
+      self$read_table("bzshuwq00", lazy = TRUE) %>%
+        filter(prsburgerservicenummer %in% !!bsn,
+               huwdatumontbindinghuwelijkpartnerschap != "" & 
+                 as.Date(huwdatumontbindinghuwelijkpartnerschap) > datum) %>%
+        collect %>%
+        mutate(huwdatumsluitinghuwelijkpartnerschap = as.Date(ymd(huwdatumsluitinghuwelijkpartnerschap)),
+               huwdatumontbindinghuwelijkpartnerschap =  as.Date(ymd(huwdatumontbindinghuwelijkpartnerschap)))
+      
+    },
+    
+    
+    
+    
+    get_overlijdens_sinds = function(datum, bsn){
+      
+      self$read_table("bzsprsq00", lazy = TRUE) %>%
+        select(bsn = prsburgerservicenummer, 
+               naam = prsnaamopgemaakt,
+               prsgeboortedatum,
+               ovldatumoverlijden) %>%
+        filter(bsn %in% !!bsn, 
+               ovldatumoverlijden != "" & 
+               as.Date(ovldatumoverlijden) >= datum) %>%
+        collect %>%
+        mutate(ovldatumoverlijden = as.Date(ovldatumoverlijden)) %>%
+        arrange(desc(ovldatumoverlijden))
+      
+    },
+    
+
+    
     
     #------ Depseudonimiseren -----
   
@@ -611,6 +722,21 @@ pseudoData <- R6::R6Class(
     },
     
     
+    make_adres_display = function(straatnaam, huisnummer, huisletter, huisnummertoevoeging, postcode, woonplaatsnaam){
+      
+      ifelse(is.na(straatnaam), "", 
+             paste0(straatnaam,
+                    " ",
+                    huisnummer,
+                    ifelse(is.na(huisletter),"",huisletter),
+                    " ",
+                    ifelse(is.na(huisnummertoevoeging) | huisnummertoevoeging == "","", paste0(" ", huisnummertoevoeging, " ")),
+                    postcode, " ",
+                    woonplaatsnaam))
+      
+    },
+    
+    
     get_family_depseudo = function(id_in = reactive(NULL)){
       
       flog.info("get_family_depseudo")
@@ -629,15 +755,7 @@ pseudoData <- R6::R6Class(
         
         fam_d() %>%
           mutate(
-            adres_display = ifelse(is.na(straatnaam), "", 
-                                  paste0(straatnaam,
-                                   " ",
-                                  huisnummer,
-                                  ifelse(is.na(huisletter),"",huisletter),
-                                  " ",
-                                  ifelse(is.na(huisnummertoevoeging) | huisnummertoevoeging == "","", paste0(" ", huisnummertoevoeging, " ")),
-                                  postcode, " ",
-                                  woonplaatsnaam)),
+            adres_display = self$make_adres_display(straatnaam, huisnummer, huisletter, huisnummertoevoeging, postcode, woonplaatsnaam),
             
             vwsdatuminschrijving = as.Date(vwsdatuminschrijving, "%y%m%d"),
 

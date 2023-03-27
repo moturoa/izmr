@@ -32,8 +32,14 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-NA-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
 \item \href{#method-NA-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
+\item \href{#method-NA-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
+\item \href{#method-NA-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
+\item \href{#method-NA-get_huwelijken_sinds}{\code{pseudoData$get_huwelijken_sinds()}}
+\item \href{#method-NA-get_scheidingen_sinds}{\code{pseudoData$get_scheidingen_sinds()}}
+\item \href{#method-NA-get_overlijdens_sinds}{\code{pseudoData$get_overlijdens_sinds()}}
 \item \href{#method-NA-table_depseudo2}{\code{pseudoData$table_depseudo2()}}
 \item \href{#method-NA-find_pseudo_columns}{\code{pseudoData$find_pseudo_columns()}}
+\item \href{#method-NA-make_adres_display}{\code{pseudoData$make_adres_display()}}
 \item \href{#method-NA-get_family_depseudo}{\code{pseudoData$get_family_depseudo()}}
 \item \href{#method-NA-save_user_search_history}{\code{pseudoData$save_user_search_history()}}
 \item \href{#method-NA-get_user_search_history_today}{\code{pseudoData$get_user_search_history_today()}}
@@ -387,6 +393,51 @@ A reactive dataframe
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_adreswijzigingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_adreswijzigingen_sinds}{}}}
+\subsection{Method \code{get_adreswijzigingen_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_adreswijzigingen_sinds(datum, pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_geboortes_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_geboortes_sinds}{}}}
+\subsection{Method \code{get_geboortes_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_geboortes_sinds(datum, ouder_anr)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_huwelijken_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_huwelijken_sinds}{}}}
+\subsection{Method \code{get_huwelijken_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_huwelijken_sinds(datum, bsn)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_scheidingen_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_scheidingen_sinds}{}}}
+\subsection{Method \code{get_scheidingen_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_scheidingen_sinds(datum, bsn)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_overlijdens_sinds"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_overlijdens_sinds}{}}}
+\subsection{Method \code{get_overlijdens_sinds()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_overlijdens_sinds(datum, bsn)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NA-table_depseudo2"></a>}}
 \if{latex}{\out{\hypertarget{method-NA-table_depseudo2}{}}}
 \subsection{Method \code{table_depseudo2()}}{
@@ -406,6 +457,22 @@ Gepseudonimiseerde kolommen worden automatisch bepaald.
 \subsection{Method \code{find_pseudo_columns()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$find_pseudo_columns(data, length_pseudo = 9)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-make_adres_display"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-make_adres_display}{}}}
+\subsection{Method \code{make_adres_display()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$make_adres_display(
+  straatnaam,
+  huisnummer,
+  huisletter,
+  huisnummertoevoeging,
+  postcode,
+  woonplaatsnaam
+)}\if{html}{\out{</div>}}
 }
 
 }

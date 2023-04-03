@@ -379,6 +379,23 @@ pseudoData <- R6::R6Class(
     },
     
     
+    #' @description Retrieve only depseudo bronnen (no BRP) for multiple persons
+    #' @param pseudo_bsn Vector of pseudo-ids, *not* reactive
+    get_person_bronnen = function(pseudo_bsn) {
+      
+      person_function <- function(id){
+        
+        self$get_all_bronnen(id)
+        
+      }
+      
+      lapply(pseudo_bsn, person_function) %>%
+        setNames(pseudo_bsn)
+      
+      
+    },
+    
+    
     get_suite = function(pseudo_bsn){
       
       if(is.null(pseudo_bsn))return(NULL)
@@ -491,14 +508,15 @@ pseudoData <- R6::R6Class(
       
     },
     
+
     
     
     #------ Adres -----
     get_verhuizingen = function(pseudo_id) {
 
       adres_historie <- self$read_table("bzsc58q00", lazy = TRUE) %>%
-        filter(prsburgerservicenummer == !!pseudo_id) %>%
-        select(
+        dplyr::filter(prsburgerservicenummer == !!pseudo_id) %>%
+        dplyr::select(
           vblstraatnaam = vblhststraatnaam,
           vblhuisnummer = vblhsthuisnummer,
           vblhuisletter = vblhsthuisletter,
@@ -507,13 +525,14 @@ pseudoData <- R6::R6Class(
           vblwoonplaatsnaam = vblhstwoonplaatsnaam,
           vbldatuminschrijving = vblhstdatuminschrijving,
           vbldatumaanvangadreshouding = vblhstdatumaanvangadreshouding,
-          vblgemeentevaninschrijvingomschrijving = vblhstgemeentevaninschrijvingomschrijving) %>%
+          vblgemeentevaninschrijvingomschrijving = vblhstgemeentevaninschrijvingomschrijving,
+          landvanwaaringeschrevenomschrijving = vblhstlandvanwaaringeschrevenomschrijving) %>%
         collect
       
       
       brp_current <- self$read_table("bzsprsq00", lazy = TRUE) %>%
-        filter(prsburgerservicenummer == !!pseudo_id) %>%
-        select(
+        dplyr::filter(prsburgerservicenummer == !!pseudo_id) %>%
+        dplyr::select(
           vblstraatnaam = vblstraatnaam,
           vblhuisnummer = vblhuisnummer,
           vblhuisletter = vblhuisletter,
@@ -523,17 +542,18 @@ pseudoData <- R6::R6Class(
           vbldatuminschrijving = vbldatuminschrijving,
           vbldatumaanvangadreshouding = vbldatumaanvangadreshouding,
           vblgemeentevaninschrijvingomschrijving = vblgemeentevaninschrijvingomschrijving) %>%
+        #mutate(landvanwaaringeschrevenomschrijving = "Nederland") %>%  # staat niet in deze tabel maar elke prs is in nederland (denk ik)
         collect
       
       suppressWarnings({
-        tab <- bind_rows(
+        tab <- dplyr::bind_rows(
           adres_historie,
           brp_current
         ) %>%
-          mutate(vbldatumaanvangadreshouding = ymd(vbldatumaanvangadreshouding),
+          dplyr::mutate(vbldatumaanvangadreshouding = ymd(vbldatumaanvangadreshouding),
                  vbldatuminschrijving = ymd(vbldatuminschrijving)) %>%
-          arrange(desc(vbldatumaanvangadreshouding)) %>%
-          filter(vblstraatnaam != "")  # <- soms lege adressen
+          dplyr::arrange(desc(vbldatumaanvangadreshouding))
+          #dplyr::filter(vblstraatnaam != "")  # <- soms lege adressen
       })
       
       tab

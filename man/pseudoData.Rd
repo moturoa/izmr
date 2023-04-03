@@ -27,6 +27,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_family}{\code{pseudoData$get_family()}}
 \item \href{#method-NA-label_burgerlijke_staat}{\code{pseudoData$label_burgerlijke_staat()}}
 \item \href{#method-NA-get_all_bronnen}{\code{pseudoData$get_all_bronnen()}}
+\item \href{#method-NA-get_person_bronnen}{\code{pseudoData$get_person_bronnen()}}
 \item \href{#method-NA-get_suite}{\code{pseudoData$get_suite()}}
 \item \href{#method-NA-get_openwave}{\code{pseudoData$get_openwave()}}
 \item \href{#method-NA-get_carel}{\code{pseudoData$get_carel()}}
@@ -57,9 +58,11 @@ R6 class for connection to anonymized database.
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="connect_to_database"><a href='../../shintodb/html/NA.html#method-NA-connect_to_database'><code>shintodb::NA$connect_to_database()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="delete_rows_where"><a href='../../shintodb/html/NA.html#method-NA-delete_rows_where'><code>shintodb::NA$delete_rows_where()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="execute_query"><a href='../../shintodb/html/NA.html#method-NA-execute_query'><code>shintodb::NA$execute_query()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="filter"><a href='../../shintodb/html/NA.html#method-NA-filter'><code>shintodb::NA$filter()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="get_query"><a href='../../shintodb/html/NA.html#method-NA-get_query'><code>shintodb::NA$get_query()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="has_value"><a href='../../shintodb/html/NA.html#method-NA-has_value'><code>shintodb::NA$has_value()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="have_column"><a href='../../shintodb/html/NA.html#method-NA-have_column'><code>shintodb::NA$have_column()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="list_indexes"><a href='../../shintodb/html/NA.html#method-NA-list_indexes'><code>shintodb::NA$list_indexes()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="list_tables"><a href='../../shintodb/html/NA.html#method-NA-list_tables'><code>shintodb::NA$list_tables()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="make_column"><a href='../../shintodb/html/NA.html#method-NA-make_column'><code>shintodb::NA$make_column()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="postgres_now"><a href='../../shintodb/html/NA.html#method-NA-postgres_now'><code>shintodb::NA$postgres_now()</code></a></span></li>
@@ -348,6 +351,23 @@ Retrieve all 'bronnen' for a person based on pseudo-id
 }
 \subsection{Returns}{
 A reactive dataframe
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_person_bronnen"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_person_bronnen}{}}}
+\subsection{Method \code{get_person_bronnen()}}{
+Retrieve only depseudo bronnen (no BRP) for multiple persons
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_person_bronnen(pseudo_bsn)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{pseudo_bsn}}{Vector of pseudo-ids, *not* reactive}
+}
+\if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}

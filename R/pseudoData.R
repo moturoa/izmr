@@ -509,6 +509,18 @@ pseudoData <- R6::R6Class(
     },
     
 
+    # Aantal bronnen per persoon (voor Linkit, uiteindelijk misschien in IZM nuttig)
+    # Zie repos `ede_izm_db_filler` waar deze tabel wordt gemaakt
+    get_bronnen_count = function(pseudo_id){
+      
+      
+      self$read_table("bronnen_count_by_person", lazy = TRUE) %>%
+        filter(pseudo_bsn %in% !!pseudo_id) %>%
+        collect
+      
+    },
+    
+    
     
     
     #------ Adres -----

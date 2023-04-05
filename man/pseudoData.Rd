@@ -33,6 +33,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_carel}{\code{pseudoData$get_carel()}}
 \item \href{#method-NA-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-NA-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
+\item \href{#method-NA-get_bronnen_count}{\code{pseudoData$get_bronnen_count()}}
 \item \href{#method-NA-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
 \item \href{#method-NA-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
 \item \href{#method-NA-get_geboortes_sinds}{\code{pseudoData$get_geboortes_sinds()}}
@@ -66,6 +67,7 @@ R6 class for connection to anonymized database.
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="list_tables"><a href='../../shintodb/html/NA.html#method-NA-list_tables'><code>shintodb::NA$list_tables()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="make_column"><a href='../../shintodb/html/NA.html#method-NA-make_column'><code>shintodb::NA$make_column()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="postgres_now"><a href='../../shintodb/html/NA.html#method-NA-postgres_now'><code>shintodb::NA$postgres_now()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="postgres_now_in_local_time"><a href='../../shintodb/html/NA.html#method-NA-postgres_now_in_local_time'><code>shintodb::NA$postgres_now_in_local_time()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="query"><a href='../../shintodb/html/NA.html#method-NA-query'><code>shintodb::NA$query()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="read_table"><a href='../../shintodb/html/NA.html#method-NA-read_table'><code>shintodb::NA$read_table()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="shintodb" data-topic="NA" data-id="replace_value_where"><a href='../../shintodb/html/NA.html#method-NA-replace_value_where'><code>shintodb::NA$replace_value_where()</code></a></span></li>
@@ -412,6 +414,15 @@ Retrieve only depseudo bronnen (no BRP) for multiple persons
 \subsection{Method \code{get_menscentraal()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_bronnen_count"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_bronnen_count}{}}}
+\subsection{Method \code{get_bronnen_count()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_bronnen_count(pseudo_id)}\if{html}{\out{</div>}}
 }
 
 }

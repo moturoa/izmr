@@ -33,6 +33,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-get_carel}{\code{pseudoData$get_carel()}}
 \item \href{#method-NA-get_allegro}{\code{pseudoData$get_allegro()}}
 \item \href{#method-NA-get_menscentraal}{\code{pseudoData$get_menscentraal()}}
+\item \href{#method-NA-get_menscentraal_zaaktypes}{\code{pseudoData$get_menscentraal_zaaktypes()}}
 \item \href{#method-NA-get_bronnen_count}{\code{pseudoData$get_bronnen_count()}}
 \item \href{#method-NA-get_verhuizingen}{\code{pseudoData$get_verhuizingen()}}
 \item \href{#method-NA-get_adreswijzigingen_sinds}{\code{pseudoData$get_adreswijzigingen_sinds()}}
@@ -414,6 +415,15 @@ Retrieve only depseudo bronnen (no BRP) for multiple persons
 \subsection{Method \code{get_menscentraal()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal(pseudo_id)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-get_menscentraal_zaaktypes"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-get_menscentraal_zaaktypes}{}}}
+\subsection{Method \code{get_menscentraal_zaaktypes()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$get_menscentraal_zaaktypes()}\if{html}{\out{</div>}}
 }
 
 }

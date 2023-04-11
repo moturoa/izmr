@@ -508,6 +508,16 @@ pseudoData <- R6::R6Class(
       
     },
     
+    get_menscentraal_zaaktypes = function(){
+      
+      query <- glue("select distinct zaaktype from {self$schema}.menscentraal")
+      
+      out <- self$get_query(query)
+      
+      sort(out[[1]])
+      
+    },
+    
 
     # Aantal bronnen per persoon (voor Linkit, uiteindelijk misschien in IZM nuttig)
     # Zie repos `ede_izm_db_filler` waar deze tabel wordt gemaakt

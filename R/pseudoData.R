@@ -596,7 +596,7 @@ pseudoData <- R6::R6Class(
                datum_adres = vblhstdatumaanvangadreshouding) %>%
         filter(datum_adres != "" & 
                datum_adres != "0" &
-               as.Date(datum_adres) >= datum,
+               as.Date(datum_adres) >= !!datum,
                bsn %in% !!pseudo_id) %>%
         collect
       

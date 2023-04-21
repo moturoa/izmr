@@ -20,8 +20,10 @@ pseudoData <- R6::R6Class(
     initialize = function(config_file = NULL, 
                           schema = "", 
                           filename = NULL,
-                          pool = FALSE){
+                          pool = FALSE,
+                          secret = ""){
       
+      self$secret <- secret
       
       super$initialize(what = "ede-izm-data",
                        config_file = config_file, schema = schema, sqlite = filename, 
@@ -42,6 +44,28 @@ pseudoData <- R6::R6Class(
         "7","Achtergebleven partner")
       
       
+      
+    },
+    
+    
+    #' @description Symmetric encrypt, using the secret 
+    encrypt = function(x){
+      if(self$secret != ""){
+        out <- shintodb::encrypt(x, secret = self$secret)
+        out[is.na(x)] <- NA_character_
+      } else {
+        out <- x
+      }
+      out
+    },
+    
+    #' @description Symmetric decrypt, using the secret 
+    decrypt = function(x){
+      if(self$secret != ""){
+        shintodb::decrypt(x, secret = self$secret)
+      } else {
+        x
+      }
       
     },
     
@@ -672,8 +696,6 @@ pseudoData <- R6::R6Class(
                huwdatumontbindinghuwelijkpartnerschap =  as.Date(ymd(huwdatumontbindinghuwelijkpartnerschap)))
       
     },
-    
-    
     
     
     get_overlijdens_sinds = function(datum, bsn){

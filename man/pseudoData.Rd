@@ -15,6 +15,8 @@ R6 class for connection to anonymized database.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-NA-new}{\code{pseudoData$new()}}
+\item \href{#method-NA-encrypt}{\code{pseudoData$encrypt()}}
+\item \href{#method-NA-decrypt}{\code{pseudoData$decrypt()}}
 \item \href{#method-NA-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-NA-get_person_brp}{\code{pseudoData$get_person_brp()}}
 \item \href{#method-NA-get_person_kenmerk}{\code{pseudoData$get_person_kenmerk()}}
@@ -86,7 +88,13 @@ R6 class for connection to anonymized database.
 \subsection{Method \code{new()}}{
 Create a new pseudoData (IZM) object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pseudoData$new(config_file = NULL, schema = "", filename = NULL, pool = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$new(
+  config_file = NULL,
+  schema = "",
+  filename = NULL,
+  pool = FALSE,
+  secret = ""
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -105,6 +113,26 @@ Create a new pseudoData (IZM) object
 \subsection{Returns}{
 A new pseudoData object
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-encrypt"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-encrypt}{}}}
+\subsection{Method \code{encrypt()}}{
+Symmetric encrypt, using the secret
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$encrypt(x)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-decrypt"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-decrypt}{}}}
+\subsection{Method \code{decrypt()}}{
+Symmetric decrypt, using the secret
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$decrypt(x)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NA-replace_na_char"></a>}}

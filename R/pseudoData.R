@@ -175,7 +175,6 @@ pseudoData <- R6::R6Class(
       # Rename cols.
       out <- dplyr::rename(out,
                            pseudo_bsn = prsburgerservicenummer,
-                           
                            naam = prsnaamopgemaakt,
                            voornamen = prsvoornamen,
                            geslachtsnaam = prsgeslachtsnaam,
@@ -626,7 +625,8 @@ pseudoData <- R6::R6Class(
       
       tab2 <- self$read_table("bzsprsq00", lazy = TRUE) %>%
         select(bsn = prsburgerservicenummer, 
-               naam = prsnaamopgemaakt,
+               naam = prsgeslachtsnaam,
+               voornamen = prsvoornamen,
                straatnaam = vblstraatnaam,
                huisnummer = vblhuisnummer,
                huisletter = vblhuisletter,
@@ -658,7 +658,8 @@ pseudoData <- R6::R6Class(
       
       self$read_table("bzsprsq00", lazy = TRUE) %>%
         select(bsn = prsburgerservicenummer, 
-               naam = prsnaamopgemaakt,
+               naam = prsgeslachtsnaam,
+               voornamen = prsvoornamen,
                prsgeboortedatum,
                ou1anummer,
                ou2anummer) %>%
@@ -702,7 +703,8 @@ pseudoData <- R6::R6Class(
       
       self$read_table("bzsprsq00", lazy = TRUE) %>%
         select(bsn = prsburgerservicenummer, 
-               naam = prsnaamopgemaakt,
+               naam = prsgeslachtsnaam,
+               voornamen = prsvoornamen,
                prsgeboortedatum,
                ovldatumoverlijden) %>%
         filter(bsn %in% !!bsn, 
@@ -852,7 +854,7 @@ pseudoData <- R6::R6Class(
             ouder1_naam = paste(ou1voornamen, ou1geslachtsnaam),
             ouder2_naam = paste(ou2voornamen, ou2geslachtsnaam),
             
-            naam_tooltip = format_naam_tooltip(naam, overleden),
+            naam_tooltip = format_naam_tooltip(geslachtsnaam, overleden),
             
             adres_tooltip = format_adres_tooltip(
               vwsdatuminschrijving,
@@ -869,7 +871,7 @@ pseudoData <- R6::R6Class(
                  adres_tooltip = na_if(adres_tooltip, "NA NA NA"),
                  adres_tooltip = na_if(adres_tooltip, "NA NANA NA"),
                  bsn = replace_na(bsn, ""),
-                 naam = replace_na(naam, ""),
+                 naam = replace_na(geslachtsnaam, ""),
                  voornamen = replace_na(voornamen, ""),
                  geslacht = replace_na(geslacht, "Onbekend"),
                  geboorteland = replace_na(geboorteland, "Onbekend"),

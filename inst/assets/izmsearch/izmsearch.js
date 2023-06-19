@@ -1,6 +1,8 @@
 
 var timeout = 0;
 
+
+// Reset button is clicked on the search form
 function resetform() {
      
      var a = $(".izmsearch");
@@ -26,13 +28,13 @@ function resetform() {
   
 
         
-        
+// Set window title to searched person
 function loadPerson(id) {
          window.top.location = window.top.location + "/tabCasus/" + id;
 }
        
 
-        
+// Throttled search function
 function autosearch(searchurl, throttle) {
   
   $('#searchresults').display = "block";
@@ -45,12 +47,14 @@ function autosearch(searchurl, throttle) {
 }
 
 
-
+// Actual search function (used in throttled version above)
+// Makes call to filldatatable()
 function autosearch2(searchurl) { 
         
         
         let form = document.forms.izmsearch;
         
+        // Search boxes and their values on the IZM search page
         searchvalues = [
           form.elements.achternaam.value,
           form.elements.bsn.value,
@@ -60,7 +64,7 @@ function autosearch2(searchurl) {
           form.elements.geboortedatum.value
         ];
         
-        //alert(form.elements.postcode.value);
+        //a
                             
                 for (i=0; i < form.length; i += 1) {
                      
@@ -72,6 +76,7 @@ function autosearch2(searchurl) {
                     searchvalues[i] = searchvalues[i].split('*').join('_')   
                  
                     // birth date search
+                    // !!! ASSUMED BIRTHDAY IS 6TH INPUT FIELD ABOVE!!!
                     if (i == 5) {    
                       
                       // remove "-" in search term
@@ -127,12 +132,11 @@ function autosearch2(searchurl) {
         }
         
         
+
+// searchvalues: array with fixed order of search values (naam to geboortedatum below)
+// 
 function fill_datatable(searchvalues,searchurl) {
   
-  
- 
-      //alert(zoeken_achternaam);
-            
       if(searchvalues){
         
         return($.ajax( { 
@@ -154,7 +158,10 @@ function fill_datatable(searchvalues,searchurl) {
                 // cannot use success https://datatables.net/forums/discussion/42156/server-side-processing-stuck-on-processing-when-handing-success-in-ajax
                 
                 success: function (res) { 
-                    justDataTable(formatSearchResults(res)); 
+                  
+                  //console.log("Input to formatSearchResults")
+                  //console.log(res)
+                  justDataTable(formatSearchResults(res)); 
                 },
                 
                 error:function(err){
@@ -166,41 +173,7 @@ function fill_datatable(searchvalues,searchurl) {
              
 }
 
-function justDataTable(data) {
-   
-   //console.log(data);
-   
-   $('#searchresults').DataTable({ 
-     "processing": false,
-        "serverSide": false,
-        destroy: true,
-        paging: true,
-        pageLength: 25,
-        dom: 'rtip',
-        
-        data:data.data,
-            columnDefs: [
 
-              { "targets" : 0, "visible" : false },
-              { "title": "BSN", "targets" : 1 },
-              { "title": "Naam", "targets" : 2 },
-              { "title": "Voornamen",  "targets" : 3 },
-              { "title": "Geboortedatum",  
-                "targets" : 4,
-                "render": DataTable.render.date()
-              },
-              { "targets" : 5, "visible" : false },
-              { "targets" : 6, "visible" : false },
-              { "targets" : 7, "visible" : false },
-              { "targets" : 8, "visible" : false },
-              { "title": "Postcode",  "targets" : 9 },
-              { "title": "Adres", "targets" : 10 },
-              { "targets" : 11, "title" : "Woonplaats"}
-
-            ],
-})
-  
-}
 
 
             
@@ -217,38 +190,94 @@ setClickedId = function(id, shinyid){
 
 
                         
-
+// This function formats the output from the search API
 function formatSearchResults(data) { 
   
-            var len = data.recordsFiltered;
- 
-            Shiny.setInputValue("izm-izmnresults", len);
-              
-            //console.log("input data to formatSearchResults");
-            //console.log(data.data[0]);
-              
-            // Maak link naar casus
-            for (i = 0; i < len; i += 1) {  
-                
-                // make bsn clickable
-                data.data[i][1] = "<a style=\"cursor: pointer;\" href='javascript:;' onclick=\"setClickedId('" + 
-                                     data.data[i][0] + "', 'izm-izmclickedid')\">" + 
-                                     data.data[i][1] + "</a>" 
-                
-                // move woonplaats to field 11 (after formatted address below)
-                data.data[i][11] = data.data[i][10]
-                
-                // formatted adres in field 10
-                data.data[i][10] = data.data[i][5] + ' ' + data.data[i][6] + ' ' +
-                                   data.data[i][7] + ' ' + data.data[i][8]
-                
-            }
-            
-            //console.log("output data from formatSearchResults");
-            //console.log(data.data[0]);
-            
-            return (data);
-        }
+    var len = data.recordsFiltered;
+
+    Shiny.setInputValue("izm-izmnresults", len);
+    
+    // Uncomment these two lines to seelook at the data input  
+    //console.log("input data to formatSearchResults");
+    //console.log(data.data[0]);
+      
+    // Integer value of data.data[i][<<integer>>] refers to the position in the JSON 'dataframe'
+    // returned by the search API. It is also used in the function below justDataTable(),
+    // which selects columns to diplay in the datatable
+    for (i = 0; i < len; i += 1) {  
+    
+        // Maak link naar casus    
+        // make bsn clickable
+        data.data[i][1] = "<a style=\"cursor: pointer;\" href='javascript:;' onclick=\"setClickedId('" + 
+                             data.data[i][0] + "', 'izm-izmclickedid')\">" + 
+                             data.data[i][1] + "</a>" 
+        
+        // move datum overlijden to just after Geboortedatum (the 5th position was empty)
+        // datum overlijden was the last column; is now in position 5 
+        // first move to end
+        data.data[i][12] = data.data[i][11]
+        
+        // move woonplaats to field 11 (after formatted address below)
+        data.data[i][11] = data.data[i][10]
+        
+        // formatted adres in field 10
+        data.data[i][10] = data.data[i][5] + ' ' + data.data[i][6] + ' ' +
+                           data.data[i][7] + ' ' + data.data[i][8]
+                           
+        // now move datum overlijden again 
+        data.data[i][5] = data.data[i][12]
+                           
+        
+    }
+    
+    //console.log("output data from formatSearchResults");
+    //console.log(data.data[0]);
+    
+    return (data);
+}
         
         
+        
+function justDataTable(data) {
+   
+   //console.log(data);
+   
+   $('#searchresults').DataTable({ 
+     "processing": false,
+        "serverSide": false,
+        destroy: true,
+        paging: true,
+        pageLength: 25,
+        dom: 'rtip',
+        
+        data:data.data,
+            columnDefs: [
+
+              // titles and display options for the columns out of formatSearchResults
+              // Note that we have to keep the order: if you want to move the order of columns,
+              // do that in formatSearchResults(), because here we have to config in increasing order
+              // for some reason
+              { "targets" : 0, "visible" : false },
+              { "title": "BSN", "targets" : 1 },
+              { "title": "Naam", "targets" : 2 },
+              { "title": "Voornamen",  "targets" : 3 },
+              { "title": "Geboortedatum",  
+                "targets" : 4,
+                "render": DataTable.render.date()
+              },
+              { "title" : "Ovl. datum", 
+                "targets" : 5,  
+                "render": DataTable.render.date()
+              },
+              { "targets" : 6, "visible" : false },
+              { "targets" : 7, "visible" : false },
+              { "targets" : 8, "visible" : false },
+              { "title": "Postcode",  "targets" : 9 },
+              { "title": "Adres", "targets" : 10 },
+              { "targets" : 11, "title" : "Woonplaats"}
+
+            ],
+})
+  
+}
         

@@ -8,7 +8,9 @@ format_naam_tooltip <- function(naam, overleden){
                     glue::glue("<i class='fa fa-cross' data-toggle='tooltip' data-placement='right' 
                                title='Overleden op { format(overleden, '%d-%m-%Y')}'></i>"), 
                     "")
-  paste(naam, tooltip)
+  out <- paste(naam, tooltip)
+  out[is.na(naam)] <- ""
+  out
 }
 
 #' @rdname format_tooltip

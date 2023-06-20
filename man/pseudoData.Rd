@@ -19,6 +19,7 @@ R6 class for connection to anonymized database.
 \item \href{#method-NA-decrypt}{\code{pseudoData$decrypt()}}
 \item \href{#method-NA-replace_na_char}{\code{pseudoData$replace_na_char()}}
 \item \href{#method-NA-get_person_brp}{\code{pseudoData$get_person_brp()}}
+\item \href{#method-NA-add_naam_column}{\code{pseudoData$add_naam_column()}}
 \item \href{#method-NA-get_person_kenmerk}{\code{pseudoData$get_person_kenmerk()}}
 \item \href{#method-NA-anummer_from_bsn}{\code{pseudoData$anummer_from_bsn()}}
 \item \href{#method-NA-set_relation}{\code{pseudoData$set_relation()}}
@@ -183,6 +184,17 @@ Reads pseudo data from bzsprsq00.
 \subsection{Returns}{
 A dataframe
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-NA-add_naam_column"></a>}}
+\if{latex}{\out{\hypertarget{method-NA-add_naam_column}{}}}
+\subsection{Method \code{add_naam_column()}}{
+Util to add 'naam' column to depseudonized form of $get_person_brp,
+for example in $get_family --> callModule(depseudo...)
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pseudoData$add_naam_column(data, fill_na = NULL)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-NA-get_person_kenmerk"></a>}}

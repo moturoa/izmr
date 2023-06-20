@@ -102,6 +102,7 @@ pseudoData <- R6::R6Class(
                    "prsgeslachtsaanduidingomschrijving",  # as geslacht, 
                    "prsvoornamen",
                    "prsgeslachtsnaam",
+                   "prsvoorvoegselgeslachtsnaam",
                    "prsnaamopgemaakt",
                    "ovldatumoverlijden", #as overleden, 
                    "prsanummer", #as anr, 
@@ -175,9 +176,9 @@ pseudoData <- R6::R6Class(
       # Rename cols.
       out <- dplyr::rename(out,
                            pseudo_bsn = prsburgerservicenummer,
-                           naam = prsnaamopgemaakt,
                            voornamen = prsvoornamen,
                            geslachtsnaam = prsgeslachtsnaam,
+                           voorvoegsel = prsvoorvoegselgeslachtsnaam,
                            geslacht = prsgeslachtsaanduidingomschrijving,
                            geboortedatum = prsgeboortedatum,
                            overleden = ovldatumoverlijden,
@@ -201,6 +202,18 @@ pseudoData <- R6::R6Class(
                ou2geslachtsnaam = na_if(ou2geslachtsnaam, "."))
       
       out
+    },
+    
+    #' @description Util to add 'naam' column to depseudonized form of $get_person_brp,
+    #' for example in $get_family --> callModule(depseudo...)
+    add_naam_column = function(data, fill_na = NULL){
+      
+      na_val <- ifelse(is.null(fill_na), NA_character_, as.character(fill_na))
+      
+      data$naam <- trimws(paste(data$voorvoegsel, data$geslachtsnaam))
+      data$naam[is.na(data$geslachtsnaam) | data$geslachtsnaam == ""] <- na_val
+      
+      data
     },
     
     #' @description Get columns from bzsprsq00 for a vector of BSNs
@@ -846,6 +859,7 @@ pseudoData <- R6::R6Class(
         req(fam_d())
         
         fam_d() %>%
+          self$add_naam_column(fill_na = "Onbekend") %>%
           mutate(
             adres_display = self$make_adres_display(straatnaam, huisnummer, huisletter, huisnummertoevoeging, postcode, woonplaatsnaam),
             
@@ -854,7 +868,7 @@ pseudoData <- R6::R6Class(
             ouder1_naam = paste(ou1voornamen, ou1geslachtsnaam),
             ouder2_naam = paste(ou2voornamen, ou2geslachtsnaam),
             
-            naam_tooltip = format_naam_tooltip(geslachtsnaam, overleden),
+            naam_tooltip = format_naam_tooltip(naam, overleden),
             
             adres_tooltip = format_adres_tooltip(
               vwsdatuminschrijving,
@@ -871,11 +885,10 @@ pseudoData <- R6::R6Class(
                  adres_tooltip = na_if(adres_tooltip, "NA NA NA"),
                  adres_tooltip = na_if(adres_tooltip, "NA NANA NA"),
                  bsn = replace_na(bsn, ""),
-                 naam = replace_na(geslachtsnaam, ""),
                  voornamen = replace_na(voornamen, ""),
                  geslacht = replace_na(geslacht, "Onbekend"),
                  geboorteland = replace_na(geboorteland, "Onbekend"),
-                 naam_tooltip = replace_na(naam_tooltip, ""),
+                 
                  adres_display = replace_na(adres_display, ""),
                  adres_tooltip = replace_na(adres_tooltip, "")
           )

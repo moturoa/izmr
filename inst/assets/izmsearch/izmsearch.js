@@ -224,7 +224,7 @@ function formatSearchResults(data) {
         data.data[i][10] = data.data[i][5] + ' ' + data.data[i][6] + ' ' +
                            data.data[i][7] + ' ' + data.data[i][8]
                            
-        // now move datum overlijden again 
+        // now move datum overlijden again so that is is just after geboortedatum
         data.data[i][5] = data.data[i][12]
                            
         
@@ -257,6 +257,7 @@ function justDataTable(data) {
               // Note that we have to keep the order: if you want to move the order of columns,
               // do that in formatSearchResults(), because here we have to config in increasing order
               // for some reason
+              // 'targets' refers to the column position in the data out of formatSearchResults (0 = 1st column)
               { "targets" : 0, "visible" : false },
               { "title": "BSN", "targets" : 1 },
               { "title": "Naam", "targets" : 2 },

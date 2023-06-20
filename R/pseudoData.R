@@ -210,7 +210,10 @@ pseudoData <- R6::R6Class(
       
       na_val <- ifelse(is.null(fill_na), NA_character_, as.character(fill_na))
       
-      data$naam <- trimws(paste(data$voorvoegsel, data$geslachtsnaam))
+      vv <- data$voorvoegsel
+      vv[is.na(vv)] <- ""
+      
+      data$naam <- trimws(paste(vv, data$geslachtsnaam))
       data$naam[is.na(data$geslachtsnaam) | data$geslachtsnaam == ""] <- na_val
       
       data

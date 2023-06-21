@@ -13,6 +13,8 @@ parse_result <- function(res, column_names, func){
     flog.info("Error in REST Call - 404 !")
     return(empty_result)
   }  
+  
+  
   out <- tryCatch({
     
     dfr <- as.data.frame(t(matrix(res, ncol = length(res)/n_columns))) %>%
@@ -64,7 +66,7 @@ parse_lookup_result <- function(res) {
   
   column_names <- c("pseudo_bsn","bsn", "naam", "voornamen", 
                     "geboortedatum", "straatnaam", "huisnummer","huisletter",
-                    "huisnummertoevoeging","postcode","woonplaats")
+                    "huisnummertoevoeging","postcode","woonplaats","overlijdendatum")
   
   n <- length(column_names)
   

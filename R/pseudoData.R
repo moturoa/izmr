@@ -276,7 +276,7 @@ pseudoData <- R6::R6Class(
     #' @param Dataframe with at least 'geslacht' column
     #' @return Dataframe
     set_kind_relation = function(data){
-      relation <- ifelse(data$geslacht == 'M', 'zoon', 'dochter')
+      relation <- ifelse(data$geslacht == 'Man', 'zoon', 'dochter')
       relation[is.na(relation)] <- "kind (geslacht onbekend)"
       relation[data$geslacht == "O"] <- "kind (geslacht onbekend)"
       self$set_relation(data, relation)

@@ -1,6 +1,12 @@
 
 var timeout = 0;
 
+document.addEventListener("DOMContentLoaded", function () {
+  const tableElem = document.querySelector(".result-table-container");
+  const namespacedId = tableElem?.getAttribute("data-tableclickedid");
+});
+
+
 
 // Reset button is clicked on the search form
 function resetform() {
@@ -197,6 +203,9 @@ function formatSearchResults(data) {
 
     Shiny.setInputValue("izm-izmnresults", len);
     
+    const tableElem = document.querySelector(".result-table-container");
+    const namespacedId = tableElem?.getAttribute("data-tableclickedid");
+    
     // Uncomment these two lines to seelook at the data input  
     //console.log("input data to formatSearchResults");
     //console.log(data.data[0]);
@@ -208,9 +217,10 @@ function formatSearchResults(data) {
     
         // Maak link naar casus    
         // make bsn clickable
-        data.data[i][1] = "<a style=\"cursor: pointer;\" href='javascript:;' onclick=\"setClickedId('" + 
-                             data.data[i][0] + "', 'izm-izmclickedid')\">" + 
-                             data.data[i][1] + "</a>" 
+        data.data[i][1] = "<a style='cursor: pointer;' href='javascript:;' onclick=\"setClickedId('" + 
+                      data.data[i][0] + "', '" + 
+                      namespacedId + "')\">" + 
+                      data.data[i][1] + "</a>"
         
         // move datum overlijden to just after Geboortedatum (the 5th position was empty)
         // datum overlijden was the last column; is now in position 5 

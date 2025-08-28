@@ -43,8 +43,7 @@ izmSearchUI <- function(id,
       #tags$script(src = "https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"),
       #tags$script(src = "https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"),
       tags$script(src = "https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"),
-      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js")  
-      
+      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js")
     ),
     
     includeCSS("https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap.min.css"),
@@ -90,8 +89,9 @@ izmSearchUI <- function(id,
     
     tags$br(),
     
-    tags$div(id = "searchresults_ui_wrapper",
+    tags$div(id = "searchresults_ui_wrapper", class = "result-table-container", `data-tableclickedid` = ns("izmclickedid"),
       tags$table(id = "searchresults", class = "display")
+
     )
     
   )
@@ -115,13 +115,12 @@ izmSearchModule <- function(input, output, session){
              )
   
   
-  reactive( 
+  reactive({
     list(
       clicked = input$izmclickedid
       #n_results = input$izmnresults  
     )
-    
-  )  
+  })  
   
   
 }

@@ -87,7 +87,7 @@ pseudoData <- R6::R6Class(
     #' @param adres If what="adres", provide the address as a list with components vblpostcode, etc.
     #' @return A dataframe
     get_person_brp = function(pseudo_id = NULL, what = c("bsn", "anr", "adres"), adres = NULL){
-      
+      #browser()
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
       
@@ -207,7 +207,7 @@ pseudoData <- R6::R6Class(
     #' @description Util to add 'naam' column to depseudonized form of $get_person_brp,
     #' for example in $get_family --> callModule(depseudo...)
     add_naam_column = function(data, fill_na = NULL){
-      
+      #browser()
       na_val <- ifelse(is.null(fill_na), NA_character_, as.character(fill_na))
       
       vv <- data$voorvoegsel
@@ -356,7 +356,7 @@ pseudoData <- R6::R6Class(
     #' @param pseudo_id A single pseudo-id
     #' @return Dataframe
     get_family = function(pseudo_id, what = c("bsn", "anr")){
-      
+      #browser()
       flog.info("get_family")
       
         what <- match.arg(what)
@@ -749,7 +749,7 @@ pseudoData <- R6::R6Class(
     #' @description Depseudonimiseer een hele tabel
     #' @details Gepseudonimiseerde kolommen worden automatisch bepaald.
     table_depseudo2 = function(table_data = reactive(NULL), columns = NULL){
-      
+      #browser()
       pseudo_columns <- reactive({
         cols <- columns
         
@@ -851,6 +851,7 @@ pseudoData <- R6::R6Class(
       
       fam <- reactive({
         req(id_in())
+        #browser()
         self$get_family(id_in(), what = "bsn")
       })
       

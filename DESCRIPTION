@@ -1,11 +1,11 @@
 Package: izmr
 Type: Package
 Title: De Integrale ZoekMachine als R package
-Version: 1.4.2
-Author: Remko Duursma
+Version: 1.5
+Author: Wesley Brants Remko Duursma
 Depends: shiny,jsonlite,glue,dplyr,dbplyr,futile.logger,DBI,pool,safer
 Imports: shintodb
-Maintainer: Remko Duursma <remko@shintolabs.nl>
+Maintainer: Wesley Brants <wesley@shintolabs.nl>
 Description: Zoeken, data ophalen, depseudonimiseren. Wrappers voor REST calls, etc.
 License: CC0
 Encoding: UTF-8

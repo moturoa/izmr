@@ -90,10 +90,10 @@ pseudoData <- R6::R6Class(
       #browser()
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
-      
+      flog.info(glue("testing with pid {pseudo_id} for what {what}"))
       # missing IDs
       pseudo_id[pseudo_id == ""] <- NA_character_
-
+      flog.info(glue("pid now is {pseudo_id}"))
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vblgemeentevaninschrijvingomschrijving",
@@ -126,7 +126,7 @@ pseudoData <- R6::R6Class(
                    )
                    
       sel_sql <- paste(columns, collapse= ", ")
-      
+      flog.info(glue("sel_sql is {sel_sql}"))
       if(what %in% c("bsn", "anr")){
         
         # gegevens van POI

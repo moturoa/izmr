@@ -357,7 +357,7 @@ pseudoData <- R6::R6Class(
     #' @return Dataframe
     get_family = function(pseudo_id, what = c("bsn", "anr")){
       #browser()
-      flog.info("get_family")
+      flog.info(glue("get_family for {what} {pseudo_id}"))
       
         what <- match.arg(what)
       

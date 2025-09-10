@@ -145,6 +145,9 @@ pseudoData <- R6::R6Class(
           id_search <- private$to_sql_string(pseudo_id)
           flog.info(glue("pseudo_id now is {pseudo_id}"))
           flog.info(glue("id_search now is {id_search}"))
+          flog.info(glue("schema now is {self$schema_sql}"))
+          flog.info(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
+                         " {search_col} IN {id_search};"))
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
                                  " {search_col} IN {id_search};")) 
         }
@@ -202,7 +205,7 @@ pseudoData <- R6::R6Class(
                overleden = as.Date(lubridate::ymd_hms(overleden)),
                ou1geslachtsnaam = na_if(ou1geslachtsnaam, "."),
                ou2geslachtsnaam = na_if(ou2geslachtsnaam, "."))
-      
+      flog.info(glue("out renamed and mutated"))
       out
     },
     

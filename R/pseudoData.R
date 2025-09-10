@@ -90,10 +90,10 @@ pseudoData <- R6::R6Class(
       #browser()
       # Is the pseudo_id a BSN or an ANR?
       what <- match.arg(what)
-      flog.info(glue("testing with pid {pseudo_id} for what {what}"))
+      
       # missing IDs
       pseudo_id[pseudo_id == ""] <- NA_character_
-      flog.info(glue("pid now is {pseudo_id}"))
+
       # could be argument
       columns <- c("vwsgemeentevaninschrijvingomschrijving", 
                    "vblgemeentevaninschrijvingomschrijving",
@@ -126,16 +126,15 @@ pseudoData <- R6::R6Class(
                    )
                    
       sel_sql <- paste(columns, collapse= ", ")
-      flog.info(glue("sel_sql is {sel_sql}"))
+      
       if(what %in% c("bsn", "anr")){
-        
         
         # gegevens van POI
         search_col <- switch(what,
                              bsn = "prsburgerservicenummer",
                              anr = "prsanummer"
         )
-        flog.info(glue("search_col now is {search_col}"))
+        
         if(all(is.na(pseudo_id)) || length(pseudo_id[1]) == 0){
           # no ID provided, return an empty table
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where false"))
@@ -143,11 +142,7 @@ pseudoData <- R6::R6Class(
           
           pseudo_id <- pseudo_id[!is.na(pseudo_id)]
           id_search <- private$to_sql_string(pseudo_id)
-          flog.info(glue("pseudo_id now is {pseudo_id}"))
-          flog.info(glue("id_search now is {id_search}"))
-          flog.info(glue("schema now is {self$schema_sql}"))
-          flog.info(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
-                         " {search_col} IN {id_search};"))
+          
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
                                  " {search_col} IN {id_search};")) 
         }
@@ -177,7 +172,7 @@ pseudoData <- R6::R6Class(
         out <- self$query(q7)
         
       }
-      flog.info(glue("out now is {head(out)}"))
+      
       # Rename cols.
       out <- dplyr::rename(out,
                            pseudo_bsn = prsburgerservicenummer,
@@ -205,7 +200,7 @@ pseudoData <- R6::R6Class(
                overleden = as.Date(lubridate::ymd_hms(overleden)),
                ou1geslachtsnaam = na_if(ou1geslachtsnaam, "."),
                ou2geslachtsnaam = na_if(ou2geslachtsnaam, "."))
-      flog.info(glue("out renamed and mutated"))
+      
       out
     },
     
@@ -368,18 +363,16 @@ pseudoData <- R6::R6Class(
       
         stopifnot(length(pseudo_id) == 1)
         
-        flog.info("getting poi")
         poi <- self$get_person_brp(pseudo_id, what = what) %>%
           self$set_relation("persoon_poi")
-        flog.info("poi got, get parents")
       
         parents <- self$get_person_brp(c(poi$anrouder1,poi$anrouder2), what = "anr") %>%
           self$set_parent_relation()
-        flog.info("parents got, get huwelijk")
+        
         huwelijk <- self$get_huwelijk(poi$pseudo_bsn) 
-        flog.info("huwelijk got, get kids")
+        
         kinderen <- self$get_kinderen(poi$pseudo_bsn)
-        flog.info("kids got, done")
+        
         return(bind_rows(
             list(
               poi,

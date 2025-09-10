@@ -129,12 +129,13 @@ pseudoData <- R6::R6Class(
       flog.info(glue("sel_sql is {sel_sql}"))
       if(what %in% c("bsn", "anr")){
         
+        
         # gegevens van POI
         search_col <- switch(what,
                              bsn = "prsburgerservicenummer",
                              anr = "prsanummer"
         )
-        
+        flog.info(glue("search_col now is {search_col}"))
         if(all(is.na(pseudo_id)) || length(pseudo_id[1]) == 0){
           # no ID provided, return an empty table
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where false"))
@@ -142,7 +143,8 @@ pseudoData <- R6::R6Class(
           
           pseudo_id <- pseudo_id[!is.na(pseudo_id)]
           id_search <- private$to_sql_string(pseudo_id)
-          
+          flog.info(glue("pseudo_id now is {pseudo_id}"))
+          flog.info(glue("id_search now is {id_search}"))
           out <- self$query(glue("select {sel_sql} from {self$schema_sql}bzsprsq00 where",
                                  " {search_col} IN {id_search};")) 
         }
@@ -172,7 +174,7 @@ pseudoData <- R6::R6Class(
         out <- self$query(q7)
         
       }
-      
+      flog.info(glue("out now is {head(out)}"))
       # Rename cols.
       out <- dplyr::rename(out,
                            pseudo_bsn = prsburgerservicenummer,

@@ -363,16 +363,18 @@ pseudoData <- R6::R6Class(
       
         stopifnot(length(pseudo_id) == 1)
         
+        flog.info("getting poi")
         poi <- self$get_person_brp(pseudo_id, what = what) %>%
           self$set_relation("persoon_poi")
+        flog.info("poi got, get parents")
       
         parents <- self$get_person_brp(c(poi$anrouder1,poi$anrouder2), what = "anr") %>%
           self$set_parent_relation()
-        
+        flog.info("parents got, get huwelijk")
         huwelijk <- self$get_huwelijk(poi$pseudo_bsn) 
-        
+        flog.info("huwelijk got, get kids")
         kinderen <- self$get_kinderen(poi$pseudo_bsn)
-        
+        flog.info("kids got, done")
         return(bind_rows(
             list(
               poi,

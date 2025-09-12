@@ -2,8 +2,8 @@
 Shiny.addCustomMessageHandler("getRecordFromId", function(params) {    
   
   
-  console.log("params.id (getRecordFromId)")
-  console.log(params.pseudo_ids)
+  // console.log("params.id (getRecordFromId)")
+  // console.log(params.pseudo_ids)
   
  if (params.pseudo_ids == null) {   
     Shiny.setInputValue(params.id, Math.random())

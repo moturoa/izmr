@@ -41,36 +41,34 @@ function loadPerson(id) {
        
 
 // Throttled search function
-function autosearch(searchurl, throttle) {
-  
-  $('#searchresults').display = "block";
+function autosearch(searchurl, throttle, ns) {
+  $('#' + ns + 'searchresults').display = "block";
   
   if(timeout) {
     clearTimeout(timeout);
     timeout = null;
   }
-  timeout = setTimeout(autosearch2, throttle, searchurl);
+  timeout = setTimeout(autosearch2, throttle, searchurl, ns);
 }
 
 
 // Actual search function (used in throttled version above)
 // Makes call to filldatatable()
-function autosearch2(searchurl) { 
+function autosearch2(searchurl, ns) { 
+  
+        const container = document.querySelector('#' + ns + 'form_ui_wrapper.form-container');
         
-        
-        let form = document.forms.izmsearch;
+        const form = container.querySelector(`form[name="${ns}izmsearch"]`);
         
         // Search boxes and their values on the IZM search page
         searchvalues = [
-          form.elements.achternaam.value,
-          form.elements.bsn.value,
-          form.elements.postcode.value,
-          form.elements.straatnaam.value,
-          form.elements.huisnummer.value,
-          form.elements.geboortedatum.value
+          form.elements[ns + "achternaam"].value,
+          form.elements[ns + "bsn"].value,
+          form.elements[ns + "postcode"].value,
+          form.elements[ns + "straatnaam"].value,
+          form.elements[ns + "huisnummer"].value,
+          form.elements[ns + "geboortedatum"].value
         ];
-        
-        //a
                             
                 for (i=0; i < form.length; i += 1) {
                      
@@ -133,7 +131,7 @@ function autosearch2(searchurl) {
         //alert(searchvalues);
                
                 
-                fill_datatable(searchvalues, searchurl);
+                fill_datatable(searchvalues, searchurl, ns);
             
         }
         
@@ -141,7 +139,7 @@ function autosearch2(searchurl) {
 
 // searchvalues: array with fixed order of search values (naam to geboortedatum below)
 // 
-function fill_datatable(searchvalues,searchurl) {
+function fill_datatable(searchvalues,searchurl,ns) {
   
       if(searchvalues){
         
@@ -167,7 +165,8 @@ function fill_datatable(searchvalues,searchurl) {
                   
                   //console.log("Input to formatSearchResults")
                   //console.log(res)
-                  justDataTable(formatSearchResults(res)); 
+                  
+                  justDataTable(formatSearchResults(res, ns), ns); 
                 },
                 
                 error:function(err){
@@ -197,13 +196,12 @@ setClickedId = function(id, shinyid){
 
                         
 // This function formats the output from the search API
-function formatSearchResults(data) { 
-  
+function formatSearchResults(data, ns) { 
     var len = data.recordsFiltered;
 
     Shiny.setInputValue("izm-izmnresults", len);
     
-    const tableElem = document.querySelector(".result-table-container");
+    const tableElem = document.querySelector('#' + ns + 'searchresults_ui_wrapper.result-table-container');
     const namespacedId = tableElem?.getAttribute("data-tableclickedid");
     
     // Uncomment these two lines to seelook at the data input  
@@ -246,14 +244,45 @@ function formatSearchResults(data) {
     return (data);
 }
         
+function justDataTable(payload, ns) {
+  const $root = $('#' + ns + 'searchresults');          // wrapper
+  let   $table = $root.find('table');
+  if ($table.length && $.fn.dataTable.isDataTable($table)) {
+    $table.DataTable().clear().destroy();
+    // Remove the generated header/body to avoid ghost columns
+    $table.remove();
+  }
+  // Fresh table element
+  $root.empty().append('<table class="display" style="width:100%"></table>');
+  $table = $root.find('table');
+  return $table.DataTable({
+    paging: true,
+    pageLength: 25,
+    dom: 'rtip',
+    data: payload.data,
+    columnDefs: [
+      { targets: 0,  visible: false },
+      { title: 'BSN',          targets: 1 },
+      { title: 'Naam',         targets: 2 },
+      { title: 'Voornamen',    targets: 3 },
+      { title: 'Geboortedatum',targets: 4, render: DataTable.render.date() },
+      { title: 'Ovl. datum',   targets: 5, render: DataTable.render.date() },
+      { targets: 6,  visible: false },
+      { targets: 7,  visible: false },
+      { targets: 8,  visible: false },
+      { title: 'Postcode',     targets: 9 },
+      { title: 'Adres',        targets: 10 },
+      { title: 'Woonplaats',   targets: 11 }
+    ]
+  });
+}       
         
-        
-function justDataTable(data) {
+function xxxxjustDataTable(data, ns) {
    
-   //console.log(data);
+   var table = $('#' + ns + 'searchresults');
    
-   $('#searchresults').DataTable({ 
-     "processing": false,
+   $('#' + ns + 'searchresults').DataTable({ 
+        "processing": false,
         "serverSide": false,
         destroy: true,
         paging: true,
